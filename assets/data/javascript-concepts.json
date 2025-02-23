@@ -1,0 +1,183 @@
+{
+  "concepts": [
+    {
+      "id": "js-variables-datatypes",
+      "title": "Variables and Data Types",
+      "description": "Learn about JavaScript variables, declaration methods (var, let, const), and fundamental data types including numbers, strings, booleans, null, and undefined.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "JavaScript provides three ways to declare variables: var, let, and const. Each has its own scope and behavior. Variables can hold different types of data including numbers, strings, booleans, null, and undefined. Understanding these fundamentals is crucial for JavaScript programming.",
+      "example": "// Variable declarations\nlet count = 0;           // Number\nconst name = 'John';     // String\nlet isActive = true;     // Boolean\nlet data = null;         // Null\nlet value;              // Undefined\n\n// Type checking\nconsole.log(typeof count);    // 'number'\nconsole.log(typeof name);     // 'string'\nconsole.log(typeof isActive); // 'boolean'\nconsole.log(typeof data);     // 'object'\nconsole.log(typeof value);    // 'undefined'",
+      "keyPoints": [
+        "Use let for variables that will be reassigned, const for values that won't change",
+        "JavaScript has six primitive data types: string, number, boolean, null, undefined, and symbol",
+        "The typeof operator helps determine the type of a value",
+        "Variables declared with let and const are block-scoped",
+        "Avoid using var as it's function-scoped and can lead to unexpected behavior"
+      ],
+      "quiz": [
+        {
+          "question": "What is the difference between let and const?",
+          "options": ["let can be reassigned, const cannot", "const can be reassigned, let cannot", "They are the same", "Neither can be reassigned"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "Which is not a primitive data type in JavaScript?",
+          "options": ["string", "boolean", "array", "undefined"],
+          "correctAnswer": 2
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Variable Declaration",
+          "code": "let count = 0;\nconst PI = 3.14;\nconsole.log(typeof count);\nconsole.log(typeof PI);"
+        }
+      ]
+    },
+    {
+      "id": "js-functions-basics",
+      "title": "Functions Fundamentals",
+      "description": "Master JavaScript functions including function declarations, expressions, arrow functions, and function parameters.",
+      "difficulty": "beginner",
+      "category": "functions",
+      "explanation": "Functions in JavaScript are blocks of reusable code that can be declared in multiple ways. Function declarations are hoisted, while function expressions are not. Arrow functions provide a concise syntax and lexical this binding. Understanding different function types and their behavior is essential for JavaScript development.",
+      "example": "// Function Declaration\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n\n// Function Expression\nconst sayGoodbye = function(name) {\n  return `Goodbye, ${name}!`;\n};\n\n// Arrow Function\nconst add = (a, b) => a + b;\n\n// Using the functions\nconsole.log(greet('John'));      // Hello, John!\nconsole.log(sayGoodbye('Jane')); // Goodbye, Jane!\nconsole.log(add(5, 3));          // 8",
+      "keyPoints": [
+        "Function declarations are hoisted, allowing them to be used before declaration",
+        "Arrow functions provide a concise syntax and lexical 'this' binding",
+        "Functions can accept parameters and return values",
+        "Functions are first-class citizens in JavaScript",
+        "Default parameters can be specified in function declarations"
+      ],
+      "quiz": [
+        {
+          "question": "What is the difference between function declaration and function expression?",
+          "options": ["Hoisting behavior", "Performance", "Syntax only", "No difference"],
+          "correctAnswer": 0
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Function Types",
+          "code": "// Function Declaration\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n\n// Arrow Function\nconst greetArrow = (name) => `Hello, ${name}!`;"
+        }
+      ]
+    },
+    {
+      "id": "js-objects-prototypes",
+      "title": "Objects and Prototypes",
+      "description": "Deep dive into JavaScript objects, object methods, prototypal inheritance, and the prototype chain.",
+      "difficulty": "intermediate",
+      "category": "objects",
+      "explanation": "JavaScript uses prototypal inheritance where objects inherit directly from other objects. Every object has a prototype from which it inherits properties and methods. Understanding the prototype chain and how to create and manipulate objects is crucial for object-oriented programming in JavaScript.",
+      "example": "// Creating an object\nconst person = {\n  name: 'John',\n  age: 30,\n  greet() {\n    return `Hello, I'm ${this.name}`;\n  }\n};\n\n// Object inheritance\nconst employee = Object.create(person);\nemployee.role = 'Developer';\n\n// Using inherited properties\nconsole.log(employee.name);     // John\nconsole.log(employee.greet());  // Hello, I'm John\n\n// Checking inheritance\nconsole.log(employee.__proto__ === person); // true",
+      "keyPoints": [
+        "Objects are collections of key-value pairs",
+        "Properties can be accessed using dot notation or bracket notation",
+        "Object.create() creates a new object with the specified prototype",
+        "The prototype chain allows objects to inherit properties and methods",
+        "Modern JavaScript provides class syntax as syntactic sugar over prototypes"
+      ],
+      "quiz": [
+        {
+          "question": "What is prototypal inheritance?",
+          "options": ["Objects inheriting from other objects", "Class-based inheritance", "Multiple inheritance", "Interface inheritance"],
+          "correctAnswer": 0
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Object Creation and Inheritance",
+          "code": "const person = {\n  name: 'John',\n  greet() {\n    return `Hello, I'm ${this.name}`;\n  }\n};\n\nconst employee = Object.create(person);"
+        }
+      ]
+    },
+    {
+      "id": "js-async-programming",
+      "title": "Asynchronous Programming",
+      "description": "Learn about callbacks, promises, async/await, and handling asynchronous operations in JavaScript.",
+      "difficulty": "advanced",
+      "category": "async",
+      "explanation": "Asynchronous programming in JavaScript allows code to run in the background while other code executes. This is essential for operations like API calls, file operations, and timers. Modern JavaScript provides Promises and async/await syntax to handle asynchronous operations more elegantly than traditional callbacks.",
+      "example": "// Using Promises\nfunction fetchData() {\n  return new Promise((resolve, reject) => {\n    setTimeout(() => {\n      resolve({ id: 1, name: 'John' });\n    }, 1000);\n  });\n}\n\n// Using async/await\nasync function getData() {\n  try {\n    const data = await fetchData();\n    console.log(data);\n  } catch (error) {\n    console.error('Error:', error);\n  }\n}\n\n// Using the async function\ngetData();",
+      "keyPoints": [
+        "Promises represent the eventual completion of an asynchronous operation",
+        "async/await provides a more readable way to handle promises",
+        "Error handling in async code is done using try/catch blocks",
+        "Multiple promises can be handled using Promise.all() or Promise.race()",
+        "The event loop manages asynchronous operations in JavaScript"
+      ],
+      "quiz": [
+        {
+          "question": "What is the purpose of async/await?",
+          "options": ["Make asynchronous code look synchronous", "Improve performance", "Replace promises", "All of the above"],
+          "correctAnswer": 0
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Async/Await Example",
+          "code": "async function fetchData() {\n  try {\n    const response = await fetch('https://api.example.com/data');\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error('Error:', error);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": "js-es6-features",
+      "title": "Modern JavaScript (ES6+)",
+      "description": "Explore modern JavaScript features including destructuring, spread operator, modules, and template literals.",
+      "difficulty": "intermediate",
+      "category": "es6",
+      "explanation": "ES6 (ECMAScript 2015) and later versions introduced many powerful features to JavaScript. These include destructuring for extracting values from objects and arrays, the spread operator for array manipulation, template literals for string interpolation, and modules for better code organization.",
+      "example": "// Destructuring\nconst person = { name: 'John', age: 30 };\nconst { name, age } = person;\n\n// Spread operator\nconst numbers = [1, 2, 3];\nconst moreNumbers = [...numbers, 4, 5];\n\n// Template literals\nconst greeting = `Hello, ${name}! You are ${age} years old.`;\n\n// Module export/import example\nexport const add = (a, b) => a + b;\nimport { add } from './math.js';\n\nconsole.log(name, age);        // John 30\nconsole.log(moreNumbers);      // [1, 2, 3, 4, 5]\nconsole.log(greeting);         // Hello, John! You are 30 years old.",
+      "keyPoints": [
+        "Destructuring simplifies extracting values from objects and arrays",
+        "The spread operator (...) can be used for array and object manipulation",
+        "Template literals allow embedded expressions and multiline strings",
+        "Modules help organize code into reusable, maintainable pieces",
+        "ES6+ features improve code readability and reduce boilerplate"
+      ],
+      "quiz": [
+        {
+          "question": "What is destructuring used for?",
+          "options": ["Extract values from objects and arrays", "Create new objects", "Delete object properties", "Combine arrays"],
+          "correctAnswer": 0
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Destructuring and Spread",
+          "code": "const { name, age } = person;\nconst numbers = [1, 2, 3];\nconst moreNumbers = [...numbers, 4, 5];"
+        }
+      ]
+    },
+    {
+      "id": "js-closures",
+      "title": "Closures and Scope",
+      "description": "Understanding JavaScript closures, lexical scope, and practical applications in modern JavaScript.",
+      "difficulty": "advanced",
+      "category": "functions",
+      "explanation": "Closures are functions that have access to variables in their outer (enclosing) lexical scope, even after the outer function has returned. They are a powerful feature in JavaScript that enables data privacy, partial application, and the module pattern.",
+      "example": "// Basic closure example\nfunction counter() {\n  let count = 0;\n  \n  return {\n    increment() {\n      return ++count;\n    },\n    decrement() {\n      return --count;\n    },\n    getCount() {\n      return count;\n    }\n  };\n}\n\nconst myCounter = counter();\nconsole.log(myCounter.increment()); // 1\nconsole.log(myCounter.increment()); // 2\nconsole.log(myCounter.decrement()); // 1\nconsole.log(myCounter.getCount());  // 1",
+      "keyPoints": [
+        "Closures maintain access to variables from their outer scope",
+        "They are commonly used for data privacy and encapsulation",
+        "Each closure has its own scope chain",
+        "Closures are the foundation of the module pattern",
+        "Memory management is important when working with closures"
+      ],
+      "quiz": [
+        {
+          "question": "What is a closure?",
+          "options": ["A function with access to its outer scope", "A private variable", "A global function", "A callback function"],
+          "correctAnswer": 0
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Closure Example",
+          "code": "function counter() {\n  let count = 0;\n  return {\n    increment: () => ++count,\n    getCount: () => count\n  };\n}"
+        }
+      ]
+    }
+  ]
+} 

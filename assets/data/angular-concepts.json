@@ -1,0 +1,108 @@
+{
+  "concepts": [
+    {
+      "id": "components",
+      "title": "Components",
+      "description": "Learn about Angular components, the building blocks of Angular applications",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "Components are the main building blocks of Angular applications. They control a portion of the screen called a view, containing the application logic and data.",
+      "example": "// Basic component example\n@Component({\n  selector: 'app-hello',\n  template: `<h1>Hello {{name}}!</h1>`\n})\nexport class HelloComponent {\n  name = 'World';\n}",
+      "keyPoints": [
+        "Components are decorated with @Component decorator",
+        "Each component has its own template and styles",
+        "Components can be nested within other components",
+        "Components can share data through inputs and outputs",
+        "Components have their own lifecycle hooks"
+      ],
+      "quiz": [
+        {
+          "question": "What decorator is used to define an Angular component?",
+          "options": ["@Component", "@NgModule", "@Injectable", "@Directive"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "Which of the following is NOT a component lifecycle hook?",
+          "options": ["ngOnInit", "ngOnDestroy", "ngOnUpdate", "ngOnChanges"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "How do you share data from a parent to child component?",
+          "options": ["Using @Input decorator", "Using @Output decorator", "Using Services", "Using ngModel"],
+          "correctAnswer": 0
+        }
+      ]
+    },
+    {
+      "id": "directives",
+      "title": "Directives",
+      "description": "Understand built-in and custom directives in Angular",
+      "difficulty": "intermediate",
+      "category": "fundamentals",
+      "explanation": "Directives are classes that add additional behavior to elements in your Angular applications. Angular includes several built-in directives and allows you to create custom ones.",
+      "example": "// Using built-in directives\n<div *ngIf=\"isVisible\">\n  <p *ngFor=\"let item of items\">{{item}}</p>\n</div>",
+      "keyPoints": [
+        "Structural directives modify DOM layout (*ngIf, *ngFor)",
+        "Attribute directives change appearance or behavior",
+        "Custom directives can be created for reusable behaviors",
+        "Directives can take inputs and respond to events",
+        "Multiple directives can be applied to a single element"
+      ],
+      "quiz": [
+        {
+          "question": "Which symbol is used to denote a structural directive?",
+          "options": ["*", "@", "#", "$"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "What is the purpose of *ngFor directive?",
+          "options": ["Loop through arrays and iterate over lists", "Show/hide elements", "Apply styles conditionally", "Handle form validation"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "Which of these is NOT a structural directive?",
+          "options": ["ngStyle", "ngIf", "ngFor", "ngSwitch"],
+          "correctAnswer": 0
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "title": "Services",
+      "description": "Explore dependency injection and services in Angular",
+      "difficulty": "intermediate",
+      "category": "architecture",
+      "explanation": "Services in Angular are used to share data and functionality across components. They are a core concept in Angular's dependency injection system.",
+      "example": "// Basic service example\n@Injectable({\n  providedIn: 'root'\n})\nexport class DataService {\n  getData() {\n    return ['item1', 'item2'];\n  }\n}",
+      "keyPoints": [
+        "Services are singleton objects in Angular",
+        "They are used for sharing data and functionality",
+        "Services can be injected into components and other services",
+        "The @Injectable decorator marks a class as a service",
+        "Services are ideal for HTTP calls and business logic"
+      ],
+      "quiz": [
+        {
+          "question": "What decorator is used to create a service in Angular?",
+          "options": ["@Injectable", "@Service", "@Provider", "@Component"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "What is the recommended way to share data between unrelated components?",
+          "options": ["Using Services", "Using global variables", "Using localStorage", "Using @Input/@Output"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "What does 'providedIn: root' mean in a service?",
+          "options": [
+            "The service is available application-wide as a singleton",
+            "The service is only available in the root component",
+            "The service must be imported in the root module",
+            "The service can only be used in root-level components"
+          ],
+          "correctAnswer": 0
+        }
+      ]
+    }
+  ]
+} 
