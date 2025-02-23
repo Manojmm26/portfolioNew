@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,13 +14,13 @@ import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
 import 'prismjs';
-import 'prismjs/components/prism-markup';
+import 'prismjs/components/prism-css';
 import 'prismjs/themes/prism-okaidia.css';
 
 declare var Prism: any;
 
 @Component({
-  selector: 'app-html-concept',
+  selector: 'app-css-concept',
   template: `
     <div class="concept-container" *ngIf="content">
       <header class="concept-header">
@@ -99,7 +99,7 @@ declare var Prism: any;
                 <div class="example-container">
                   <div class="code-section">
                     <div class="code-header">
-                      <h3>HTML Code</h3>
+                      <h3>CSS Code</h3>
                       <div class="code-actions">
                         <button mat-icon-button (click)="copyCode()" matTooltip="Copy to clipboard">
                           <mat-icon>content_copy</mat-icon>
@@ -146,7 +146,10 @@ declare var Prism: any;
                         <mat-icon>{{ previewMode === 'desktop' ? 'computer' : 'smartphone' }}</mat-icon>
                       </button>
                     </div>
-                    <div class="preview-container" [class]="previewMode" [innerHTML]="sanitizedPreview"></div>
+                    <div class="preview-container" [ngClass]="{'mobile': previewMode === 'mobile'}">
+                      <div #previewStyleContainer></div>
+                      <div #previewContent class="preview-content" [innerHTML]="previewHtml"></div>
+                    </div>
                   </div>
                 </div>
               </mat-card-content>
@@ -195,7 +198,7 @@ declare var Prism: any;
   `,
   styles: [`
     .concept-container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
 
@@ -308,124 +311,127 @@ declare var Prism: any;
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
         margin-top: 1rem;
+      }
 
-        .code-section {
-          background-color: #272822;
-          border-radius: 4px;
-          
-          .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background-color: #1e1f1c;
-            border-radius: 4px 4px 0 0;
+      .code-section {
+        background-color: #272822;
+        border-radius: 4px;
+        
+        .code-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          background-color: #1e1f1c;
+          border-radius: 4px 4px 0 0;
 
-            h3 {
-              color: #f8f8f2;
-              margin: 0;
-            }
-
-            .code-actions {
-              display: flex;
-              gap: 0.5rem;
-            }
-
-            button {
-              color: #f8f8f2;
-            }
+          h3 {
+            color: #f8f8f2;
+            margin: 0;
           }
 
-          .code-editor {
-            padding: 1rem;
+          .code-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
+          }
 
-            .line-numbers {
-              user-select: none;
-              text-align: right;
-              color: #75715e;
-              padding-right: 0.5rem;
-              border-right: 1px solid #3c3d37;
+          button {
+            color: #f8f8f2;
+          }
+        }
 
-              .line-number {
-                font-family: 'Fira Code', monospace;
-                font-size: 0.9rem;
-                line-height: 1.5;
-              }
-            }
+        .code-editor {
+          padding: 1rem;
+          display: flex;
+          gap: 1rem;
 
-            textarea {
-              flex: 1;
-              min-height: 300px;
-              background-color: #272822;
-              color: #f8f8f2;
-              border: none;
+          .line-numbers {
+            user-select: none;
+            text-align: right;
+            color: #75715e;
+            padding-right: 0.5rem;
+            border-right: 1px solid #3c3d37;
+
+            .line-number {
               font-family: 'Fira Code', monospace;
               font-size: 0.9rem;
-              resize: vertical;
-              padding: 0 0.5rem;
-              outline: none;
               line-height: 1.5;
-
-              &:focus {
-                outline: 1px solid #525252;
-              }
             }
           }
 
-          .syntax-errors {
-            padding: 1rem;
-            background-color: #1e1f1c;
-            border-top: 1px solid #3c3d37;
-
-            .error {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              color: #f44336;
-              font-size: 0.9rem;
-              margin-bottom: 0.5rem;
-
-              &:last-child {
-                margin-bottom: 0;
-              }
-            }
-          }
-        }
-
-        .preview-section {
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
-
-          .preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid #e0e0e0;
-
-            h3 {
-              margin: 0;
-              color: #333;
-            }
-          }
-
-          .preview-container {
+          textarea {
+            flex: 1;
             min-height: 300px;
-            padding: 1rem;
-            background-color: #ffffff;
-            overflow: auto;
-            
-            &.mobile {
-              max-width: 375px;
-              margin: 0 auto;
-              border: 10px solid #333;
-              border-radius: 20px;
-              min-height: 600px;
+            background-color: #272822;
+            color: #f8f8f2;
+            border: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            padding: 0 0.5rem;
+            outline: none;
+            line-height: 1.5;
+
+            &:focus {
+              outline: 1px solid #525252;
             }
           }
         }
+
+        .syntax-errors {
+          padding: 1rem;
+          background-color: #1e1f1c;
+          border-top: 1px solid #3c3d37;
+
+          .error {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #f44336;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+
+      .preview-section {
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: #f5f5f5;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .preview-container {
+        background: white;
+        min-height: 300px;
+        padding: 1rem;
+        overflow: auto;
+      }
+
+      .preview-container.mobile {
+        max-width: 375px;
+        margin: 1rem auto;
+        min-height: 500px;
+        border: 10px solid #333;
+        border-radius: 20px;
+        padding: 1rem;
+        background: white;
+      }
+
+      .preview-content {
+        height: 100%;
       }
 
       .quiz-card {
@@ -488,6 +494,12 @@ declare var Prism: any;
         &.advanced { background-color: #F44336; color: white; }
       }
     }
+
+    @media (max-width: 768px) {
+      .example-container {
+        grid-template-columns: 1fr;
+      }
+    }
   `],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
@@ -505,11 +517,14 @@ declare var Prism: any;
     MatBadgeModule
   ]
 })
-export class HtmlConceptComponent implements OnInit {
+export class CssConceptComponent implements OnInit, AfterViewInit {
+  @ViewChild('previewStyleContainer') previewStyleContainer!: ElementRef;
+  @ViewChild('previewContent') previewContent!: ElementRef;
+
   content: ConceptContent | null = null;
   userAnswers: number[] = [];
   currentCode: string = '';
-  sanitizedPreview: SafeHtml = '';
+  previewHtml: SafeHtml = '';
   sanitizedExplanation: SafeHtml = '';
   previewMode: 'desktop' | 'mobile' = 'desktop';
   quizComplete: boolean = false;
@@ -520,7 +535,8 @@ export class HtmlConceptComponent implements OnInit {
     private route: ActivatedRoute,
     private conceptService: ConceptService,
     private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit() {
@@ -530,14 +546,89 @@ export class HtmlConceptComponent implements OnInit {
         if (content) {
           this.content = content;
           this.currentCode = content.example;
-          this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(content.example);
+          
+          // Sanitize the preview HTML
+          this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(
+            content.previewHtml || ''
+          );
+
           this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
             content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
           );
+          
           this.checkSyntax();
         }
       });
     }
+  }
+
+  ngAfterViewInit() {
+    this.updatePreviewStyles();
+  }
+
+  private updatePreviewStyles() {
+    if (this.previewStyleContainer && this.currentCode) {
+      // Remove any existing style elements
+      const existingStyles = this.previewStyleContainer.nativeElement.querySelectorAll('style');
+      existingStyles.forEach((style: HTMLElement) => style.remove());
+
+      // Create and append new style element with scoped styles
+      const styleElement = document.createElement('style');
+      styleElement.textContent = `
+        .preview-content {
+          height: 100%;
+        }
+        ${this.currentCode}
+      `;
+      
+      // Find the preview container and inject styles
+      const previewContainer = this.elementRef.nativeElement.querySelector('.preview-container');
+      if (previewContainer) {
+        previewContainer.appendChild(styleElement);
+      }
+    }
+  }
+
+  onCodeChange(): void {
+    this.checkSyntax();
+    this.updatePreviewStyles();
+  }
+
+  private getBaseStyles(): string {
+    return `
+      .preview-content {
+        padding: 1rem;
+      }
+      .preview-target {
+        font-family: Arial, sans-serif;
+      }
+      .preview-target h2 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+      .preview-target p {
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+      .preview-target button {
+        padding: 0.5rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        background: #fff;
+        cursor: pointer;
+      }
+      .preview-target .box {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f0f0f0;
+        margin: 1rem 0;
+      }
+      ${this.currentCode}
+    `;
   }
 
   getLineNumbers(): number[] {
@@ -551,111 +642,24 @@ export class HtmlConceptComponent implements OnInit {
     lineNumbers.scrollTop = textarea.scrollTop;
   }
 
-  onCodeChange(): void {
-    this.updatePreview();
-    this.checkSyntax();
-  }
-
-  checkSyntax(): void {
+  private checkSyntax(): void {
     this.syntaxErrors = [];
-    const lines = this.currentCode.split('\n');
-    const stack: Array<{ tag: string; line: number }> = [];
-    const selfClosingTags = new Set([
-      'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
-      'link', 'meta', 'param', 'source', 'track', 'wbr'
-    ]);
-    
-    // Process all lines to find tags
-    lines.forEach((line, lineIndex) => {
-      let position = 0;
-      
-      while (position < line.length) {
-        // Find next tag
-        const tagStart = line.indexOf('<', position);
-        if (tagStart === -1) break;
-        
-        const tagEnd = line.indexOf('>', tagStart);
-        if (tagEnd === -1) {
-          // Unclosed tag bracket
-          this.syntaxErrors.push({
-            line: lineIndex + 1,
-            message: 'Unclosed tag bracket'
-          });
-          break;
-        }
-        
-        const tagContent = line.substring(tagStart + 1, tagEnd);
-        position = tagEnd + 1;
-        
-        // Skip comments and doctype
-        if (tagContent.startsWith('!')) continue;
-        
-        // Check if it's a closing tag
-        if (tagContent.startsWith('/')) {
-          const tagName = tagContent.substring(1).trim().split(' ')[0].toLowerCase();
-          
-          // Find matching opening tag
-          const lastTag = stack.pop();
-          if (!lastTag) {
-            this.syntaxErrors.push({
-              line: lineIndex + 1,
-              message: `Unexpected closing tag </${tagName}>`
-            });
-          } else if (lastTag.tag !== tagName) {
-            this.syntaxErrors.push({
-              line: lineIndex + 1,
-              message: `Mismatched closing tag: expected </${lastTag.tag}>, found </${tagName}>`
-            });
-            // Put the tag back since it wasn't matched
-            stack.push(lastTag);
-          }
-        } else {
-          // It's an opening tag
-          const tagName = tagContent.trim().split(' ')[0].toLowerCase();
-          
-          // Check for invalid tag names
-          if (!tagName.match(/^[a-z][a-z0-9-]*$/)) {
-            this.syntaxErrors.push({
-              line: lineIndex + 1,
-              message: `Invalid tag name: ${tagName}`
-            });
-            continue;
-          }
-          
-          // Check for attributes
-          const attributeMatches = tagContent.match(/\s\w+(?:=(?:"[^"]*"|'[^']*'|[^\s>]+))?/g);
-          if (attributeMatches) {
-            attributeMatches.forEach(attr => {
-              const [name, value] = attr.trim().split('=');
-              if (value && !value.match(/^["'][^"']*["']$/)) {
-                this.syntaxErrors.push({
-                  line: lineIndex + 1,
-                  message: `Invalid attribute value for ${name}: missing quotes`
-                });
-              }
-            });
-          }
-          
-          // Don't push self-closing tags onto the stack
-          if (!selfClosingTags.has(tagName) && !tagContent.endsWith('/')) {
-            stack.push({ tag: tagName, line: lineIndex + 1 });
-          }
-        }
-      }
-    });
-    
-    // Check for any remaining unclosed tags
-    stack.forEach(({ tag, line }) => {
+    try {
+      const styleElement = document.createElement('style');
+      styleElement.textContent = this.currentCode;
+      document.head.appendChild(styleElement);
+      document.head.removeChild(styleElement);
+    } catch (error: any) {
       this.syntaxErrors.push({
-        line,
-        message: `Unclosed tag <${tag}>`
+        line: 1,
+        message: error.toString()
       });
-    });
+    }
   }
 
   highlightCode(code: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(
-      Prism.highlight(code, Prism.languages.markup, 'markup')
+      Prism.highlight(code, Prism.languages.css, 'css')
     );
   }
 
@@ -667,7 +671,6 @@ export class HtmlConceptComponent implements OnInit {
     if (this.content?.interactiveExamples) {
       const example = this.content.interactiveExamples[index];
       this.currentCode = example.code;
-      this.updatePreview();
       this.checkSyntax();
     }
   }
@@ -699,12 +702,8 @@ export class HtmlConceptComponent implements OnInit {
   resetCode(): void {
     if (this.content) {
       this.currentCode = this.content.example;
-      this.updatePreview();
+      this.checkSyntax();
     }
-  }
-
-  updatePreview(): void {
-    this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(this.currentCode);
   }
 
   checkAnswer(questionIndex: number, selectedAnswer: number): void {
@@ -758,5 +757,21 @@ export class HtmlConceptComponent implements OnInit {
     }
 
     return null;
+  }
+}
+
+class CSSParser {
+  parse(css: string): void {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = css;
+    
+    try {
+      document.head.appendChild(styleElement);
+      // If we get here, the CSS is valid
+      document.head.removeChild(styleElement);
+    } catch (error) {
+      document.head.removeChild(styleElement);
+      throw error;
+    }
   }
 } 

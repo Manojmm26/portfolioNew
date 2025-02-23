@@ -1,0 +1,219 @@
+{
+  "concepts": [
+    {
+      "id": "flexbox",
+      "technology": "css",
+      "category": "layout",
+      "title": "Flexbox Layout",
+      "description": "Learn how to create flexible and responsive layouts using CSS Flexbox",
+      "difficulty": "intermediate",
+      "explanation": "Flexbox is a one-dimensional layout method for arranging items in rows or columns. It provides a more efficient way to distribute space and align content in a container, even when their sizes are unknown or dynamic. The main idea behind the flex layout is to give the container the ability to alter its items' width/height to best fill the available space.",
+      "example": ".container {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 1rem;\n}\n\n.item {\n  flex: 1;\n  padding: 1rem;\n  background-color: #e0e0e0;\n}",
+      "previewHtml": "<div class='container'>\n  <div class='item'>Item 1</div>\n  <div class='item'>Item 2</div>\n  <div class='item'>Item 3</div>\n</div>",
+      "practice": [
+        "Create a navigation bar with evenly spaced items using flexbox",
+        "Build a card layout with flexible content areas",
+        "Implement a centered content container with flex properties"
+      ],
+      "quiz": [
+        {
+          "question": "Which property makes a container a flex container?",
+          "options": ["display: block", "display: flex", "display: grid", "display: inline"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the default value of flex-direction?",
+          "options": ["column", "row", "row-reverse", "column-reverse"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which property aligns flex items along the cross axis?",
+          "options": ["justify-content", "align-items", "align-content", "flex-wrap"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": ".navbar {\n  display: flex;\n  justify-content: space-between;\n  padding: 1rem;\n  background-color: #f5f5f5;\n}\n\n.nav-item {\n  padding: 0.5rem 1rem;\n  color: #333;\n  text-decoration: none;\n  border-radius: 4px;\n}\n\n.nav-item:hover {\n  background-color: #e0e0e0;\n}",
+          "result": "A responsive navigation bar with hover effects"
+        }
+      ],
+      "keyPoints": [
+        "Flexbox works in one dimension at a time",
+        "The flex container can alter its items' dimensions",
+        "Items can be reordered without changing the HTML",
+        "Flex properties provide powerful alignment capabilities"
+      ]
+    },
+    {
+      "id": "grid",
+      "technology": "css",
+      "category": "layout",
+      "title": "CSS Grid Layout",
+      "description": "Master CSS Grid for creating complex two-dimensional layouts",
+      "difficulty": "intermediate",
+      "explanation": "CSS Grid Layout is a two-dimensional layout system that lets you organize content in rows and columns. Unlike Flexbox, which works in one dimension, Grid allows you to create complex layouts with precise control over both rows and columns simultaneously. It's perfect for creating responsive web layouts, card systems, and complex UI components.",
+      "example": ".grid-container {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  grid-gap: 1rem;\n  padding: 1rem;\n}\n\n.grid-item {\n  padding: 2rem;\n  background-color: #e0e0e0;\n  text-align: center;\n}",
+      "previewHtml": "<div class='grid-container'>\n  <div class='grid-item'>1</div>\n  <div class='grid-item'>2</div>\n  <div class='grid-item'>3</div>\n  <div class='grid-item'>4</div>\n  <div class='grid-item'>5</div>\n  <div class='grid-item'>6</div>\n</div>",
+      "practice": [
+        "Create a responsive image gallery using grid",
+        "Build a dashboard layout with different sized sections",
+        "Implement a responsive card grid with auto-fit"
+      ],
+      "quiz": [
+        {
+          "question": "What does 'fr' unit represent in Grid?",
+          "options": ["Fixed ratio", "Fractional unit", "Free space", "Frame size"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which property defines the size of grid columns?",
+          "options": ["grid-template-rows", "grid-template-columns", "grid-auto-columns", "grid-column-gap"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": ".gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  grid-gap: 1rem;\n  padding: 1rem;\n}\n\n.gallery-item {\n  aspect-ratio: 1;\n  background-color: #f0f0f0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}",
+          "result": "A responsive image gallery layout"
+        }
+      ],
+      "keyPoints": [
+        "Grid works in two dimensions (rows and columns)",
+        "Supports both explicit and implicit grid tracks",
+        "Provides powerful alignment and spacing controls",
+        "Enables responsive layouts without media queries"
+      ]
+    },
+    {
+      "id": "animations",
+      "technology": "css",
+      "category": "animation",
+      "title": "CSS Animations",
+      "description": "Create engaging animations using CSS keyframes and transitions",
+      "difficulty": "intermediate",
+      "explanation": "CSS animations allow you to create smooth transitions and dynamic effects without JavaScript. Using @keyframes, you can define animation sequences with multiple steps, while transitions provide simple state changes. These tools are essential for creating engaging user interfaces and micro-interactions.",
+      "example": "@keyframes slide-in {\n  from {\n    transform: translateX(-100%);\n    opacity: 0;\n  }\n  to {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n\n.animated-element {\n  animation: slide-in 0.5s ease-out;\n}\n\n.transition-element {\n  transition: all 0.3s ease;\n}\n\n.transition-element:hover {\n  transform: scale(1.1);\n}",
+      "previewHtml": "<div class='animated-element'>Animated Content</div>\n<button class='transition-element'>Hover Me</button>",
+      "practice": [
+        "Create a loading spinner animation",
+        "Implement a smooth hover effect on cards",
+        "Build a fade-in animation for page elements"
+      ],
+      "quiz": [
+        {
+          "question": "Which property defines the duration of a CSS animation?",
+          "options": ["animation-speed", "animation-duration", "animation-time", "duration"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the purpose of animation-fill-mode?",
+          "options": [
+            "Sets the animation color",
+            "Defines how styles are applied before and after the animation",
+            "Controls animation direction",
+            "Sets animation speed"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": "@keyframes spin {\n  to { transform: rotate(360deg); }\n}\n\n.loader {\n  width: 40px;\n  height: 40px;\n  border: 4px solid #f3f3f3;\n  border-top: 4px solid #3498db;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n}",
+          "result": "A spinning loader animation"
+        }
+      ],
+      "keyPoints": [
+        "Use @keyframes for complex animations",
+        "Transitions for simple state changes",
+        "Consider performance and animation timing",
+        "Use appropriate easing functions for natural movement"
+      ]
+    },
+    {
+      "id": "responsive",
+      "technology": "css",
+      "category": "layout",
+      "title": "Responsive Design",
+      "description": "Learn techniques for creating websites that work across all devices",
+      "difficulty": "intermediate",
+      "explanation": "Responsive design ensures that web pages look and function well on any device size. This is achieved through fluid grids, flexible images, and media queries. The approach focuses on creating layouts that adapt to the viewer's screen size and orientation, providing an optimal viewing experience.",
+      "example": "/* Base styles */\n.container {\n  max-width: 1200px;\n  margin: 0 auto;\n  padding: 1rem;\n}\n\n/* Responsive grid */\n.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n  gap: 1rem;\n}\n\n/* Media queries */\n@media (max-width: 768px) {\n  .grid {\n    grid-template-columns: 1fr;\n  }\n\n  .header {\n    font-size: 1.5rem;\n  }\n}",
+      "previewHtml": "<div class='container'>\n  <div class='grid'>\n    <div class='card'>Card 1</div>\n    <div class='card'>Card 2</div>\n    <div class='card'>Card 3</div>\n  </div>\n</div>",
+      "practice": [
+        "Create a responsive navigation menu",
+        "Implement a mobile-first grid layout",
+        "Build responsive typography using relative units"
+      ],
+      "quiz": [
+        {
+          "question": "What is the viewport meta tag used for?",
+          "options": [
+            "Setting page background",
+            "Controlling the viewport's size and scale",
+            "Defining page title",
+            "Setting page width"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which unit is NOT relative?",
+          "options": ["em", "rem", "px", "vw"],
+          "correctAnswer": 2
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": ".responsive-nav {\n  display: flex;\n  justify-content: space-between;\n  padding: 1rem;\n}\n\n@media (max-width: 768px) {\n  .responsive-nav {\n    flex-direction: column;\n    gap: 1rem;\n  }\n}",
+          "result": "A responsive navigation layout"
+        }
+      ],
+      "keyPoints": [
+        "Use relative units for flexibility",
+        "Implement mobile-first design",
+        "Test across different devices",
+        "Use appropriate breakpoints"
+      ]
+    },
+    {
+      "id": "variables",
+      "technology": "css",
+      "category": "fundamentals",
+      "title": "CSS Custom Properties (Variables)",
+      "description": "Use CSS variables for maintainable and dynamic styling",
+      "difficulty": "beginner",
+      "explanation": "CSS Custom Properties (also known as CSS Variables) allow you to store specific values to be reused throughout a document. They are set using custom property notation (--main-color) and are accessed using the var() function. This feature makes it easier to maintain consistent styling and create dynamic theme changes.",
+      "example": ":root {\n  --primary-color: #3498db;\n  --secondary-color: #2ecc71;\n  --text-color: #333;\n  --spacing-unit: 1rem;\n}\n\n.button {\n  background-color: var(--primary-color);\n  color: white;\n  padding: var(--spacing-unit);\n  border: none;\n  border-radius: 4px;\n}\n\n.button:hover {\n  background-color: var(--secondary-color);\n}",
+      "previewHtml": "<button class='button'>Click Me</button>",
+      "practice": [
+        "Create a theme system using CSS variables",
+        "Implement dynamic color schemes",
+        "Use variables for consistent spacing"
+      ],
+      "quiz": [
+        {
+          "question": "How do you declare a CSS variable?",
+          "options": ["$variable", "@variable", "--variable", "var(variable)"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "How do you use a CSS variable?",
+          "options": ["@variable", "$variable", "var(--variable)", "--variable"],
+          "correctAnswer": 2
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": ":root {\n  --theme-color: #3498db;\n}\n\n.theme-element {\n  background-color: var(--theme-color);\n  padding: 1rem;\n  color: white;\n  border-radius: 4px;\n}\n\n/* Try changing --theme-color to see the effect */",
+          "result": "A themed element using CSS variables"
+        }
+      ],
+      "keyPoints": [
+        "Variables must be prefixed with --",
+        "Use var() function to access variables",
+        "Can be updated dynamically with JavaScript",
+        "Provides better maintainability"
+      ]
+    }
+  ]
+} 

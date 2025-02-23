@@ -1,0 +1,219 @@
+{
+  "concepts": [
+    {
+      "id": "div",
+      "technology": "html",
+      "title": "Div Element",
+      "description": "Learn about the div element and how to use it for content division and layout",
+      "explanation": "The <div> element is a container that helps organize and group content. It's a block-level element commonly used for layout and styling purposes. Unlike semantic elements, divs have no inherent meaning but serve as versatile containers for structuring content.",
+      "example": "<div class=\"container\">\n  <div class=\"header\">\n    <h1>Welcome</h1>\n  </div>\n  <div class=\"content\">\n    <p>This is the main content.</p>\n  </div>\n</div>",
+      "practice": [
+        "Create a simple layout with header, content, and footer using div elements",
+        "Style different div elements with unique background colors and padding",
+        "Create a card layout using nested div elements"
+      ],
+      "difficulty": "beginner",
+      "quiz": [
+        {
+          "question": "What is the default display property of a div element?",
+          "options": ["inline", "block", "inline-block", "flex"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which is NOT a common use case for div elements?",
+          "options": [
+            "Creating layouts",
+            "Grouping related content",
+            "Inline text formatting",
+            "Container for styling"
+          ],
+          "correctAnswer": 2
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": "<div style=\"background-color: #e0e0e0; padding: 20px;\">\n  <h2>Simple Card</h2>\n  <p>This is a simple card layout using a div.</p>\n</div>",
+          "result": "A basic card with gray background and padding"
+        }
+      ],
+      "keyPoints": [
+        "Divs are block-level elements",
+        "Used primarily for layout and grouping",
+        "No semantic meaning by default",
+        "Can be nested inside other divs"
+      ]
+    },
+    {
+      "id": "semantic-elements",
+      "technology": "html",
+      "title": "Semantic Elements",
+      "description": "Understand semantic HTML elements like header, nav, main, article, and footer",
+      "explanation": "Semantic HTML elements clearly describe their meaning to both the browser and the developer. They provide better structure, accessibility, and SEO benefits compared to generic div elements. Common semantic elements include <header>, <nav>, <main>, <article>, <section>, <aside>, and <footer>.",
+      "example": "<header>\n  <h1>Website Title</h1>\n  <nav>\n    <ul>\n      <li><a href=\"#home\">Home</a></li>\n      <li><a href=\"#about\">About</a></li>\n    </ul>\n  </nav>\n</header>\n<main>\n  <article>\n    <h2>Article Title</h2>\n    <section>\n      <h3>Section Heading</h3>\n      <p>Content goes here...</p>\n    </section>\n  </article>\n  <aside>\n    <h3>Related Content</h3>\n    <ul>\n      <li>Link 1</li>\n      <li>Link 2</li>\n    </ul>\n  </aside>\n</main>\n<footer>\n  <p>&copy; 2024 Your Website</p>\n</footer>",
+      "practice": [
+        "Convert a div-based layout to use semantic elements",
+        "Create a blog post layout using article, section, and aside elements",
+        "Build a navigation menu using the nav element and proper structure"
+      ],
+      "difficulty": "intermediate",
+      "quiz": [
+        {
+          "question": "Which semantic element is best suited for the main content area of a webpage?",
+          "options": ["<div>", "<content>", "<main>", "<section>"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What is the primary benefit of using semantic elements?",
+          "options": [
+            "They look better by default",
+            "They provide meaning and improve accessibility",
+            "They load faster than div elements",
+            "They require less CSS"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": "<article>\n  <h2>Blog Post Title</h2>\n  <p>Article content here...</p>\n  <footer>\n    <p>Posted by: Author Name</p>\n  </footer>\n</article>",
+          "result": "A semantic blog post structure"
+        }
+      ],
+      "keyPoints": [
+        "Semantic elements provide meaning to content structure",
+        "Improve accessibility and SEO",
+        "Make code more readable and maintainable",
+        "Help search engines understand content hierarchy"
+      ]
+    },
+    {
+      "id": "forms",
+      "technology": "html",
+      "title": "Forms & Input Elements",
+      "description": "Master HTML forms and various input types for collecting user data",
+      "explanation": "HTML forms are essential for collecting user input. The <form> element contains various input elements, each designed for specific types of data. Modern HTML5 input types provide built-in validation and appropriate mobile keyboards.",
+      "example": "<form action=\"/submit\" method=\"POST\">\n  <div class=\"form-group\">\n    <label for=\"name\">Name:</label>\n    <input type=\"text\" id=\"name\" name=\"name\" required minlength=\"2\">\n  </div>\n  \n  <div class=\"form-group\">\n    <label for=\"email\">Email:</label>\n    <input type=\"email\" id=\"email\" name=\"email\" required>\n  </div>\n  \n  <div class=\"form-group\">\n    <label for=\"message\">Message:</label>\n    <textarea id=\"message\" name=\"message\" rows=\"4\"></textarea>\n  </div>\n  \n  <button type=\"submit\">Submit</button>\n</form>",
+      "practice": [
+        "Create a registration form with various input types",
+        "Implement client-side validation using HTML5 attributes",
+        "Build a contact form with proper labels and accessibility"
+      ],
+      "difficulty": "intermediate",
+      "quiz": [
+        {
+          "question": "Which attribute makes a form field required?",
+          "options": ["mandatory", "required", "validate", "necessary"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the purpose of the label element?",
+          "options": [
+            "To style form inputs",
+            "To provide accessible names for form controls",
+            "To group form elements",
+            "To validate input"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": "<form>\n  <label for=\"username\">Username:</label>\n  <input type=\"text\" id=\"username\" required>\n  <span class=\"error\">Please enter a username</span>\n</form>",
+          "result": "A form field with validation"
+        }
+      ],
+      "keyPoints": [
+        "Always use labels with form controls",
+        "Utilize HTML5 input types for better UX",
+        "Implement proper form validation",
+        "Consider accessibility in form design"
+      ]
+    },
+    {
+      "id": "tables",
+      "technology": "html",
+      "title": "Tables",
+      "description": "Learn how to create and structure tables for displaying data",
+      "explanation": "HTML tables are used to present data in rows and columns. They consist of elements like <table>, <tr> (table row), <td> (table data), and <th> (table header). Tables should be used for tabular data, not for layout purposes.",
+      "example": "<table border=\"1\">\n  <thead>\n    <tr>\n      <th>Name</th>\n      <th>Age</th>\n      <th>City</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>John Doe</td>\n      <td>30</td>\n      <td>New York</td>\n    </tr>\n    <tr>\n      <td>Jane Smith</td>\n      <td>25</td>\n      <td>London</td>\n    </tr>\n  </tbody>\n</table>",
+      "practice": [
+        "Create a simple data table with headers",
+        "Use colspan and rowspan for complex tables",
+        "Add captions and summaries for accessibility"
+      ],
+      "difficulty": "beginner",
+      "quiz": [
+        {
+          "question": "Which element represents a table header cell?",
+          "options": ["<td>", "<th>", "<thead>", "<header>"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the purpose of the <caption> element in tables?",
+          "options": [
+            "To style the table",
+            "To provide a title or explanation",
+            "To create a footer",
+            "To add borders"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": "<table>\n  <caption>Monthly Budget</caption>\n  <tr>\n    <th>Category</th>\n    <th>Amount</th>\n  </tr>\n  <tr>\n    <td>Rent</td>\n    <td>$1000</td>\n  </tr>\n</table>",
+          "result": "A simple table with caption"
+        }
+      ],
+      "keyPoints": [
+        "Use tables for tabular data only",
+        "Include proper headers with <th>",
+        "Use captions for better context",
+        "Consider responsive design for tables"
+      ]
+    },
+    {
+      "id": "lists",
+      "technology": "html",
+      "title": "Lists",
+      "description": "Explore different types of HTML lists and their uses",
+      "explanation": "HTML provides three types of lists: ordered lists (<ol>), unordered lists (<ul>), and description lists (<dl>). Lists can be nested and styled to create navigation menus, content hierarchies, and more.",
+      "example": "<ul>\n  <li>First item</li>\n  <li>Second item\n    <ul>\n      <li>Sub-item 1</li>\n      <li>Sub-item 2</li>\n    </ul>\n  </li>\n  <li>Third item</li>\n</ul>",
+      "practice": [
+        "Create nested lists with different styles",
+        "Build a navigation menu using lists",
+        "Use description lists for term definitions"
+      ],
+      "difficulty": "beginner",
+      "quiz": [
+        {
+          "question": "Which list type automatically numbers its items?",
+          "options": ["<ul>", "<ol>", "<dl>", "<li>"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the correct way to create a sub-list?",
+          "options": [
+            "Place a new list inside a <li> element",
+            "Use the sub attribute",
+            "Add a class of sub",
+            "Use a different list type"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "code": "<dl>\n  <dt>HTML</dt>\n  <dd>HyperText Markup Language</dd>\n  <dt>CSS</dt>\n  <dd>Cascading Style Sheets</dd>\n</dl>",
+          "result": "A description list with terms and definitions"
+        }
+      ],
+      "keyPoints": [
+        "Choose appropriate list type for content",
+        "Lists can be nested for hierarchy",
+        "Use semantic meaning for better structure",
+        "Lists are commonly used for navigation"
+      ]
+    }
+  ]
+} 

@@ -14,13 +14,13 @@ import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
 import 'prismjs';
-import 'prismjs/components/prism-markup';
+import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-okaidia.css';
 
 declare var Prism: any;
 
 @Component({
-  selector: 'app-html-concept',
+  selector: 'app-javascript-concept',
   template: `
     <div class="concept-container" *ngIf="content">
       <header class="concept-header">
@@ -31,6 +31,10 @@ declare var Prism: any;
               <mat-chip [class]="content.difficulty">
                 <mat-icon>{{ getDifficultyIcon(content.difficulty) }}</mat-icon>
                 {{ content.difficulty | titlecase }}
+              </mat-chip>
+              <mat-chip>
+                <mat-icon>{{ getCategoryIcon(content.category) }}</mat-icon>
+                {{ content.category | titlecase }}
               </mat-chip>
             </mat-chip-set>
           </div>
@@ -99,13 +103,16 @@ declare var Prism: any;
                 <div class="example-container">
                   <div class="code-section">
                     <div class="code-header">
-                      <h3>HTML Code</h3>
+                      <h3>JavaScript Code</h3>
                       <div class="code-actions">
                         <button mat-icon-button (click)="copyCode()" matTooltip="Copy to clipboard">
                           <mat-icon>content_copy</mat-icon>
                         </button>
                         <button mat-icon-button (click)="resetCode()" matTooltip="Reset code">
                           <mat-icon>restart_alt</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="runCode()" matTooltip="Run code">
+                          <mat-icon>play_arrow</mat-icon>
                         </button>
                         <button mat-icon-button 
                           [matBadge]="syntaxErrors.length" 
@@ -139,14 +146,19 @@ declare var Prism: any;
                       </div>
                     </div>
                   </div>
-                  <div class="preview-section">
-                    <div class="preview-header">
-                      <h3>Live Preview</h3>
-                      <button mat-icon-button (click)="togglePreviewMode()" [matTooltip]="previewMode">
-                        <mat-icon>{{ previewMode === 'desktop' ? 'computer' : 'smartphone' }}</mat-icon>
+                  <div class="output-section">
+                    <div class="output-header">
+                      <h3>Console Output</h3>
+                      <button mat-icon-button (click)="clearConsole()" matTooltip="Clear console">
+                        <mat-icon>clear_all</mat-icon>
                       </button>
                     </div>
-                    <div class="preview-container" [class]="previewMode" [innerHTML]="sanitizedPreview"></div>
+                    <div class="console-output" #consoleContainer>
+                      <div *ngFor="let log of consoleMessages" class="log-entry" [class]="log.type">
+                        <mat-icon>{{ getLogIcon(log.type) }}</mat-icon>
+                        <pre>{{ log.message }}</pre>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </mat-card-content>
@@ -394,11 +406,13 @@ declare var Prism: any;
           }
         }
 
-        .preview-section {
+        .output-section {
           border: 1px solid #e0e0e0;
           border-radius: 4px;
+          display: flex;
+          flex-direction: column;
 
-          .preview-header {
+          .output-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -411,18 +425,54 @@ declare var Prism: any;
             }
           }
 
-          .preview-container {
+          .console-output {
+            flex: 1;
             min-height: 300px;
             padding: 1rem;
-            background-color: #ffffff;
-            overflow: auto;
-            
-            &.mobile {
-              max-width: 375px;
-              margin: 0 auto;
-              border: 10px solid #333;
-              border-radius: 20px;
-              min-height: 600px;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-y: auto;
+
+            .log-entry {
+              display: flex;
+              align-items: flex-start;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+              padding: 0.25rem;
+              border-radius: 4px;
+
+              &.log {
+                color: #f8f8f2;
+              }
+
+              &.info {
+                color: #66d9ef;
+              }
+
+              &.warn {
+                color: #e6db74;
+                background-color: rgba(230, 219, 116, 0.1);
+              }
+
+              &.error {
+                color: #f44336;
+                background-color: rgba(244, 67, 54, 0.1);
+              }
+
+              mat-icon {
+                font-size: 1.2rem;
+                width: 1.2rem;
+                height: 1.2rem;
+              }
+
+              pre {
+                margin: 0;
+                white-space: pre-wrap;
+                word-break: break-word;
+                flex: 1;
+              }
             }
           }
         }
@@ -505,16 +555,15 @@ declare var Prism: any;
     MatBadgeModule
   ]
 })
-export class HtmlConceptComponent implements OnInit {
+export class JavascriptConceptComponent implements OnInit {
   content: ConceptContent | null = null;
   userAnswers: number[] = [];
   currentCode: string = '';
-  sanitizedPreview: SafeHtml = '';
   sanitizedExplanation: SafeHtml = '';
-  previewMode: 'desktop' | 'mobile' = 'desktop';
   quizComplete: boolean = false;
   quizScore: number = 0;
   syntaxErrors: Array<{ line: number; message: string }> = [];
+  consoleMessages: Array<{ type: 'log' | 'info' | 'warn' | 'error', message: string }> = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -530,7 +579,6 @@ export class HtmlConceptComponent implements OnInit {
         if (content) {
           this.content = content;
           this.currentCode = content.example;
-          this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(content.example);
           this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
             content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
           );
@@ -552,110 +600,87 @@ export class HtmlConceptComponent implements OnInit {
   }
 
   onCodeChange(): void {
-    this.updatePreview();
     this.checkSyntax();
   }
 
   checkSyntax(): void {
     this.syntaxErrors = [];
-    const lines = this.currentCode.split('\n');
-    const stack: Array<{ tag: string; line: number }> = [];
-    const selfClosingTags = new Set([
-      'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
-      'link', 'meta', 'param', 'source', 'track', 'wbr'
-    ]);
-    
-    // Process all lines to find tags
-    lines.forEach((line, lineIndex) => {
-      let position = 0;
-      
-      while (position < line.length) {
-        // Find next tag
-        const tagStart = line.indexOf('<', position);
-        if (tagStart === -1) break;
-        
-        const tagEnd = line.indexOf('>', tagStart);
-        if (tagEnd === -1) {
-          // Unclosed tag bracket
-          this.syntaxErrors.push({
-            line: lineIndex + 1,
-            message: 'Unclosed tag bracket'
-          });
-          break;
-        }
-        
-        const tagContent = line.substring(tagStart + 1, tagEnd);
-        position = tagEnd + 1;
-        
-        // Skip comments and doctype
-        if (tagContent.startsWith('!')) continue;
-        
-        // Check if it's a closing tag
-        if (tagContent.startsWith('/')) {
-          const tagName = tagContent.substring(1).trim().split(' ')[0].toLowerCase();
-          
-          // Find matching opening tag
-          const lastTag = stack.pop();
-          if (!lastTag) {
-            this.syntaxErrors.push({
-              line: lineIndex + 1,
-              message: `Unexpected closing tag </${tagName}>`
-            });
-          } else if (lastTag.tag !== tagName) {
-            this.syntaxErrors.push({
-              line: lineIndex + 1,
-              message: `Mismatched closing tag: expected </${lastTag.tag}>, found </${tagName}>`
-            });
-            // Put the tag back since it wasn't matched
-            stack.push(lastTag);
-          }
-        } else {
-          // It's an opening tag
-          const tagName = tagContent.trim().split(' ')[0].toLowerCase();
-          
-          // Check for invalid tag names
-          if (!tagName.match(/^[a-z][a-z0-9-]*$/)) {
-            this.syntaxErrors.push({
-              line: lineIndex + 1,
-              message: `Invalid tag name: ${tagName}`
-            });
-            continue;
-          }
-          
-          // Check for attributes
-          const attributeMatches = tagContent.match(/\s\w+(?:=(?:"[^"]*"|'[^']*'|[^\s>]+))?/g);
-          if (attributeMatches) {
-            attributeMatches.forEach(attr => {
-              const [name, value] = attr.trim().split('=');
-              if (value && !value.match(/^["'][^"']*["']$/)) {
-                this.syntaxErrors.push({
-                  line: lineIndex + 1,
-                  message: `Invalid attribute value for ${name}: missing quotes`
-                });
-              }
-            });
-          }
-          
-          // Don't push self-closing tags onto the stack
-          if (!selfClosingTags.has(tagName) && !tagContent.endsWith('/')) {
-            stack.push({ tag: tagName, line: lineIndex + 1 });
-          }
-        }
-      }
-    });
-    
-    // Check for any remaining unclosed tags
-    stack.forEach(({ tag, line }) => {
+    try {
+      new Function(this.currentCode);
+    } catch (error: any) {
+      const match = error.message.match(/line (\d+)/);
+      const lineNumber = match ? parseInt(match[1], 10) : 1;
       this.syntaxErrors.push({
-        line,
-        message: `Unclosed tag <${tag}>`
+        line: lineNumber,
+        message: error.message
       });
+    }
+  }
+
+  runCode(): void {
+    if (this.syntaxErrors.length > 0) {
+      this.snackBar.open('Please fix syntax errors before running the code', 'Close', {
+        duration: 3000
+      });
+      return;
+    }
+
+    // Create a safe execution environment
+    const consoleProxy = {
+      log: (message: any) => this.addConsoleOutput('log', message),
+      info: (message: any) => this.addConsoleOutput('info', message),
+      warn: (message: any) => this.addConsoleOutput('warn', message),
+      error: (message: any) => this.addConsoleOutput('error', message)
+    };
+
+    try {
+      // Create a new function with console proxy
+      const code = `
+        return (function() {
+          const console = arguments[0];
+          ${this.currentCode}
+        })
+      `;
+      new Function(code)()(consoleProxy);
+    } catch (error: any) {
+      this.addConsoleOutput('error', error.message);
+    }
+  }
+
+  addConsoleOutput(type: 'log' | 'info' | 'warn' | 'error', message: any): void {
+    this.consoleMessages.push({
+      type,
+      message: this.formatConsoleMessage(message)
     });
+  }
+
+  formatConsoleMessage(message: any): string {
+    if (typeof message === 'object') {
+      return JSON.stringify(message, null, 2);
+    }
+    return String(message);
+  }
+
+  clearConsole(): void {
+    this.consoleMessages = [];
+  }
+
+  getLogIcon(type: string): string {
+    switch (type) {
+      case 'info':
+        return 'info';
+      case 'warn':
+        return 'warning';
+      case 'error':
+        return 'error';
+      default:
+        return 'terminal';
+    }
   }
 
   highlightCode(code: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(
-      Prism.highlight(code, Prism.languages.markup, 'markup')
+      Prism.highlight(code, Prism.languages.javascript, 'javascript')
     );
   }
 
@@ -667,8 +692,24 @@ export class HtmlConceptComponent implements OnInit {
     if (this.content?.interactiveExamples) {
       const example = this.content.interactiveExamples[index];
       this.currentCode = example.code;
-      this.updatePreview();
       this.checkSyntax();
+    }
+  }
+
+  getCategoryIcon(category: string): string {
+    switch (category) {
+      case 'fundamentals':
+        return 'school';
+      case 'functions':
+        return 'functions';
+      case 'objects':
+        return 'data_object';
+      case 'async':
+        return 'sync';
+      case 'es6':
+        return 'code';
+      default:
+        return 'help';
     }
   }
 
@@ -685,10 +726,6 @@ export class HtmlConceptComponent implements OnInit {
     }
   }
 
-  togglePreviewMode(): void {
-    this.previewMode = this.previewMode === 'desktop' ? 'mobile' : 'desktop';
-  }
-
   copyCode(): void {
     navigator.clipboard.writeText(this.currentCode);
     this.snackBar.open('Code copied to clipboard!', 'Close', {
@@ -699,12 +736,8 @@ export class HtmlConceptComponent implements OnInit {
   resetCode(): void {
     if (this.content) {
       this.currentCode = this.content.example;
-      this.updatePreview();
+      this.checkSyntax();
     }
-  }
-
-  updatePreview(): void {
-    this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(this.currentCode);
   }
 
   checkAnswer(questionIndex: number, selectedAnswer: number): void {
@@ -748,8 +781,7 @@ export class HtmlConceptComponent implements OnInit {
       return null;
     }
 
-    if (!this.content) return null;
-    if (this.content.quiz[questionIndex].correctAnswer === optionIndex) {
+    if (this.content && this.content.quiz[questionIndex].correctAnswer === optionIndex) {
       return 'primary';
     }
 

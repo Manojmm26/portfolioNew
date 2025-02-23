@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NgFor } from '@angular/common';
-import { ConceptService, Concept } from '../../../shared/services/concept.service';
+import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
 
 @Component({
   selector: 'app-html-list',
@@ -90,7 +90,7 @@ import { ConceptService, Concept } from '../../../shared/services/concept.servic
   ]
 })
 export class HtmlListComponent implements OnInit {
-  concepts: Concept[] = [];
+  concepts: ConceptContent[] = [];
 
   constructor(
     private router: Router,
@@ -98,7 +98,7 @@ export class HtmlListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.conceptService.getHtmlConcepts().subscribe(concepts => {
+    this.conceptService.getConcepts('html').subscribe(concepts => {
       this.concepts = concepts;
     });
   }
