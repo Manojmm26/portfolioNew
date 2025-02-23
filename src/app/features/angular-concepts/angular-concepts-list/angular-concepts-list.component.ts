@@ -1,23 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatChipsModule } from '@angular/material/chips';
-import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
+import { AngularConceptsService, AngularConcept } from '../services/angular-concepts.service';
 
 @Component({
-  selector: 'app-html-list',
+  selector: 'app-angular-concepts-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatInputModule,
+    MatSelectModule,
+    MatFormFieldModule
+  ],
   template: `
-    <div class="concept-list">
-      <header class="header">
-        <h1>HTML Concepts</h1>
-        <p>Master the building blocks of web development</p>
+    <div class="list-container">
+      <header class="list-header">
+        <h1>Angular Concepts</h1>
+        <p>Master Angular with interactive examples, live coding, and quizzes</p>
       </header>
 
       <div class="filters">
@@ -38,10 +50,20 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="filterConcepts()">
+            <mat-option value="">All categories</mat-option>
+            <mat-option value="fundamentals">Fundamentals</mat-option>
+            <mat-option value="architecture">Architecture</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
           <mat-label>Sort by</mat-label>
           <mat-select [(ngModel)]="sortBy" (ngModelChange)="sortConcepts()">
             <mat-option value="title">Title</mat-option>
             <mat-option value="difficulty">Difficulty</mat-option>
+            <mat-option value="category">Category</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -49,24 +71,28 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
       <div class="concepts-grid">
         <mat-card *ngFor="let concept of filteredConcepts" class="concept-card" (click)="navigateToConcept(concept.id)">
           <mat-card-header>
+            <mat-card-title>{{ concept.title }}</mat-card-title>
             <mat-chip-set>
               <mat-chip [class]="concept.difficulty">
                 <mat-icon>{{ getDifficultyIcon(concept.difficulty) }}</mat-icon>
                 {{ concept.difficulty | titlecase }}
               </mat-chip>
+              <mat-chip>
+                <mat-icon>{{ getCategoryIcon(concept.category) }}</mat-icon>
+                {{ concept.category | titlecase }}
+              </mat-chip>
             </mat-chip-set>
-            <mat-card-title>{{ concept.title }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <p>{{ concept.description }}</p>
             <div class="concept-meta">
-              <span class="meta-item" *ngIf="concept.quiz">
+              <span class="meta-item">
                 <mat-icon>quiz</mat-icon>
                 {{ concept.quiz.length }} questions
               </span>
               <span class="meta-item">
                 <mat-icon>code</mat-icon>
-                Example code
+                {{ concept.keyPoints.length }} key points
               </span>
             </div>
           </mat-card-content>
@@ -81,12 +107,12 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
     </div>
   `,
   styles: [`
-    .concept-list {
+    .list-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
 
-      .header {
+      .list-header {
         text-align: center;
         margin-bottom: 3rem;
 
@@ -119,79 +145,78 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
 
       .concepts-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 2rem;
-      }
 
-      .concept-card {
-        cursor: pointer;
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        .concept-card {
+          cursor: pointer;
+          transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
-        &:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        mat-card-header {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 1rem;
-          margin-bottom: 1rem;
-
-          mat-card-title {
-            font-size: 1.5rem;
-            color: #333;
-          }
-        }
-
-        mat-card-content {
-          p {
-            color: #666;
-            margin-bottom: 1rem;
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
           }
 
-          .concept-meta {
-            display: flex;
+          mat-card-header {
+            flex-direction: column;
+            align-items: flex-start;
             gap: 1rem;
-            color: #666;
+            margin-bottom: 1rem;
 
-            .meta-item {
+            mat-card-title {
+              font-size: 1.5rem;
+              color: #333;
+            }
+          }
+
+          mat-card-content {
+            p {
+              color: #666;
+              margin-bottom: 1rem;
+            }
+
+            .concept-meta {
               display: flex;
-              align-items: center;
-              gap: 0.5rem;
+              gap: 1rem;
+              color: #666;
 
-              mat-icon {
-                font-size: 1.2rem;
-                width: 1.2rem;
-                height: 1.2rem;
+              .meta-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+
+                mat-icon {
+                  font-size: 1.2rem;
+                  width: 1.2rem;
+                  height: 1.2rem;
+                }
               }
             }
           }
-        }
 
-        mat-card-actions {
-          padding: 1rem;
-          border-top: 1px solid #eee;
+          mat-card-actions {
+            padding: 1rem;
+            border-top: 1px solid #eee;
 
-          button {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            button {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+            }
           }
-        }
 
-        mat-chip {
-          &.beginner { background-color: #4CAF50; color: white; }
-          &.intermediate { background-color: #FF9800; color: white; }
-          &.advanced { background-color: #F44336; color: white; }
+          mat-chip {
+            &.beginner { background-color: #4CAF50; color: white; }
+            &.intermediate { background-color: #FF9800; color: white; }
+            &.advanced { background-color: #F44336; color: white; }
+          }
         }
       }
 
       @media (max-width: 768px) {
         padding: 1rem;
 
-        .header {
+        .list-header {
           margin-bottom: 2rem;
 
           h1 {
@@ -204,36 +229,25 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
         }
       }
     }
-  `],
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    MatFormFieldModule,
-    MatChipsModule
-  ]
+  `]
 })
-export class HtmlListComponent implements OnInit {
-  concepts: ConceptContent[] = [];
-  filteredConcepts: ConceptContent[] = [];
+export class AngularConceptsListComponent implements OnInit {
+  concepts: AngularConcept[] = [];
+  filteredConcepts: AngularConcept[] = [];
   searchQuery: string = '';
   selectedDifficulty: string = '';
-  sortBy: 'title' | 'difficulty' = 'title';
+  selectedCategory: string = '';
+  sortBy: 'title' | 'difficulty' | 'category' = 'title';
 
   constructor(
-    private router: Router,
-    private conceptService: ConceptService
+    private conceptsService: AngularConceptsService,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.conceptService.getConcepts('html').subscribe(concepts => {
-      this.concepts = concepts;
-      this.filteredConcepts = concepts;
+    this.conceptsService.getConcepts().subscribe(response => {
+      this.concepts = response.concepts;
+      this.filteredConcepts = response.concepts;
       this.sortConcepts();
     });
   }
@@ -247,7 +261,10 @@ export class HtmlListComponent implements OnInit {
       const matchesDifficulty = !this.selectedDifficulty || 
         concept.difficulty === this.selectedDifficulty;
 
-      return matchesSearch && matchesDifficulty;
+      const matchesCategory = !this.selectedCategory || 
+        concept.category === this.selectedCategory;
+
+      return matchesSearch && matchesDifficulty && matchesCategory;
     });
 
     this.sortConcepts();
@@ -262,14 +279,16 @@ export class HtmlListComponent implements OnInit {
           const difficultyOrder = { beginner: 1, intermediate: 2, advanced: 3 };
           return difficultyOrder[a.difficulty as keyof typeof difficultyOrder] - 
                  difficultyOrder[b.difficulty as keyof typeof difficultyOrder];
+        case 'category':
+          return a.category.localeCompare(b.category);
         default:
           return 0;
       }
     });
   }
 
-  navigateToConcept(conceptId: string): void {
-    this.router.navigate(['/html', conceptId]);
+  navigateToConcept(conceptId: string) {
+    this.router.navigate(['/angular-concepts', conceptId]);
   }
 
   getDifficultyIcon(difficulty: string): string {
@@ -280,6 +299,17 @@ export class HtmlListComponent implements OnInit {
         return 'trending_up';
       case 'advanced':
         return 'psychology';
+      default:
+        return 'help';
+    }
+  }
+
+  getCategoryIcon(category: string): string {
+    switch (category) {
+      case 'fundamentals':
+        return 'school';
+      case 'architecture':
+        return 'architecture';
       default:
         return 'help';
     }

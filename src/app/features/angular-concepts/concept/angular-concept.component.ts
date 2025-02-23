@@ -8,19 +8,34 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
-import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AngularConceptsService, AngularConcept } from '../services/angular-concepts.service';
 import 'prismjs';
+import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-okaidia.css';
 
 declare var Prism: any;
 
 @Component({
-  selector: 'app-javascript-concept',
+  selector: 'app-angular-concept',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatSnackBarModule,
+    MatTooltipModule,
+    MatExpansionModule,
+    MatBadgeModule
+  ],
   template: `
     <div class="concept-container" *ngIf="content">
       <header class="concept-header">
@@ -50,34 +65,6 @@ declare var Prism: any;
                 <div class="explanation-content">
                   <div [innerHTML]="sanitizedExplanation"></div>
                   
-                  <mat-accordion class="interactive-examples" *ngIf="content.interactiveExamples">
-                    <mat-expansion-panel *ngFor="let example of content.interactiveExamples; let i = index">
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          <mat-icon>code</mat-icon>
-                          Interactive Example {{ i + 1 }}
-                        </mat-panel-title>
-                        <mat-panel-description>
-                          Try it yourself!
-                        </mat-panel-description>
-                      </mat-expansion-panel-header>
-                      
-                      <div class="mini-editor">
-                        <div class="code-header">
-                          <span>Code:</span>
-                          <button mat-icon-button (click)="tryExample(i)" matTooltip="Try this example">
-                            <mat-icon>play_arrow</mat-icon>
-                          </button>
-                        </div>
-                        <pre><code [innerHTML]="highlightCode(example.code)"></code></pre>
-                        <div class="example-result" *ngIf="example.result">
-                          <strong>Result:</strong>
-                          <div [innerHTML]="sanitizeHtml(example.result)"></div>
-                        </div>
-                      </div>
-                    </mat-expansion-panel>
-                  </mat-accordion>
-
                   <div class="key-points" *ngIf="content.keyPoints">
                     <h3>
                       <mat-icon>lightbulb</mat-icon>
@@ -103,26 +90,13 @@ declare var Prism: any;
                 <div class="example-container">
                   <div class="code-section">
                     <div class="code-header">
-                      <h3>JavaScript Code</h3>
+                      <h3>Angular Code</h3>
                       <div class="code-actions">
                         <button mat-icon-button (click)="copyCode()" matTooltip="Copy to clipboard">
                           <mat-icon>content_copy</mat-icon>
                         </button>
                         <button mat-icon-button (click)="resetCode()" matTooltip="Reset code">
                           <mat-icon>restart_alt</mat-icon>
-                        </button>
-                        <button mat-icon-button (click)="runCode()" matTooltip="Run code">
-                          <mat-icon>play_arrow</mat-icon>
-                        </button>
-                        <button mat-icon-button 
-                          [matBadge]="syntaxErrors.length" 
-                          [matBadgeHidden]="!syntaxErrors.length"
-                          matBadgeColor="warn"
-                          [matTooltip]="syntaxErrors.length ? 'Syntax errors found' : 'No syntax errors'"
-                        >
-                          <mat-icon [color]="syntaxErrors.length ? 'warn' : 'primary'">
-                            {{ syntaxErrors.length ? 'error' : 'check_circle' }}
-                          </mat-icon>
                         </button>
                       </div>
                     </div>
@@ -133,31 +107,20 @@ declare var Prism: any;
                       <textarea
                         #codeEditor
                         [(ngModel)]="currentCode"
-                        (ngModelChange)="onCodeChange()"
                         (scroll)="syncScroll($event)"
                         rows="10"
                         spellcheck="false">
                       </textarea>
                     </div>
-                    <div class="syntax-errors" *ngIf="syntaxErrors.length">
-                      <div class="error" *ngFor="let error of syntaxErrors">
-                        <mat-icon color="warn">error</mat-icon>
-                        <span>Line {{ error.line }}: {{ error.message }}</span>
-                      </div>
-                    </div>
                   </div>
                   <div class="output-section">
                     <div class="output-header">
-                      <h3>Console Output</h3>
-                      <button mat-icon-button (click)="clearConsole()" matTooltip="Clear console">
+                      <h3>Preview</h3>
+                      <button mat-icon-button (click)="clearPreview()" matTooltip="Clear preview">
                         <mat-icon>clear_all</mat-icon>
                       </button>
                     </div>
-                    <div class="console-output" #consoleContainer>
-                      <div *ngFor="let log of consoleMessages" class="log-entry" [class]="log.type">
-                        <mat-icon>{{ getLogIcon(log.type) }}</mat-icon>
-                        <pre>{{ log.message }}</pre>
-                      </div>
+                    <div class="preview-output" [innerHTML]="previewContent">
                     </div>
                   </div>
                 </div>
@@ -238,35 +201,6 @@ declare var Prism: any;
       }
 
       .explanation-content {
-        .interactive-examples {
-          margin-top: 2rem;
-
-          .mini-editor {
-            margin-top: 1rem;
-
-            .code-header {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 0.5rem;
-            }
-
-            pre {
-              background-color: #272822;
-              padding: 1rem;
-              border-radius: 4px;
-              margin: 0;
-            }
-
-            .example-result {
-              margin-top: 1rem;
-              padding: 1rem;
-              background-color: #f5f5f5;
-              border-radius: 4px;
-            }
-          }
-        }
-
         .key-points {
           margin-top: 2rem;
           padding: 1rem;
@@ -385,25 +319,6 @@ declare var Prism: any;
               }
             }
           }
-
-          .syntax-errors {
-            padding: 1rem;
-            background-color: #1e1f1c;
-            border-top: 1px solid #3c3d37;
-
-            .error {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              color: #f44336;
-              font-size: 0.9rem;
-              margin-bottom: 0.5rem;
-
-              &:last-child {
-                margin-bottom: 0;
-              }
-            }
-          }
         }
 
         .output-section {
@@ -425,55 +340,12 @@ declare var Prism: any;
             }
           }
 
-          .console-output {
+          .preview-output {
             flex: 1;
             min-height: 300px;
             padding: 1rem;
-            background-color: #2d2d2d;
-            color: #f8f8f2;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
+            background-color: #ffffff;
             overflow-y: auto;
-
-            .log-entry {
-              display: flex;
-              align-items: flex-start;
-              gap: 0.5rem;
-              margin-bottom: 0.5rem;
-              padding: 0.25rem;
-              border-radius: 4px;
-
-              &.log {
-                color: #f8f8f2;
-              }
-
-              &.info {
-                color: #66d9ef;
-              }
-
-              &.warn {
-                color: #e6db74;
-                background-color: rgba(230, 219, 116, 0.1);
-              }
-
-              &.error {
-                color: #f44336;
-                background-color: rgba(244, 67, 54, 0.1);
-              }
-
-              mat-icon {
-                font-size: 1.2rem;
-                width: 1.2rem;
-                height: 1.2rem;
-              }
-
-              pre {
-                margin: 0;
-                white-space: pre-wrap;
-                word-break: break-word;
-                flex: 1;
-              }
-            }
           }
         }
       }
@@ -539,35 +411,20 @@ declare var Prism: any;
       }
     }
   `],
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTabsModule,
-    MatChipsModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    MatExpansionModule,
-    MatBadgeModule
-  ]
+  encapsulation: ViewEncapsulation.None
 })
-export class JavascriptConceptComponent implements OnInit {
-  content: ConceptContent | null = null;
-  userAnswers: number[] = [];
+export class AngularConceptComponent implements OnInit {
+  content: AngularConcept | null = null;
   currentCode: string = '';
   sanitizedExplanation: SafeHtml = '';
+  previewContent: SafeHtml = '';
+  userAnswers: number[] = [];
   quizComplete: boolean = false;
   quizScore: number = 0;
-  syntaxErrors: Array<{ line: number; message: string }> = [];
-  consoleMessages: Array<{ type: 'log' | 'info' | 'warn' | 'error', message: string }> = [];
 
   constructor(
     private route: ActivatedRoute,
-    private conceptService: ConceptService,
+    private conceptsService: AngularConceptsService,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar
   ) {}
@@ -575,14 +432,14 @@ export class JavascriptConceptComponent implements OnInit {
   ngOnInit() {
     const conceptId = this.route.snapshot.paramMap.get('conceptId');
     if (conceptId) {
-      this.conceptService.getConcept(conceptId).subscribe(content => {
-        if (content) {
-          this.content = content;
-          this.currentCode = content.example;
+      this.conceptsService.getConcepts().subscribe(response => {
+        this.content = response.concepts.find(c => c.id === conceptId) || null;
+        if (this.content) {
+          this.currentCode = this.content.example;
           this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
-            content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            this.content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
           );
-          this.checkSyntax();
+          this.updatePreview();
         }
       });
     }
@@ -600,115 +457,24 @@ export class JavascriptConceptComponent implements OnInit {
     lineNumbers.scrollTop = textarea.scrollTop;
   }
 
-  onCodeChange(): void {
-    this.checkSyntax();
-  }
-
-  checkSyntax(): void {
-    this.syntaxErrors = [];
-    try {
-      new Function(this.currentCode);
-    } catch (error: any) {
-      const match = error.message.match(/line (\d+)/);
-      const lineNumber = match ? parseInt(match[1], 10) : 1;
-      this.syntaxErrors.push({
-        line: lineNumber,
-        message: error.message
-      });
+  updatePreview(): void {
+    if (this.content) {
+      this.previewContent = this.sanitizer.bypassSecurityTrustHtml(
+        Prism.highlight(this.currentCode, Prism.languages.typescript, 'typescript')
+      );
     }
   }
 
-  runCode(): void {
-    if (this.syntaxErrors.length > 0) {
-      this.snackBar.open('Please fix syntax errors before running the code', 'Close', {
-        duration: 3000
-      });
-      return;
-    }
-
-    // Create a safe execution environment
-    const consoleProxy = {
-      log: (message: any) => this.addConsoleOutput('log', message),
-      info: (message: any) => this.addConsoleOutput('info', message),
-      warn: (message: any) => this.addConsoleOutput('warn', message),
-      error: (message: any) => this.addConsoleOutput('error', message)
-    };
-
-    try {
-      // Create a new function with console proxy
-      const code = `
-        return (function() {
-          const console = arguments[0];
-          ${this.currentCode}
-        })
-      `;
-      new Function(code)()(consoleProxy);
-    } catch (error: any) {
-      this.addConsoleOutput('error', error.message);
-    }
-  }
-
-  addConsoleOutput(type: 'log' | 'info' | 'warn' | 'error', message: any): void {
-    this.consoleMessages.push({
-      type,
-      message: this.formatConsoleMessage(message)
-    });
-  }
-
-  formatConsoleMessage(message: any): string {
-    if (typeof message === 'object') {
-      return JSON.stringify(message, null, 2);
-    }
-    return String(message);
-  }
-
-  clearConsole(): void {
-    this.consoleMessages = [];
-  }
-
-  getLogIcon(type: string): string {
-    switch (type) {
-      case 'info':
-        return 'info';
-      case 'warn':
-        return 'warning';
-      case 'error':
-        return 'error';
-      default:
-        return 'terminal';
-    }
-  }
-
-  highlightCode(code: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(
-      Prism.highlight(code, Prism.languages.javascript, 'javascript')
-    );
-  }
-
-  sanitizeHtml(html: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(html);
-  }
-
-  tryExample(index: number): void {
-    if (this.content?.interactiveExamples) {
-      const example = this.content.interactiveExamples[index];
-      this.currentCode = example.code;
-      this.checkSyntax();
-    }
+  clearPreview(): void {
+    this.previewContent = '';
   }
 
   getCategoryIcon(category: string): string {
     switch (category) {
       case 'fundamentals':
         return 'school';
-      case 'functions':
-        return 'functions';
-      case 'objects':
-        return 'data_object';
-      case 'async':
-        return 'sync';
-      case 'es6':
-        return 'code';
+      case 'architecture':
+        return 'architecture';
       default:
         return 'help';
     }
@@ -737,7 +503,7 @@ export class JavascriptConceptComponent implements OnInit {
   resetCode(): void {
     if (this.content) {
       this.currentCode = this.content.example;
-      this.checkSyntax();
+      this.updatePreview();
     }
   }
 

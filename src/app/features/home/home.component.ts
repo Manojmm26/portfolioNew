@@ -34,9 +34,9 @@ export class HomeComponent {
     },
     {
       title: 'Angular',
-      path: '/angular',
+      path: '/angular-concepts',
       description: 'Explore Angular components, services, and best practices'
-    }
+    },
   ];
 
   constructor(private router: Router) {}

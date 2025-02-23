@@ -17,6 +17,10 @@ export const routes: Routes = [
     path: 'javascript',
     loadChildren: () => import('./features/javascript/javascript.module').then(m => m.JavascriptModule)
   },
+  {
+    path: 'angular-concepts',
+    loadChildren: () => import('./features/angular-concepts/angular-concepts.module').then(m => m.AngularConceptsModule)
+  },
 //   {
 //     path: 'angular',
 //     loadChildren: () => import('./features/angular/angular.module').then(m => m.AngularModule)
