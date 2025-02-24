@@ -13,12 +13,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AngularConceptsService, AngularConcept } from '../services/angular-concepts.service';
-import 'prismjs';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-okaidia.css';
-
-declare var Prism: any;
+import { highlight, highlightAll } from '../../../shared/utils/prism-config';
 
 @Component({
   selector: 'app-angular-concept',
@@ -417,6 +412,7 @@ export class AngularConceptComponent implements OnInit {
   content: AngularConcept | null = null;
   currentCode: string = '';
   sanitizedExplanation: SafeHtml = '';
+  sanitizedCode: SafeHtml = '';
   previewContent: SafeHtml = '';
   userAnswers: number[] = [];
   quizComplete: boolean = false;
@@ -441,12 +437,11 @@ export class AngularConceptComponent implements OnInit {
           this.currentCode = concept.example;
           this.updatePreview();
           setTimeout(() => {
-            Prism.highlightAll();
+            highlightAll();
           });
         },
         error: (error) => {
           console.error('Error loading concept:', error);
-          // Handle error appropriately
         }
       });
     }
@@ -465,9 +460,9 @@ export class AngularConceptComponent implements OnInit {
   }
 
   updatePreview(): void {
-    if (this.content) {
-      this.previewContent = this.sanitizer.bypassSecurityTrustHtml(
-        Prism.highlight(this.currentCode, Prism.languages.typescript, 'typescript')
+    if (this.currentCode) {
+      this.sanitizedCode = this.sanitizer.bypassSecurityTrustHtml(
+        highlight(this.currentCode, 'typescript')
       );
     }
   }

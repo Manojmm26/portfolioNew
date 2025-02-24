@@ -13,14 +13,27 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
-import 'prismjs';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-okaidia.css';
+import { highlight, highlightAll } from '../../../shared/utils/prism-config';
 
 declare var Prism: any;
 
 @Component({
   selector: 'app-javascript-concept',
+  standalone: true,
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatSnackBarModule,
+    MatTooltipModule,
+    MatExpansionModule,
+    MatBadgeModule
+  ],
   template: `
     <div class="concept-container" *ngIf="content">
       <header class="concept-header">
@@ -539,21 +552,6 @@ declare var Prism: any;
       }
     }
   `],
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTabsModule,
-    MatChipsModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    MatExpansionModule,
-    MatBadgeModule
-  ]
 })
 export class JavascriptConceptComponent implements OnInit {
   content: ConceptContent | null = null;
@@ -585,11 +583,10 @@ export class JavascriptConceptComponent implements OnInit {
           }
           this.currentCode = concept.example || '';
           setTimeout(() => {
-            Prism.highlightAll();
+            highlightAll();
           });
         } else {
           console.error('Concept not found');
-          // Handle concept not found case
         }
       });
     }
@@ -688,7 +685,7 @@ export class JavascriptConceptComponent implements OnInit {
 
   highlightCode(code: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(
-      Prism.highlight(code, Prism.languages.javascript, 'javascript')
+      highlight(code, 'javascript')
     );
   }
 
