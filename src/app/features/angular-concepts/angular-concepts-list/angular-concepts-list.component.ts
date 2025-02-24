@@ -28,7 +28,7 @@ import { AngularConceptsService, AngularConcept } from '../services/angular-conc
   template: `
     <div class="list-container">
       <header class="list-header">
-        <h1>Angular Concepts</h1>
+        <h1>Angular Concepts ({{filteredConcepts.length}})</h1>
         <p>Master Angular with interactive examples, live coding, and quizzes</p>
       </header>
 
@@ -166,6 +166,41 @@ import { AngularConceptsService, AngularConcept } from '../services/angular-conc
             mat-card-title {
               font-size: 1.5rem;
               color: #333;
+              margin-bottom: 0.5rem;
+            }
+
+            mat-chip-set {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+              margin: 0;
+              padding: 0;
+            }
+
+            mat-chip {
+              height: 24px;
+              font-size: 0.85rem;
+              padding: 0 8px;
+              
+              mat-icon {
+                font-size: 16px;
+                height: 16px;
+                width: 16px;
+                margin-right: 4px;
+              }
+
+              &.beginner { 
+                background-color: #4CAF50; 
+                color: white; 
+              }
+              &.intermediate { 
+                background-color: #FF9800; 
+                color: white; 
+              }
+              &.advanced { 
+                background-color: #F44336; 
+                color: white; 
+              }
             }
           }
 
@@ -203,12 +238,6 @@ import { AngularConceptsService, AngularConcept } from '../services/angular-conc
               align-items: center;
               gap: 0.5rem;
             }
-          }
-
-          mat-chip {
-            &.beginner { background-color: #4CAF50; color: white; }
-            &.intermediate { background-color: #FF9800; color: white; }
-            &.advanced { background-color: #F44336; color: white; }
           }
         }
       }

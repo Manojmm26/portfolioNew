@@ -16,7 +16,7 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
   template: `
     <div class="concept-list">
       <header class="header">
-        <h1>HTML Concepts</h1>
+        <h1>HTML Concepts ({{filteredConcepts.length}})</h1>
         <p>Master the building blocks of web development</p>
       </header>
 

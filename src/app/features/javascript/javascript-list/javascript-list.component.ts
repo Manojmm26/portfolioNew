@@ -16,7 +16,7 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
   template: `
     <div class="list-container">
       <header class="list-header">
-        <h1>JavaScript Concepts</h1>
+        <h1>JavaScript Concepts ({{filteredConcepts.length}})</h1>
         <p>Master JavaScript with interactive examples, live coding, and quizzes</p>
       </header>
 

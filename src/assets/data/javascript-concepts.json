@@ -6,31 +6,52 @@
       "description": "Learn about JavaScript variables, declaration methods (var, let, const), and fundamental data types including numbers, strings, booleans, null, and undefined.",
       "difficulty": "beginner",
       "category": "fundamentals",
-      "explanation": "JavaScript provides three ways to declare variables: var, let, and const. Each has its own scope and behavior. Variables can hold different types of data including numbers, strings, booleans, null, and undefined. Understanding these fundamentals is crucial for JavaScript programming.",
-      "example": "// Variable declarations\nlet count = 0;           // Number\nconst name = 'John';     // String\nlet isActive = true;     // Boolean\nlet data = null;         // Null\nlet value;              // Undefined\n\n// Type checking\nconsole.log(typeof count);    // 'number'\nconsole.log(typeof name);     // 'string'\nconsole.log(typeof isActive); // 'boolean'\nconsole.log(typeof data);     // 'object'\nconsole.log(typeof value);    // 'undefined'",
+      "explanation": "JavaScript is a dynamically-typed language, meaning you don't explicitly declare the data type of a variable. The type is determined at runtime based on the value assigned. You have three keywords to declare variables: `var`, `let`, and `const`. `var` is function-scoped and has hoisting behavior, which can lead to confusion and bugs in modern JavaScript. It's generally recommended to avoid `var` in favor of `let` and `const`. `let` and `const` are block-scoped, meaning they are only accessible within the block they are defined (e.g., inside an `if` statement or a loop). `let` is used for variables that you intend to reassign, while `const` is for variables whose value should remain constant after initialization.  JavaScript has six primitive data types: String (textual data), Number (numeric data, including integers and floating-point numbers), Boolean (true/false values), Null (intentional absence of any object value), Undefined (value of a variable that has not been assigned a value), and Symbol (unique and immutable primitive value, often used as object keys, introduced in ES6). Understanding these data types and variable scopes is foundational for writing any JavaScript program.",
+      "example": "// Variable declarations\nlet count = 0;           // Number - Initialized to 0, can be reassigned\nconst userName = 'John Doe'; // String - Constant, cannot be reassigned after this\nlet isLoggedIn = true;     // Boolean - Represents a true/false state, can be reassigned\nlet userData = null;         // Null - Explicitly set to no value, can be reassigned (though less common for null)\nlet address;              // Undefined - Declared but not initialized, will be undefined until assigned\n\n// Reassignment (allowed for let, not for const)\ncount = 10;\nisLoggedIn = false;\n// userName = 'Jane Doe'; // This would cause an error because userName is const\n\n// Type checking using typeof operator\nconsole.log('Type of count:', typeof count);    // 'number'\nconsole.log('Type of userName:', typeof userName);     // 'string'\nconsole.log('Type of isLoggedIn:', typeof isLoggedIn); // 'boolean'\nconsole.log('Type of userData:', typeof userData);     // 'object' (Note: typeof null is an historical anomaly and should be considered null)\nconsole.log('Type of address:', typeof address);    // 'undefined'\nconsole.log('Type of Symbol:', typeof Symbol('unique')); // 'symbol'",
       "keyPoints": [
-        "Use let for variables that will be reassigned, const for values that won't change",
-        "JavaScript has six primitive data types: string, number, boolean, null, undefined, and symbol",
-        "The typeof operator helps determine the type of a value",
-        "Variables declared with let and const are block-scoped",
-        "Avoid using var as it's function-scoped and can lead to unexpected behavior"
+        "Use `let` for variables that may be reassigned and `const` for variables intended to hold a constant value. Favor `const` by default and use `let` when reassignment is necessary.",
+        "JavaScript has six primitive data types: string, number, boolean, null, undefined, and symbol. Understanding these types is crucial for manipulating data correctly.",
+        "The `typeof` operator is essential for determining the data type of a value at runtime, which is useful for debugging and type checking (though not as strict as in statically-typed languages).",
+        "Variables declared with `let` and `const` are block-scoped, which helps in writing cleaner and more maintainable code by preventing accidental variable leakage into larger scopes. This is a significant improvement over `var`'s function scope.",
+        "`var` is function-scoped and hoisted, which can lead to unexpected behavior and is generally discouraged in modern JavaScript development. Avoid using `var` unless you have a specific legacy reason.",
+        "While `typeof null` returns 'object', this is a known quirk in JavaScript. Logically, `null` is its own distinct type representing the intentional absence of a value.",
+        "Symbols (ES6+) provide a way to create unique identifiers, often used for object properties to avoid naming collisions, especially in library development."
       ],
       "quiz": [
         {
-          "question": "What is the difference between let and const?",
-          "options": ["let can be reassigned, const cannot", "const can be reassigned, let cannot", "They are the same", "Neither can be reassigned"],
-          "correctAnswer": 0
+          "question": "What is the primary difference between `let` and `const` in JavaScript?",
+          "options": ["`let` is function-scoped, `const` is block-scoped", "`let` can be reassigned, `const` cannot", "`const` is used for numbers, `let` for strings", "There is no significant difference between `let` and `const`"],
+          "correctAnswer": 1
         },
         {
-          "question": "Which is not a primitive data type in JavaScript?",
+          "question": "Which of the following is NOT a primitive data type in JavaScript?",
           "options": ["string", "boolean", "array", "undefined"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What is the scope of a variable declared with `var`?",
+          "options": ["Block scope", "Global scope", "Function scope", "Lexical scope"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What will `typeof null` return in JavaScript?",
+          "options": ["'null'", "'undefined'", "'object'", "'primitive'"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Which keyword is recommended for declaring variables that should not be reassigned after their initial assignment?",
+          "options": ["`var`", "`let`", "`const`", "`static`"],
           "correctAnswer": 2
         }
       ],
       "interactiveExamples": [
         {
-          "title": "Variable Declaration",
-          "code": "let count = 0;\nconst PI = 3.14;\nconsole.log(typeof count);\nconsole.log(typeof PI);"
+          "title": "Variable Declaration and Scope Experiment",
+          "code": "// Experiment with let, const, and var scopes\nfunction checkScope() {\n  if (true) {\n    var varVariable = 'var scope';\n    let letVariable = 'let scope';\n    const constVariable = 'const scope';\n    console.log('Inside block - var:', varVariable); // Accessible\n    console.log('Inside block - let:', letVariable); // Accessible\n    console.log('Inside block - const:', constVariable); // Accessible\n  }\n  console.log('Outside block - var:', varVariable); // Accessible - function scope\n  // console.log('Outside block - let:', letVariable); // Error - block scope\n  // console.log('Outside block - const:', constVariable); // Error - block scope\n}\ncheckScope();\n\n// Observe which variables are accessible outside the if block and understand scoping"
+        },
+        {
+          "title": "Data Type Exploration",
+          "code": "// Explore different data types and typeof operator\nlet myString = 'Hello, JavaScript!';\nlet myNumber = 123;\nlet myBoolean = false;\nlet myNull = null;\nlet myUndefined;\nlet mySymbol = Symbol('uniqueSymbol');\n\nconsole.log('Type of myString:', typeof myString, ', Value:', myString);\nconsole.log('Type of myNumber:', typeof myNumber, ', Value:', myNumber);\nconsole.log('Type of myBoolean:', typeof myBoolean, ', Value:', myBoolean);\nconsole.log('Type of myNull:', typeof myNull, ', Value:', myNull);\nconsole.log('Type of myUndefined:', typeof myUndefined, ', Value:', myUndefined);\nconsole.log('Type of mySymbol:', typeof mySymbol, ', Value:', mySymbol.toString());\n\n// Change the values and declarations to see how types change"
         }
       ]
     },
@@ -40,26 +61,52 @@
       "description": "Master JavaScript functions including function declarations, expressions, arrow functions, and function parameters.",
       "difficulty": "beginner",
       "category": "functions",
-      "explanation": "Functions in JavaScript are blocks of reusable code that can be declared in multiple ways. Function declarations are hoisted, while function expressions are not. Arrow functions provide a concise syntax and lexical this binding. Understanding different function types and their behavior is essential for JavaScript development.",
-      "example": "// Function Declaration\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n\n// Function Expression\nconst sayGoodbye = function(name) {\n  return `Goodbye, ${name}!`;\n};\n\n// Arrow Function\nconst add = (a, b) => a + b;\n\n// Using the functions\nconsole.log(greet('John'));      // Hello, John!\nconsole.log(sayGoodbye('Jane')); // Goodbye, Jane!\nconsole.log(add(5, 3));          // 8",
+      "explanation": "Functions are fundamental building blocks in JavaScript. They are reusable blocks of code designed to perform a specific task. Functions help in organizing code, making it modular and easier to maintain. In JavaScript, functions are first-class citizens, meaning they can be treated like any other value - assigned to variables, passed as arguments to other functions, and returned from functions. There are several ways to define functions in JavaScript: Function declarations, function expressions, and arrow functions (introduced in ES6). Function declarations are hoisted, meaning they can be called before they are defined in the code. Function expressions are not hoisted and are created when the line of code where they are defined is reached. Arrow functions provide a more concise syntax and have lexical `this` binding, which can be beneficial in certain contexts. Functions can accept parameters (inputs) and return values (outputs). Parameters allow you to pass data into a function, and the `return` statement allows a function to send a value back to the caller. Understanding function types and their behavior is essential for writing effective JavaScript code.",
+      "example": "// Function Declaration\nfunction greet(name) { // 'name' is a parameter\n  return `Hello, ${name}!`; // Returns a string value\n}\n\n// Function Expression\nconst sayGoodbye = function(name) { // Assigning an anonymous function to a variable\n  return `Goodbye, ${name}!`;\n};\n\n// Arrow Function (Concise syntax, especially for simple functions)\nconst add = (a, b) => a + b; // Implicit return for single expression\nconst multiply = (x, y) => { // Explicit return for multi-line functions\n  const result = x * y;\n  return result;\n};\n\n// Using the functions\nconsole.log(greet('Alice'));      // Output: Hello, Alice!\nconsole.log(sayGoodbye('Bob')); // Output: Goodbye, Bob!\nconsole.log(add(5, 3));          // Output: 8\nconsole.log(multiply(4, 6));     // Output: 24\n\n// Function with default parameters (ES6 feature)\nfunction power(base, exponent = 2) { // Default exponent is 2 if not provided\n  return Math.pow(base, exponent);\n}\nconsole.log(power(3));       // Output: 9 (3^2)\nconsole.log(power(3, 3));    // Output: 27 (3^3)",
       "keyPoints": [
-        "Function declarations are hoisted, allowing them to be used before declaration",
-        "Arrow functions provide a concise syntax and lexical 'this' binding",
-        "Functions can accept parameters and return values",
-        "Functions are first-class citizens in JavaScript",
-        "Default parameters can be specified in function declarations"
+        "Function declarations are hoisted, which means you can call them before their declaration in your code. This is not the case for function expressions.",
+        "Arrow functions offer a more concise syntax compared to traditional function expressions, especially for short, simple functions. They also lexically bind `this`, which can be advantageous in certain scenarios like callbacks.",
+        "Functions can accept zero or more parameters, allowing them to operate on different inputs. Parameters are placeholders for values that will be passed when the function is called.",
+        "Functions can return values using the `return` statement. If no `return` statement is present, or if `return` is used without a value, the function implicitly returns `undefined`.",
+        "Functions in JavaScript are 'first-class citizens', meaning they can be assigned to variables, passed as arguments to other functions (callbacks), and returned as values from other functions. This is a powerful feature enabling functional programming paradigms.",
+        "Default parameters (ES6+) allow you to set default values for function parameters, making functions more flexible and easier to use with optional arguments.",
+        "Understanding the difference between function declarations and expressions, and when to use arrow functions, is crucial for writing clean and efficient JavaScript code."
       ],
       "quiz": [
         {
-          "question": "What is the difference between function declaration and function expression?",
-          "options": ["Hoisting behavior", "Performance", "Syntax only", "No difference"],
-          "correctAnswer": 0
+          "question": "What is the key difference between function declaration and function expression regarding hoisting?",
+          "options": ["Function expressions are hoisted, function declarations are not", "Function declarations are hoisted, function expressions are not", "Both function declarations and expressions are hoisted", "Neither function declarations nor expressions are hoisted"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which of the following is NOT a valid way to define a function in JavaScript?",
+          "options": ["Function declaration", "Function expression", "Arrow function", "Method function"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "What is the return value of a JavaScript function if it does not have a `return` statement?",
+          "options": ["`null`", "`0`", "`undefined`", "An error"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What is a 'first-class citizen' in the context of JavaScript functions?",
+          "options": ["Functions can only be used for simple tasks", "Functions are treated like any other data type and can be assigned to variables and passed as arguments", "Functions are less important than objects", "Functions cannot be returned from other functions"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which type of function syntax is generally more concise and often used for short, simple functions?",
+          "options": ["Function declaration", "Function expression", "Arrow function", "Anonymous function expression"],
+          "correctAnswer": 2
         }
       ],
       "interactiveExamples": [
         {
-          "title": "Function Types",
-          "code": "// Function Declaration\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n\n// Arrow Function\nconst greetArrow = (name) => `Hello, ${name}!`;"
+          "title": "Function Types and Hoisting",
+          "code": "// Try calling functionDeclaration before its definition - Works due to hoisting\nconsole.log(functionDeclaration(5));\n\nfunction functionDeclaration(num) {\n  return num * 2;\n}\n\n// Try calling functionExpression before its definition - Error due to no hoisting\n// console.log(functionExpression(5)); // Uncommenting this will cause an error\n\nconst functionExpression = function(num) {\n  return num * 2;\n};\nconsole.log(functionExpression(5));\n\n// Experiment with calling each type of function before and after its definition to observe hoisting"
+        },
+        {
+          "title": "Arrow Functions vs. Function Expressions",
+          "code": "// Function Expression\nconst addExpression = function(a, b) {\n  return a + b;\n};\nconsole.log('Function Expression add:', addExpression(10, 5));\n\n// Arrow Function - more concise\nconst addArrow = (a, b) => a + b;\nconsole.log('Arrow Function add:', addArrow(10, 5));\n\n// Arrow Function with block body and explicit return\nconst multiplyArrow = (a, b) => {\n  const result = a * b;\n  return result;\n};\nconsole.log('Arrow Function multiply:', multiplyArrow(7, 3));\n\n// Convert function expressions to arrow functions and see how the syntax simplifies"
         }
       ]
     },
@@ -69,26 +116,52 @@
       "description": "Deep dive into JavaScript objects, object methods, prototypal inheritance, and the prototype chain.",
       "difficulty": "intermediate",
       "category": "objects",
-      "explanation": "JavaScript uses prototypal inheritance where objects inherit directly from other objects. Every object has a prototype from which it inherits properties and methods. Understanding the prototype chain and how to create and manipulate objects is crucial for object-oriented programming in JavaScript.",
-      "example": "// Creating an object\nconst person = {\n  name: 'John',\n  age: 30,\n  greet() {\n    return `Hello, I'm ${this.name}`;\n  }\n};\n\n// Object inheritance\nconst employee = Object.create(person);\nemployee.role = 'Developer';\n\n// Using inherited properties\nconsole.log(employee.name);     // John\nconsole.log(employee.greet());  // Hello, I'm John\n\n// Checking inheritance\nconsole.log(employee.__proto__ === person); // true",
+      "explanation": "Objects are fundamental in JavaScript, serving as collections of key-value pairs, where keys are strings (or Symbols) and values can be any JavaScript data type (including other objects). JavaScript uses prototypal inheritance, a paradigm where objects inherit properties and methods directly from other objects, known as prototypes. Unlike class-based inheritance found in languages like Java or C++, JavaScript inheritance is based on delegation. Every object in JavaScript, except for objects created with `Object.create(null)`, has a prototype object. When you try to access a property on an object, JavaScript first looks for the property directly on the object itself. If not found, it then searches the object's prototype, and if still not found, it continues up the prototype chain until it reaches `null` (the end of the chain). This chain of prototypes is called the prototype chain.  Understanding prototypal inheritance is crucial for object-oriented programming in JavaScript. You can create objects using object literals, constructor functions, or ES6 classes (which are syntactic sugar over prototypes). Methods are functions associated with objects and are defined as properties whose values are functions. Manipulating prototypes allows for powerful patterns of code reuse and inheritance.",
+      "example": "// Creating an object using object literal\nconst person = {\n  name: 'John',\n  age: 30,\n  city: 'New York',\n  greet() { // Method definition\n    return `Hello, I'm ${this.name} from ${this.city}.`;\n  }\n};\n\n// Accessing object properties\nconsole.log('Person's name:', person.name);     // Output: John (dot notation)\nconsole.log('Person's age:', person['age']);    // Output: 30 (bracket notation)\nconsole.log('Greeting:', person.greet());        // Output: Hello, I'm John from New York.\n\n// Prototypal Inheritance using Object.create()\nconst animal = {\n  type: 'animal',\n  speak() {\n    return 'Generic animal sound';\n  }\n};\n\nconst dog = Object.create(animal); // dog inherits from animal\ndog.breed = 'Labrador'; // Adding a property specific to dog\ndog.speak = function() { // Overriding the speak method for dog\n  return 'Woof!';\n};\n\nconsole.log('Dog type:', dog.type);        // Output: animal (inherited from animal prototype)\nconsole.log('Dog breed:', dog.breed);       // Output: Labrador (own property)\nconsole.log('Dog sound:', dog.speak());       // Output: Woof! (own method, overrides animal's speak)\nconsole.log('Animal sound:', animal.speak());  // Output: Generic animal sound (original animal method)\n\n// Checking the prototype chain\nconsole.log('Dog's prototype is animal:', Object.getPrototypeOf(dog) === animal); // Output: true\nconsole.log('Animal's prototype is Object.prototype:', Object.getPrototypeOf(animal) === Object.prototype); // Output: true",
       "keyPoints": [
-        "Objects are collections of key-value pairs",
-        "Properties can be accessed using dot notation or bracket notation",
-        "Object.create() creates a new object with the specified prototype",
-        "The prototype chain allows objects to inherit properties and methods",
-        "Modern JavaScript provides class syntax as syntactic sugar over prototypes"
+        "Objects in JavaScript are collections of key-value pairs. Keys are strings or Symbols, and values can be any JavaScript data type, including other objects, functions (methods), primitives.",
+        "Properties of objects can be accessed using dot notation (`object.property`) or bracket notation (`object['property']`). Bracket notation is necessary when property names are not valid identifiers or are determined dynamically.",
+        "`Object.create(proto)` creates a new object with the specified `proto` object as its prototype. This is a fundamental way to establish prototypal inheritance in JavaScript.",
+        "Prototypal inheritance allows objects to inherit properties and methods from their prototypes. When a property is accessed on an object, the JavaScript engine first looks at the object itself, then its prototype, and so on, up the prototype chain.",
+        "The prototype chain is a sequence of prototypes, ending with `null`. Most objects inherit from `Object.prototype`, which is at the top of the chain for standard objects.",
+        "Modern JavaScript provides `class` syntax (introduced in ES6) as syntactic sugar over the prototypal inheritance model. Classes provide a more familiar syntax for developers coming from class-based languages, but they are still based on prototypes under the hood.",
+        "Understanding prototypes is key to mastering object-oriented JavaScript, including inheritance, method overriding, and creating reusable object patterns."
       ],
       "quiz": [
         {
-          "question": "What is prototypal inheritance?",
-          "options": ["Objects inheriting from other objects", "Class-based inheritance", "Multiple inheritance", "Interface inheritance"],
-          "correctAnswer": 0
+          "question": "What is prototypal inheritance in JavaScript?",
+          "options": ["Objects inherit from classes", "Objects inherit directly from other objects", "Inheritance based on interfaces", "Multiple inheritance from different classes"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the prototype chain in JavaScript?",
+          "options": ["A chain of classes", "A sequence of objects linked together by prototype relationships", "A list of properties of an object", "A method for creating objects"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "How do you create an object that inherits from another object in JavaScript using prototypal inheritance?",
+          "options": ["Using the `extends` keyword", "Using `Object.create()`", "Using the `new` keyword with a class", "By directly assigning properties from one object to another"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What happens when you try to access a property on an object that is not directly on the object itself?",
+          "options": ["JavaScript throws an error", "JavaScript returns `undefined`", "JavaScript searches for the property in the object's prototype chain", "JavaScript creates a new property on the object"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Are ES6 classes in JavaScript fundamentally based on prototypal inheritance or class-based inheritance?",
+          "options": ["Class-based inheritance", "Prototypal inheritance", "A hybrid of both", "Neither, they are a new form of inheritance"],
+          "correctAnswer": 1
         }
       ],
       "interactiveExamples": [
         {
-          "title": "Object Creation and Inheritance",
-          "code": "const person = {\n  name: 'John',\n  greet() {\n    return `Hello, I'm ${this.name}`;\n  }\n};\n\nconst employee = Object.create(person);"
+          "title": "Object Creation and Property Access",
+          "code": "// Create a simple object\nconst book = {\n  title: 'The JavaScript Way',\n  author: 'John Smith',\n  pages: 300,\n  read: function() {\n    return 'Reading ' + this.title;\n  }\n};\n\n// Access properties using dot and bracket notation\nconsole.log('Book Title (dot notation):', book.title);\nconsole.log('Book Author (bracket notation):', book['author']);\nconsole.log('Book Reading:', book.read());\n\n// Add a new property\nbook.genre = 'Programming';\nconsole.log('Book Genre:', book.genre);\n\n// Try accessing and modifying properties, and calling methods"
+        },
+        {
+          "title": "Prototypal Inheritance in Action",
+          "code": "// Define a prototype object\nconst vehicle = {\n  wheels: 4,\n  startEngine: function() {\n    return 'Engine started';\n  }\n};\n\n// Create a car object inheriting from vehicle\nconst car = Object.create(vehicle);\ncar.model = 'Sedan';\n\n// Create a motorcycle object inheriting from vehicle\nconst motorcycle = Object.create(vehicle);\nmotorcycle.wheels = 2; // Override wheels property\n\nconsole.log('Car wheels:', car.wheels);         // Inherited from vehicle\nconsole.log('Car model:', car.model);          // Own property\nconsole.log('Car start engine:', car.startEngine()); // Inherited method\nconsole.log('Motorcycle wheels:', motorcycle.wheels); // Overridden property\nconsole.log('Motorcycle start engine:', motorcycle.startEngine()); // Inherited method\n\n// Experiment with creating more objects and modifying prototype properties and methods"
         }
       ]
     },
@@ -98,26 +171,53 @@
       "description": "Learn about callbacks, promises, async/await, and handling asynchronous operations in JavaScript.",
       "difficulty": "advanced",
       "category": "async",
-      "explanation": "Asynchronous programming in JavaScript allows code to run in the background while other code executes. This is essential for operations like API calls, file operations, and timers. Modern JavaScript provides Promises and async/await syntax to handle asynchronous operations more elegantly than traditional callbacks.",
-      "example": "// Using Promises\nfunction fetchData() {\n  return new Promise((resolve, reject) => {\n    setTimeout(() => {\n      resolve({ id: 1, name: 'John' });\n    }, 1000);\n  });\n}\n\n// Using async/await\nasync function getData() {\n  try {\n    const data = await fetchData();\n    console.log(data);\n  } catch (error) {\n    console.error('Error:', error);\n  }\n}\n\n// Using the async function\ngetData();",
+      "explanation": "Asynchronous programming in JavaScript is crucial for handling operations that might take some time to complete, such as network requests, file I/O, or timers, without blocking the main thread. This ensures that the user interface remains responsive and the application doesn't freeze during these operations. JavaScript is single-threaded, meaning it executes code line by line in a single sequence. To manage asynchronous operations, JavaScript uses mechanisms like callbacks, Promises, and async/await (which is built on Promises). Callbacks are functions passed as arguments to asynchronous operations, which are executed once the operation completes. However, heavy use of callbacks can lead to 'callback hell' (deeply nested callbacks), making code hard to read and maintain. Promises provide a more structured way to handle asynchronous operations. A Promise represents the eventual result of an asynchronous operation, which can be in one of three states: pending, fulfilled (with a value), or rejected (with a reason). Promises make asynchronous code easier to manage and chain. Async/await, introduced in ES8, is built on Promises and provides a more synchronous-looking way to write asynchronous code. `async` functions always return a Promise, and `await` can be used inside an `async` function to pause execution until a Promise resolves, making asynchronous code look and behave more like synchronous code. Understanding these asynchronous patterns is essential for modern JavaScript development, especially for frontend applications that frequently interact with APIs and handle user events.",
+      "example": "// Using Callbacks (Traditional approach, can lead to callback hell)\nfunction fetchDataCallback(callback) {\n  setTimeout(() => {\n    const data = { id: 1, name: 'Callback Data' };\n    callback(data); // Execute callback with fetched data\n  }, 1000);\n}\n\nfetchDataCallback(function(data) {\n  console.log('Data from callback:', data);\n  // Nested callback example (can get complex)\n  setTimeout(() => {\n    const moreData = { details: 'More callback info' };\n    // callback hell can start forming here...\n    console.log('More data:', moreData);\n  }, 500);\n});\n\n// Using Promises (More structured approach)\nfunction fetchDataPromise() {\n  return new Promise((resolve, reject) => { // Promise constructor\n    setTimeout(() => {\n      const data = { id: 2, name: 'Promise Data' };\n      resolve(data); // Resolve the promise with data\n      // reject('Error fetching data'); // Reject the promise in case of error\n    }, 1000);\n  });\n}\n\nfetchDataPromise()\n  .then(data => {\n    console.log('Data from promise:', data);\n    return fetchDataPromise(); // Promise chaining\n  })\n  .then(moreData => {\n    console.log('More promise data:', moreData);\n  })\n  .catch(error => {\n    console.error('Promise error:', error);\n  });\n\n// Using Async/Await (Simplifies promise handling, synchronous style)\nasync function fetchDataAsync() {\n  try {\n    console.log('Fetching data...');\n    const data = await fetchDataPromise(); // Await promise resolution\n    console.log('Data from async/await:', data);\n    const moreData = await fetchDataPromise(); // Await another promise\n    console.log('More async/await data:', moreData);\n    return data;\n  } catch (error) {\n    console.error('Async/await error:', error);\n  }\n}\n\nfetchDataAsync();",
       "keyPoints": [
-        "Promises represent the eventual completion of an asynchronous operation",
-        "async/await provides a more readable way to handle promises",
-        "Error handling in async code is done using try/catch blocks",
-        "Multiple promises can be handled using Promise.all() or Promise.race()",
-        "The event loop manages asynchronous operations in JavaScript"
+        "Asynchronous programming allows JavaScript to handle long-running operations without blocking the main thread, keeping the UI responsive.",
+        "Callbacks were the original way to handle asynchronous operations in JavaScript, but they can lead to complex and hard-to-maintain 'callback hell'.",
+        "Promises provide a more structured and manageable way to deal with asynchronous operations. They represent the eventual result of an operation and can be chained for sequential asynchronous tasks.",
+        "Async/await is syntactic sugar built on top of Promises, making asynchronous code look and behave more like synchronous code, improving readability and reducing complexity.",
+        "`async` functions always return a Promise. `await` can only be used inside an `async` function and pauses the execution until the Promise it's awaiting resolves.",
+        "Error handling in asynchronous code using Promises and async/await is typically done using `.catch()` for Promises and `try/catch` blocks for async/await, providing clear and centralized error management.",
+        "`Promise.all()` and `Promise.race()` are useful for handling multiple promises concurrently, allowing for parallel execution of asynchronous tasks.",
+        "The JavaScript event loop is the underlying mechanism that enables asynchronous behavior. It manages the execution of asynchronous tasks and callbacks in a non-blocking way."
       ],
       "quiz": [
         {
-          "question": "What is the purpose of async/await?",
-          "options": ["Make asynchronous code look synchronous", "Improve performance", "Replace promises", "All of the above"],
-          "correctAnswer": 0
+          "question": "What is the primary purpose of asynchronous programming in JavaScript?",
+          "options": ["To make code run faster", "To handle long-running operations without blocking the main thread", "To simplify synchronous code", "To replace synchronous programming completely"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which of the following is NOT a common approach for handling asynchronous operations in JavaScript?",
+          "options": ["Callbacks", "Promises", "Async/await", "Synchronous functions"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "What does a Promise represent in JavaScript?",
+          "options": ["An immediate result of an operation", "The eventual result of an asynchronous operation", "A function that will be called later", "An error in asynchronous code"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which keyword is used to pause the execution of an async function until a Promise resolves?",
+          "options": ["`async`", "`await`", "`promise`", "`resolve`"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What is 'callback hell'?",
+          "options": ["A type of error in JavaScript", "Deeply nested and hard-to-read callbacks in asynchronous code", "A feature of Promises", "A way to simplify asynchronous code"],
+          "correctAnswer": 1
         }
       ],
       "interactiveExamples": [
         {
-          "title": "Async/Await Example",
-          "code": "async function fetchData() {\n  try {\n    const response = await fetch('https://api.example.com/data');\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error('Error:', error);\n  }\n}"
+          "title": "Promise Example - Simulating API Call",
+          "code": "// Function that returns a Promise simulating an API call\nfunction simulateApiCall(delay, data) {\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(data);\n    }, delay);\n  });\n}\n\nsimulateApiCall(2000, { message: 'Data fetched after 2 seconds' })\n  .then(result => {\n    console.log('API Call Result:', result);\n  });\n\nconsole.log('This message appears before the API call resolves because it's asynchronous.');\n\n// Modify the delay and data to experiment with Promise behavior"
+        },
+        {
+          "title": "Async/Await Example - Fetching Data",
+          "code": "// Async function to fetch data (simulated)\nasync function fetchDataAsyncExample() {\n  try {\n    console.log('Fetching data...');\n    const userData = await simulateApiCall(1500, { name: 'Async User', id: 123 });\n    console.log('User Data:', userData);\n    const productData = await simulateApiCall(1000, { product: 'Laptop', price: 1200 });\n    console.log('Product Data:', productData);\n    console.log('Data fetching complete.');\n  } catch (error) {\n    console.error('Error fetching data:', error);\n  }\n}\n\nfetchDataAsyncExample();\n\n// Observe how async/await makes asynchronous operations look sequential"
         }
       ]
     },
@@ -127,26 +227,51 @@
       "description": "Explore modern JavaScript features including destructuring, spread operator, modules, and template literals.",
       "difficulty": "intermediate",
       "category": "es6",
-      "explanation": "ES6 (ECMAScript 2015) and later versions introduced many powerful features to JavaScript. These include destructuring for extracting values from objects and arrays, the spread operator for array manipulation, template literals for string interpolation, and modules for better code organization.",
-      "example": "// Destructuring\nconst person = { name: 'John', age: 30 };\nconst { name, age } = person;\n\n// Spread operator\nconst numbers = [1, 2, 3];\nconst moreNumbers = [...numbers, 4, 5];\n\n// Template literals\nconst greeting = `Hello, ${name}! You are ${age} years old.`;\n\n// Module export/import example\nexport const add = (a, b) => a + b;\nimport { add } from './math.js';\n\nconsole.log(name, age);        // John 30\nconsole.log(moreNumbers);      // [1, 2, 3, 4, 5]\nconsole.log(greeting);         // Hello, John! You are 30 years old.",
+      "explanation": "ES6 (ECMAScript 2015) and subsequent versions have introduced a wealth of powerful and convenient features to JavaScript, significantly enhancing the language's capabilities and developer productivity. These features streamline common tasks, improve code readability, and enable more sophisticated programming patterns. Destructuring allows you to unpack values from arrays or properties from objects into distinct variables, making code cleaner and more expressive. The spread operator (`...`) provides a concise way to expand elements of an iterable (like arrays or strings) or properties of objects, useful for creating copies, combining arrays or objects, and passing variable arguments to functions. Template literals, using backticks (``), offer a powerful way to define strings, allowing for easy string interpolation (embedding expressions directly within strings) and multiline strings without concatenation. Modules (ES modules) enable better code organization by allowing you to split code into reusable, self-contained files, and import/export functionalities between them, which is crucial for building large-scale applications. These ES6+ features are now fundamental to modern JavaScript development and are widely used in frontend frameworks and libraries.",
+      "example": "// Destructuring - Extracting values from objects and arrays\nconst person = { firstName: 'John', lastName: 'Doe', age: 30, city: 'London' };\nconst { firstName, lastName, age } = person; // Object destructuring\nconsole.log('Name:', firstName, lastName, 'Age:', age); // Output: Name: John Doe Age: 30\n\nconst colors = ['red', 'green', 'blue'];\nconst [firstColor, secondColor] = colors; // Array destructuring\nconsole.log('First color:', firstColor, 'Second color:', secondColor); // Output: First color: red Second color: green\n\n// Spread Operator - Expanding arrays and objects\nconst numbers = [1, 2, 3];\nconst moreNumbers = [...numbers, 4, 5]; // Spread array to create a new array\nconsole.log('Combined numbers:', moreNumbers); // Output: Combined numbers: [1, 2, 3, 4, 5]\n\nconst address = { street: '123 Main St', country: 'USA' };\nconst fullPerson = { ...person, ...address }; // Spread objects to merge properties\nconsole.log('Full person info:', fullPerson); // Output: Full person info: {firstName: 'John', lastName: 'Doe', age: 30, city: 'London', street: '123 Main St', country: 'USA'}\n\n// Template Literals - String interpolation and multiline strings\nconst name = 'Alice';\nconst greeting = `Hello, ${name}! Welcome to ES6+ features.`; // String interpolation\nconsole.log(greeting); // Output: Hello, Alice! Welcome to ES6+ features.\n\nconst multilineText = `This is a\nmultiline string\nusing template literals.`; // Multiline string\nconsole.log(multilineText);\n\n// Modules - Export and Import (Conceptual example, requires module setup)\n// math.js (module file)\n// export const add = (a, b) => a + b;\n// app.js (another module file)\n// import { add } from './math.js';\n// console.log('Module add function:', add(10, 20));",
       "keyPoints": [
-        "Destructuring simplifies extracting values from objects and arrays",
-        "The spread operator (...) can be used for array and object manipulation",
-        "Template literals allow embedded expressions and multiline strings",
-        "Modules help organize code into reusable, maintainable pieces",
-        "ES6+ features improve code readability and reduce boilerplate"
+        "Destructuring simplifies the process of extracting values from arrays and objects, making code more readable and less verbose. It works for both object properties and array elements.",
+        "The spread operator (`...`) is incredibly versatile. It can be used to create shallow copies of arrays and objects, concatenate arrays, merge objects, and provide arguments to functions.",
+        "Template literals provide a cleaner and more intuitive way to work with strings, especially when you need to embed expressions or create multiline strings. They eliminate the need for complex string concatenation.",
+        "ES modules (using `export` and `import`) are essential for organizing JavaScript code into modular, reusable components, improving maintainability and scalability of applications. Modules help avoid global scope pollution and promote code encapsulation.",
+        "ES6+ features collectively aim to make JavaScript more expressive, efficient, and developer-friendly. Adopting these features is crucial for writing modern JavaScript code and working with contemporary frontend frameworks and libraries.",
+        "These features are widely supported in modern browsers and Node.js environments, making them practical for use in almost all new JavaScript projects."
       ],
       "quiz": [
         {
-          "question": "What is destructuring used for?",
-          "options": ["Extract values from objects and arrays", "Create new objects", "Delete object properties", "Combine arrays"],
-          "correctAnswer": 0
+          "question": "What is the primary purpose of destructuring in JavaScript?",
+          "options": ["To create new objects", "To extract values from arrays and objects into variables", "To modify object properties", "To delete array elements"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which operator is used for spread syntax in ES6+?",
+          "options": ["`->`", "`...`", "`::`", "`=>`"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What are template literals in JavaScript?",
+          "options": ["Strings created with single quotes", "Strings created with double quotes", "Strings created with backticks, allowing for interpolation and multiline strings", "Strings that cannot be modified"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What benefit do ES modules provide in JavaScript?",
+          "options": ["Improved code performance", "Better code organization and reusability", "Automatic error handling", "Simplified syntax for loops"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which of the following is NOT a common use case for the spread operator?",
+          "options": ["Creating copies of arrays", "Merging objects", "Defining function parameters", "Destructuring objects"],
+          "correctAnswer": 3
         }
       ],
       "interactiveExamples": [
         {
-          "title": "Destructuring and Spread",
-          "code": "const { name, age } = person;\nconst numbers = [1, 2, 3];\nconst moreNumbers = [...numbers, 4, 5];"
+          "title": "Destructuring Objects and Arrays",
+          "code": "// Object destructuring\nconst config = { apiKey: 'YOUR_API_KEY', timeout: 5000, endpoint: '/api/data' };\nconst { apiKey, endpoint } = config; // Extract apiKey and endpoint\nconsole.log('API Key:', apiKey);\nconsole.log('Endpoint:', endpoint);\n\n// Array destructuring\nconst dataPoints = [100, 200, 150, 300];\nconst [firstValue, secondValue, ...restValues] = dataPoints; // Get first two and rest\nconsole.log('First Value:', firstValue);\nconsole.log('Second Value:', secondValue);\nconsole.log('Rest of Values:', restValues);\n\n// Experiment with destructuring different objects and arrays"
+        },
+        {
+          "title": "Spread Operator for Array and Object Manipulation",
+          "code": "// Spread operator for array copy and concatenation\nconst originalArray = [1, 2, 3];\nconst copiedArray = [...originalArray]; // Create a copy\nconst extraElements = [4, 5, 6];\nconst combinedArray = [...originalArray, ...extraElements]; // Concatenate\nconsole.log('Copied Array:', copiedArray);\nconsole.log('Combined Array:', combinedArray);\n\n// Spread operator for object copy and merge\nconst baseObject = { a: 1, b: 2 };\nconst extendedObject = { ...baseObject, c: 3, d: 4 }; // Merge and extend\nconsole.log('Extended Object:', extendedObject);\n\n// Try different spread operations and observe the results"
         }
       ]
     },
@@ -156,28 +281,749 @@
       "description": "Understanding JavaScript closures, lexical scope, and practical applications in modern JavaScript.",
       "difficulty": "advanced",
       "category": "functions",
-      "explanation": "Closures are functions that have access to variables in their outer (enclosing) lexical scope, even after the outer function has returned. They are a powerful feature in JavaScript that enables data privacy, partial application, and the module pattern.",
-      "example": "// Basic closure example\nfunction counter() {\n  let count = 0;\n  \n  return {\n    increment() {\n      return ++count;\n    },\n    decrement() {\n      return --count;\n    },\n    getCount() {\n      return count;\n    }\n  };\n}\n\nconst myCounter = counter();\nconsole.log(myCounter.increment()); // 1\nconsole.log(myCounter.increment()); // 2\nconsole.log(myCounter.decrement()); // 1\nconsole.log(myCounter.getCount());  // 1",
+      "explanation": "Closures are a powerful and sometimes initially confusing feature in JavaScript. A closure is created when a function is defined inside another function (nested function), and the inner function has access to the outer function's variables (lexical scope), even after the outer function has finished executing. This 'remembers' or 'closes over' the variables from its surrounding scope, hence the name 'closure'. Lexical scope means that the scope of a variable is determined by where it is written in the code, not where the function is called. Closures are essential for data privacy and encapsulation in JavaScript, as they allow you to create private variables that are only accessible through the inner function. They are also fundamental to many JavaScript patterns, including the module pattern, function factories, and maintaining state in asynchronous operations. Understanding closures is key to writing more sophisticated and efficient JavaScript code, especially in frontend development where managing state and event handlers is crucial.",
+      "example": "// Basic closure example - Counter function\nfunction counterCreator() {\n  let count = 0; // Variable in the outer function's scope\n\n  return {\n    increment: function() {\n      count++; // Inner function accessing 'count' from outer scope\n      return count;\n    },\n    decrement: function() {\n      count--;\n      return count;\n    },\n    getCount: function() {\n      return count;\n    }\n  };\n}\n\nconst myCounter = counterCreator(); // myCounter now holds the returned object with closures\nconsole.log('Increment 1:', myCounter.increment()); // Output: 1\nconsole.log('Increment 2:', myCounter.increment()); // Output: 2\nconsole.log('Decrement 1:', myCounter.decrement()); // Output: 1\nconsole.log('Current Count:', myCounter.getCount());  // Output: 1\n\n// Another closure example - Function factory\nfunction multiplierFactory(factor) {\n  return function(number) { // Returns a function that 'remembers' 'factor'\n    return number * factor;\n  };\n}\n\nconst multiplyBy5 = multiplierFactory(5); // 'factor' is now 5 within multiplyBy5's closure\nconst multiplyBy10 = multiplierFactory(10); // 'factor' is now 10 within multiplyBy10's closure\n\nconsole.log('5 times 3:', multiplyBy5(3));   // Output: 15 (3 * 5)\nconsole.log('10 times 3:', multiplyBy10(3));  // Output: 30 (3 * 10)\n\n// Practical use case - Event handlers in loops\nfunction createButtonListeners() {\n  for (var i = 1; i <= 3; i++) { // Using var for demonstration (closure issue with var)\n    const button = document.createElement('button');\n    button.textContent = `Button ${i}`;\n    button.addEventListener('click', function() { // Closure over 'i'\n      alert(`This is button ${i}`); // 'i' will be 4 after loop completes due to var's scope\n    });\n    document.body.appendChild(button);\n  }\n}\n// createButtonListeners(); // Run this to see the issue with var and closures in loops (fixed with let)",
       "keyPoints": [
-        "Closures maintain access to variables from their outer scope",
-        "They are commonly used for data privacy and encapsulation",
-        "Each closure has its own scope chain",
-        "Closures are the foundation of the module pattern",
-        "Memory management is important when working with closures"
+        "Closures are created when a function is defined inside another function and the inner function accesses variables from the outer function's scope. The inner function 'closes over' these variables.",
+        "Closures maintain access to the variables from their lexical scope (the scope in which they were defined), even after the outer function has returned. This is a key characteristic of closures.",
+        "Closures are commonly used for data privacy and encapsulation. By using variables within the outer function's scope, you can create private variables that are not directly accessible from outside the closure.",
+        "Each closure has its own scope chain. When a function is executed, its scope chain includes its own scope, the scope of its outer function, and so on, up to the global scope.",
+        "Closures are the foundation of many JavaScript design patterns, such as the module pattern, which uses closures to create modules with private state and public methods.",
+        "Function factories (functions that return other functions) often rely on closures to 'remember' configuration or parameters from the outer scope, allowing for the creation of specialized functions.",
+        "Be mindful of memory management when working with closures, especially in long-running applications. Closures keep variables from their outer scope in memory as long as the closure itself is reachable. In loops, using `let` instead of `var` can prevent common closure-related issues due to `let`'s block scope."
       ],
       "quiz": [
         {
-          "question": "What is a closure?",
-          "options": ["A function with access to its outer scope", "A private variable", "A global function", "A callback function"],
+          "question": "What is a closure in JavaScript?",
+          "options": ["A function with no return statement", "A function that is immediately invoked", "A function that has access to its outer (lexical) scope even after the outer function has closed", "A function that can only access global variables"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What is 'lexical scope' in the context of closures?",
+          "options": ["The scope determined by where a function is called", "The scope determined by where a function is defined", "Global scope", "Block scope"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which of the following is a common use case for closures?",
+          "options": ["Creating global variables", "Data encapsulation and privacy", "Replacing loops", "Simplifying synchronous code"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "In the counter example (`counterCreator`), where is the `count` variable stored?",
+          "options": ["In the global scope", "Inside the `increment` and `decrement` functions' scope", "In the closure created by `counterCreator`", "It's not stored, it's recalculated each time"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Why is using `let` instead of `var` important when creating closures in loops?",
+          "options": ["`let` is faster than `var`", "`let` is block-scoped, creating a new closure for each iteration, while `var` is function-scoped and shares the same closure across iterations", "`let` prevents memory leaks in closures", "`var` cannot be used in loops"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Closure for Data Encapsulation",
+          "code": "// Closure to create a private counter\nfunction createSecretCounter(initialValue = 0) {\n  let secretCount = initialValue; // Private variable\n\n  return {\n    increment: function() {\n      secretCount++;\n    },\n    decrement: function() {\n      secretCount--;\n    },\n    getValue: function() {\n      return secretCount;\n    }\n  };\n}\n\nconst secretCounter = createSecretCounter(100); // Initialize with 100\nsecretCounter.increment();\nsecretCounter.decrement();\n// console.log(secretCounter.secretCount); // Error - cannot access private variable directly\nconsole.log('Secret Counter Value:', secretCounter.getValue()); // Access via public method\n\n// Try to access secretCount directly - should be inaccessible due to closure"
+        },
+        {
+          "title": "Function Factory using Closures",
+          "code": "// Function factory to create custom greeting functions\nfunction greetFactory(greeting) {\n  return function(name) {\n    return `${greeting}, ${name}!`; // Closure over 'greeting'\n  };\n}\n\nconst sayHello = greetFactory('Hello'); // Create a 'Hello' greeting function\nconst sayGoodbye = greetFactory('Goodbye'); // Create a 'Goodbye' greeting function\n\nconsole.log(sayHello('Alice'));   // Output: Hello, Alice!\nconsole.log(sayGoodbye('Bob')); // Output: Goodbye, Bob!\n\n// Create more greeting functions with different greetings and names"
+        }
+      ]
+    },
+    {
+      "id": "js-operators",
+      "title": "Operators in JavaScript",
+      "description": "Explore different types of operators in JavaScript, including arithmetic, assignment, comparison, logical, and more.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "JavaScript operators are special symbols that instruct the JavaScript engine to perform operations on operands (values and variables). They are the backbone of any JavaScript program, enabling you to perform calculations, make decisions, manipulate data, and control the flow of your application. Operators are broadly categorized based on their function: Arithmetic operators are used for mathematical computations (+, -, *, /, %, **, ++, --). Assignment operators assign values to variables (=, +=, -=, *=, /=, %=, **=). Comparison operators compare two values and return a boolean result (true or false) based on the comparison (==, ===, !=, !==, >, <, >=, <=). Logical operators perform logical AND, OR, and NOT operations on boolean values (&&, ||, !). Bitwise operators operate on the binary representation of numbers (&, |, ^, ~, <<, >>, >>>). Understanding each type of operator and their precedence is crucial for writing correct and efficient JavaScript code. For example, understanding the difference between loose equality (==) and strict equality (===) is vital to avoid unexpected type coercion issues. Also, knowing operator precedence helps in correctly interpreting complex expressions without relying solely on parentheses.",
+      "example": "// Arithmetic Operators\nlet x = 10;\nlet y = 3;\nconsole.log('Addition (x + y):', x + y);       // Output: 13\nconsole.log('Subtraction (x - y):', x - y);    // Output: 7\nconsole.log('Multiplication (x * y):', x * y); // Output: 30\nconsole.log('Division (x / y):', x / y);       // Output: 3.333...\nconsole.log('Remainder (x % y):', x % y);      // Output: 1 (Modulus)\nconsole.log('Exponentiation (x ** y):', x ** y); // Output: 1000 (x to the power of y)\nconsole.log('Increment (x++):', x++);       // Output: 10 (Post-increment, x becomes 11 after this line)\nconsole.log('Decrement (--y):', --y);       // Output: 2 (Pre-decrement, y becomes 2 before this line)\n\n// Assignment Operators\nlet a = 5;\na += 5; // Equivalent to a = a + 5\nconsole.log('Assignment += (a += 5):', a);      // Output: 10\na -= 3; // Equivalent to a = a - 3\nconsole.log('Assignment -= (a -= 3):', a);      // Output: 7\na *= 2; // Equivalent to a = a * 2\nconsole.log('Assignment *= (a *= 2):', a);      // Output: 14\n\n// Comparison Operators\nlet num1 = 10;\nlet num2 = '10';\nconsole.log('Equal (==, value comparison):', num1 == num2);   // Output: true (Type coercion occurs)\nconsole.log('Strict Equal (===, value and type comparison):', num1 === num2); // Output: false (No type coercion)\nconsole.log('Not Equal (!=):', num1 != num2);   // Output: false\nconsole.log('Strict Not Equal (!==):', num1 !== num2); // Output: true\nconsole.log('Greater than (>):', num1 > 5);       // Output: true\nconsole.log('Less than (<):', num1 < 5);          // Output: false\nconsole.log('Greater than or equal to (>=):', num1 >= 10);  // Output: true\nconsole.log('Less than or equal to (<=):', num1 <= 10);     // Output: true\n\n// Logical Operators\nlet isAdult = true;\nlet isStudent = false;\nconsole.log('Logical AND (&&, isAdult && !isStudent):', isAdult && !isStudent); // Output: true (Both conditions must be true)\nconsole.log('Logical OR (||, isAdult || isStudent):', isAdult || isStudent);  // Output: true (At least one condition must be true)\nconsole.log('Logical NOT (!, !isStudent):', !isStudent);       // Output: true (Inverts the boolean value)\n\n// Ternary Operator (Conditional Operator)\nconst age = 20;\nconst canVote = age >= 18 ? 'Yes' : 'No'; // Condition ? valueIfTrue : valueIfFalse\nconsole.log('Can vote (ternary):', canVote); // Output: Yes",
+      "keyPoints": [
+        "Arithmetic operators are used for performing mathematical calculations. Understand the behavior of increment (++), decrement (--), and exponentiation (**) operators.",
+        "Assignment operators provide shorthand for updating variable values. Compound assignment operators like `+=`, `-=`, `*=`, etc., combine an arithmetic operation with assignment.",
+        "Comparison operators are essential for decision-making in programs. Differentiate clearly between loose equality (`==`) and strict equality (`===`). Prefer `===` and `!==` to avoid unexpected type coercion and ensure type and value comparison.",
+        "Logical operators (`&&`, `||`, `!`) are used to combine or negate boolean expressions. Understand truth tables for AND, OR, and NOT operations.",
+        "`==` checks for value equality but performs type coercion if operands are of different types, which can lead to unexpected results. `===` checks for strict equality, meaning both value and type must be the same, without type coercion.",
+        "Understand operator precedence. For example, multiplication and division have higher precedence than addition and subtraction. Use parentheses `()` to explicitly control the order of operations in complex expressions.",
+        "Unary operators like increment (++), decrement (--), unary plus (+), and unary minus (-) operate on a single operand.",
+        "The ternary operator (`condition ? exprIfTrue : exprIfFalse`) provides a concise syntax for simple conditional assignments, acting as a shorthand for `if-else` statements.",
+        "Bitwise operators, while less common in typical frontend development, are used to perform operations on the binary representations of numbers and are important in certain performance-critical or low-level contexts."
+      ],
+      "quiz": [
+        {
+          "question": "What is the difference between the `==` and `===` operators in JavaScript?",
+          "options": ["`==` is for assignment, `===` is for comparison", "`==` checks value and type equality, `===` only checks value equality", "`==` checks value equality with type coercion, `===` checks strict equality without type coercion", "They are interchangeable, but `===` is newer"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Which operator is used to calculate the remainder of a division operation in JavaScript?",
+          "options": ["`/`", "`%`", "`//`", "`rem`"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the result of `true && false`?",
+          "options": ["`true`", "`false`", "`undefined`", "`null`"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What does the exponentiation operator `**` do?",
+          "options": ["Calculates the square root of a number", "Raises the first operand to the power of the second operand", "Multiplies two numbers", "Divides the first operand by the second operand"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which type of operator is `+=`?",
+          "options": ["Arithmetic operator", "Assignment operator", "Comparison operator", "Logical operator"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Arithmetic and Assignment Operator Exploration",
+          "code": "let num = 10;\nconsole.log('Initial num:', num);\nnum = num + 5; // Addition\nconsole.log('num + 5 (assignment):', num);\nnum -= 3;      // Subtraction assignment\nconsole.log('num -= 3:', num);\nnum *= 2;      // Multiplication assignment\nconsole.log('num *= 2:', num);\nnum %= 4;      // Modulus assignment\nconsole.log('num %= 4:', num);\nnum++;       // Increment\nconsole.log('num++:', num);\nnum--;       // Decrement\nconsole.log('num--:', num);\n\n// Experiment with different arithmetic and assignment operators"
+        },
+        {
+          "title": "Comparison and Logical Operators in Conditionals",
+          "code": "let value1 = 20;\nlet value2 = '20';\nlet value3 = 30;\n\n// Comparison operators\nconsole.log('value1 == value2:', value1 == value2);   // Value equality (coercion)\nconsole.log('value1 === value2:', value1 === value2);  // Strict equality (no coercion)\nconsole.log('value1 != value3:', value1 != value3);   // Not equal\nconsole.log('value1 !== value3:', value1 !== value3);  // Strict not equal\n\n// Logical operators in if statements\nif (value1 > 15 && value2 == 20) {\n  console.log('value1 > 15 AND value2 == 20 is true');\n}\nif (value1 < 10 || value3 > 25) {\n  console.log('value1 < 10 OR value3 > 25 is true');\n}\nif (!(value1 < 10)) {\n  console.log('NOT (value1 < 10) is true');\n}\n\n// Modify values and conditions to see different outcomes"
+        }
+      ]
+    },
+    {
+      "id": "js-control-flow",
+      "title": "Control Flow Statements",
+      "description": "Learn about control flow statements in JavaScript, including if-else, switch, for loops, while loops, and break/continue.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "Control flow statements in JavaScript are the mechanisms that determine the order in which your code is executed. They allow you to create dynamic and responsive programs by making decisions, repeating actions, and altering the sequence of execution based on conditions. Mastering control flow is fundamental to programming in JavaScript, as it enables you to handle different scenarios, process data collections, and create complex logic. The primary control flow statements in JavaScript are: `if`, `else if`, `else` for conditional execution based on boolean expressions. `switch` for selecting one of several code blocks to execute based on the value of an expression, often more efficient than nested `if-else if` for multiple discrete choices. `for` loops for iterating a block of code a known number of times, ideal for working with arrays or ranges. `while` and `do...while` loops for repeating a block of code as long as a condition remains true. `while` checks the condition before each iteration, whereas `do...while` executes the block at least once before checking the condition. `break` to immediately exit a loop or switch statement, often used when a condition is met that makes further iterations unnecessary. `continue` to skip the rest of the current iteration of a loop and proceed to the next iteration, useful for skipping certain elements in a loop based on a condition.",
+      "example": "// If-else statements - Conditional execution\nlet age = 20;\nif (age >= 18) {\n  console.log('Adult'); // Executed if age is 18 or greater\n} else {\n  console.log('Minor'); // Executed if age is less than 18\n}\n\n// If-else if-else statements - Multiple conditions\nlet score = 75;\nif (score >= 90) {\n  console.log('Grade A');\n} else if (score >= 80) {\n  console.log('Grade B');\n} else if (score >= 70) {\n  console.log('Grade C'); // Executed for scores 70-79\n} else {\n  console.log('Grade D or F'); // Executed for scores below 70\n}\n\n// Switch statement - Selecting one of many code blocks\nlet day = 'Monday';\nswitch (day) {\n  case 'Monday':\n    console.log('Start of the week');\n    break; // Exit switch after executing this case\n  case 'Friday':\n    console.log('Almost weekend');\n    break;\n  default:\n    console.log('Mid-week day'); // Default case if no other case matches\n}\n\n// For loop - Iterating a known number of times\nfor (let i = 0; i < 5; i++) {\n  console.log('For loop iteration:', i); // Iterates 5 times, i from 0 to 4\n}\n\n// While loop - Iterating while a condition is true\nlet count = 0;\nwhile (count < 3) {\n  console.log('While loop count:', count); // Iterates as long as count < 3\n  count++;\n}\n\n// Do-while loop - Execute at least once, then check condition\nlet j = 0;\ndo {\n  console.log('Do-while loop:', j); // Executes once, then checks condition\n  j++;\n} while (j < 2);\n\n// Break and continue - Altering loop flow\nfor (let k = 0; k < 5; k++) {\n  if (k === 3) {\n    break; // Exit loop immediately when k is 3\n  }\n  if (k === 1) {\n    continue; // Skip current iteration when k is 1, proceed to next\n  }\n  console.log('Loop with break/continue:', k); // Output: 0, then skip 1, then 2, then loop breaks at 3\n}",
+      "keyPoints": [
+        "`if`, `else if`, `else` statements provide conditional branching based on boolean conditions. Use `else if` to check multiple conditions sequentially and `else` to provide a default action if no conditions are met.",
+        "`switch` statement offers an efficient way to handle multiple discrete cases based on the value of an expression. Remember to use `break` at the end of each `case` block to prevent 'fall-through' to the next case unintentionally.",
+        "`for` loops are designed for definite iteration, where the number of iterations is known or can be predetermined. They consist of initialization, condition check, and increment/decrement steps, making them ideal for array traversal and count-based loops.",
+        "`while` loops are used for indefinite iteration, repeating a block of code as long as a specified condition remains true. The condition is checked before each iteration, and if initially false, the loop body might not execute at all.",
+        "`do...while` loops are similar to `while` loops but guarantee that the code block is executed at least once because the condition is checked after the first execution. They are useful when you need to perform an action at least once regardless of the initial condition.",
+        "`break` statement is used to terminate the execution of a loop or a `switch` statement prematurely. It's commonly used to exit a loop when a certain condition is met or to prevent fall-through in `switch` cases.",
+        "`continue` statement is used within loops to skip the current iteration and proceed directly to the next iteration. It's helpful for skipping processing for certain elements based on conditions within a loop.",
+        "Nested control flow structures (e.g., loops inside loops, `if` statements inside loops) are common for implementing complex logic. Be mindful of readability and complexity when nesting control flow structures deeply.",
+        "Choosing the appropriate control flow statement depends on the specific logic and iteration requirements of your program. Consider whether you need conditional execution, definite or indefinite iteration, and how you need to alter the flow within loops or conditional blocks."
+      ],
+      "quiz": [
+        {
+          "question": "Which control flow statement is used to execute a block of code repeatedly as long as a condition is true, and checks the condition *before* each execution?",
+          "options": ["`for` loop", "`while` loop", "`do...while` loop", "`switch` statement"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the primary function of the `break` statement in a loop or `switch` statement?",
+          "options": ["To skip to the next iteration", "To terminate the loop or `switch` statement immediately", "To pause the execution temporarily", "To continue to the next case in a `switch` statement"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which loop type guarantees that the code block will be executed at least once, regardless of the initial condition?",
+          "options": ["`for` loop", "`while` loop", "`do...while` loop", "All loop types"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "When is it most appropriate to use a `switch` statement instead of multiple `if-else if` statements?",
+          "options": ["When checking conditions based on ranges of values", "When you have many possible discrete values for a single expression to check against", "When conditions are complex boolean expressions", "When you need to iterate over an array"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What does the `continue` statement do within a loop?",
+          "options": ["Terminates the loop", "Skips the rest of the current iteration and goes to the next iteration", "Pauses the loop execution", "Resets the loop counter"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "If-Else and Switch for Decision Making",
+          "code": "// If-else example: Check if a number is positive, negative, or zero\nlet numberToCheck = 5;\nif (numberToCheck > 0) {\n  console.log('Number is positive');\n} else if (numberToCheck < 0) {\n  console.log('Number is negative');\n} else {\n  console.log('Number is zero');\n}\n\n// Switch example: Determine day of the week based on a number (1-7)\nlet dayNumber = 3;\nlet dayName;\nswitch (dayNumber) {\n  case 1:\n    dayName = 'Monday';\n    break;\n  case 2:\n    dayName = 'Tuesday';\n    break;\n  case 3:\n    dayName = 'Wednesday';\n    break;\n  case 4:\n    dayName = 'Thursday';\n    break;\n  case 5:\n    dayName = 'Friday';\n    break;\n  case 6:\n    dayName = 'Saturday';\n    break;\n  case 7:\n    dayName = 'Sunday';\n    break;\n  default:\n    dayName = 'Invalid day number';\n}\nconsole.log('Day of the week:', dayName);\n\n// Change numberToCheck and dayNumber to test different conditions"
+        },
+        {
+          "title": "Looping Constructs: For, While, Do-While",
+          "code": "// For loop: Print numbers from 1 to 5\nconsole.log('For loop output:');\nfor (let i = 1; i <= 5; i++) {\n  console.log(i);\n}\n\n// While loop: Countdown from 5 to 1\nconsole.log('While loop output:');\nlet countdown = 5;\nwhile (countdown >= 1) {\n  console.log(countdown);\n  countdown--;\n}\n\n// Do-while loop: Print 'Hello' at least once, condition is initially false\nconsole.log('Do-while loop output:');\nlet condition = false;\ndo {\n  console.log('Hello from do-while');\n} while (condition);\n\n// Modify loop conditions and code blocks to explore different iteration scenarios"
+        }
+      ]
+    },
+    {
+      "id": "js-arrays-basics",
+      "title": "Arrays Fundamentals",
+      "description": "Learn about JavaScript arrays, array creation, accessing elements, common array methods, and array iteration.",
+      "difficulty": "beginner",
+      "category": "data-structures",
+      "explanation": "Arrays in JavaScript are ordered lists of values. They are versatile data structures that can hold elements of any data type, including primitives (numbers, strings, booleans), objects, functions, and even other arrays (creating multi-dimensional arrays). Arrays are zero-indexed, meaning the first element in an array is at index 0, the second at index 1, and so on. JavaScript arrays are dynamic in size, automatically adjusting as you add or remove elements, unlike arrays in some other languages that have a fixed size. Arrays are fundamental for storing and manipulating collections of data in JavaScript. You can create arrays using array literals `[]` or the `Array()` constructor, although array literals are the more common and recommended approach. Accessing elements is done using bracket notation `array[index]`. JavaScript provides a rich set of built-in methods for array manipulation, including adding and removing elements (`push()`, `pop()`, `shift()`, `unshift()`), extracting portions of arrays (`slice()`, `splice()`), combining arrays (`concat()`), searching for elements (`indexOf()`, `includes()`), and iterating over arrays (`for` loops, `for...of` loops, `forEach()`, `map()`, `filter()`, `reduce()`). Understanding arrays and their methods is crucial for efficiently managing and processing lists of data in JavaScript applications.",
+      "example": "// Array creation - Using array literal (recommended)\nconst numbers = [1, 2, 3, 4, 5]; // Array of numbers\nconst fruits = ['apple', 'banana', 'orange']; // Array of strings\nconst mixedArray = [1, 'hello', true, null, { key: 'value' }]; // Array with mixed data types\n\n// Array creation - Using Array constructor (less common)\nconst colors = new Array('red', 'green', 'blue');\n// Note: Avoid using 'new Array(number)' if you intend to create an array with initial elements, as it behaves differently for single number arguments.\n\n// Accessing elements - Using bracket notation (zero-indexed)\nconsole.log('First number:', numbers[0]);    // Output: 1\nconsole.log('Second fruit:', fruits[1]);     // Output: banana\nconsole.log('Array length:', numbers.length); // Output: 5 (number of elements)\nconsole.log('Last element of numbers:', numbers[numbers.length - 1]); // Output: 5 (accessing last element)\n\n// Modifying elements - Arrays are mutable\nnumbers[2] = 10; // Change element at index 2\nconsole.log('Modified numbers:', numbers); // Output: [1, 2, 10, 4, 5]\n\n// Adding elements\nnumbers.push(6); // Add to the end of the array\nconsole.log('Numbers after push(6):', numbers); // Output: [1, 2, 10, 4, 5, 6]\nnumbers.unshift(0); // Add to the beginning of the array\nconsole.log('Numbers after unshift(0):', numbers); // Output: [0, 1, 2, 10, 4, 5, 6]\n\n// Removing elements\nnumbers.pop(); // Remove the last element from the array\nconsole.log('Numbers after pop():', numbers); // Output: [0, 1, 2, 10, 4, 5]\nnumbers.shift(); // Remove the first element from the array\nconsole.log('Numbers after shift():', numbers); // Output: [1, 2, 10, 4, 5]\n\n// Slicing and splicing - Extracting and modifying array portions\nconst slicedArray = numbers.slice(1, 3); // Extract elements from index 1 up to (but not including) 3\nconsole.log('Sliced array (slice(1, 3)):', slicedArray); // Output: [2, 10]\nnumbers.splice(1, 2, 7, 8); // Remove 2 elements starting from index 1, and insert 7, 8\nconsole.log('Numbers after splice(1, 2, 7, 8):', numbers); // Output: [1, 7, 8, 4, 5]\n\n// Iterating through array - Using for loop and forEach method\nconsole.log('Iterating with for loop:');\nfor (let i = 0; i < numbers.length; i++) {\n  console.log('Element at index', i, ':', numbers[i]);\n}\n\nconsole.log('Iterating with forEach:');\nnumbers.forEach(function(number, index) { // forEach method with callback function\n  console.log('Element at index', index, ':', number);\n});",
+      "keyPoints": [
+        "Arrays are ordered collections of values, indexed starting from 0, and dynamically resizable. They are a fundamental data structure for managing lists of items in JavaScript.",
+        "Arrays can store elements of any JavaScript data type, allowing for flexible data organization. They are mutable, meaning their contents can be changed after creation.",
+        "Array literals `[]` are the preferred and most common way to create arrays due to their simplicity and readability. Avoid using the `Array` constructor unnecessarily, especially with single number arguments.",
+        "Access array elements using bracket notation `array[index]`. The `length` property provides the number of elements in an array, useful for accessing the last element at `array[array.length - 1]`.",
+        "`push()` adds elements to the end of an array, `pop()` removes and returns the last element, `unshift()` adds elements to the beginning, `shift()` removes and returns the first element. These methods modify the original array.",
+        "`slice(start, end)` extracts a portion of an array and returns a new array without modifying the original array. `splice(start, deleteCount, ...items)` changes the content of an array by removing or replacing existing elements and/or adding new elements in place.",
+        "`concat()` merges two or more arrays and returns a new array. `join(separator)` converts all elements of an array into a string, separated by the specified separator. `indexOf(element)` finds the first index of a specified element, and `includes(element)` checks if an array contains a certain element, returning a boolean.",
+        "Common array iteration methods include `for` loop, `for...of` loop (for iterating over values), `forEach()`, `map()`, `filter()`, `reduce()`. Choose the appropriate method based on the task: simple iteration (`forEach`, `for...of`), transforming elements (`map`), filtering elements (`filter`), or aggregating values (`reduce`).",
+        "Arrays in JavaScript are technically objects, but they have special behavior and optimized methods for handling ordered collections. They are a cornerstone of data manipulation in JavaScript, especially in frontend development for managing lists of items, processing data from APIs, and handling user inputs."
+      ],
+      "quiz": [
+        {
+          "question": "What is the index of the first element in a JavaScript array?",
+          "options": ["1", "0", "-1", "Depends on the array"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which array method adds a new element to the *end* of an array and also returns the new length of the array?",
+          "options": ["`push()`", "`pop()`", "`shift()`", "`unshift()`"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "What does the `slice()` method do to the original array it is called upon?",
+          "options": ["Modifies the original array by removing elements", "Returns a new array containing a portion of the original array", "Removes elements from the original array and returns them", "Returns the length of the original array"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which of the following is NOT a valid method for iterating over elements in a JavaScript array?",
+          "options": ["`for` loop", "`while` loop", "`forEach()` method", "`map()` method"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Are JavaScript arrays fixed in size or dynamic?",
+          "options": ["Fixed size", "Dynamic size", "Size is defined at creation and cannot be changed", "Depends on the browser"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Array Manipulation - Adding and Removing Elements",
+          "code": "const colors = ['red', 'green', 'blue'];\nconsole.log('Initial array:', colors);\n\n// Adding elements\ncolors.push('yellow');\nconsole.log('After push('yellow'):', colors);\ncolors.unshift('purple');\nconsole.log('After unshift('purple'):', colors);\n\n// Removing elements\ncolors.pop();\nconsole.log('After pop():', colors);\ncolors.shift();\nconsole.log('After shift():', colors);\n\n// Experiment with push, pop, unshift, shift to see how arrays change"
+        },
+        {
+          "title": "Array Slicing and Splicing - Extracting and Modifying Portions",
+          "code": "const numbers = [10, 20, 30, 40, 50];\nconsole.log('Original array:', numbers);\n\n// Slicing - Extract a portion\nconst slicedPart = numbers.slice(1, 4); // Indices 1, 2, 3\nconsole.log('Sliced array (slice(1, 4)):', slicedPart);\nconsole.log('Original array after slice:', numbers); // Original array unchanged\n\n// Splicing - Modify original array by removing and inserting\nconst removedElements = numbers.splice(2, 2, 'a', 'b'); // Remove 2 from index 2, insert 'a', 'b'\nconsole.log('Array after splice(2, 2, 'a', 'b'):', numbers);\nconsole.log('Removed elements by splice:', removedElements);\n\n// Experiment with different slice and splice parameters to understand their effects"
+        }
+      ]
+    },
+    {
+      "id": "js-strings-basics",
+      "title": "Strings Fundamentals",
+      "description": "Explore JavaScript strings, string creation, immutability, string methods, template literals, and string manipulation.",
+      "difficulty": "beginner",
+      "category": "data-types",
+      "explanation": "Strings in JavaScript are sequences of characters used to represent text. They are a primitive data type and are immutable, meaning once a string is created, its value cannot be changed. Any operation that appears to modify a string actually creates a new string in memory. Strings can be created using single quotes (`'`), double quotes (`\"`), or backticks (template literals ``). Single and double quotes are largely interchangeable, but it's common to choose one style and be consistent within a project. Template literals, introduced in ES6, offer enhanced capabilities, including string interpolation (embedding expressions inside strings) and multiline strings. JavaScript provides a rich set of built-in methods for string manipulation, allowing you to perform operations like accessing individual characters, searching for substrings, replacing parts of strings, extracting substrings, changing case (uppercase/lowercase), trimming whitespace, and splitting strings into arrays. Understanding strings and their methods is essential for working with text data in JavaScript, which is a common task in web development for handling user input, displaying text content, and processing data from APIs.",
+      "example": "// String creation - Using single quotes, double quotes, and template literals\nconst singleQuoteString = 'Hello';\nconst doubleQuoteString = \"World\";\nconst templateLiteralString = `Hello, World!`;\n\nconsole.log('Single quote string:', singleQuoteString);\nconsole.log('Double quote string:', doubleQuoteString);\nconsole.log('Template literal string:', templateLiteralString);\n\n// String immutability - Original string remains unchanged after methods\nlet message = 'JavaScript';\nconsole.log('Original message:', message); // Output: JavaScript\nmessage.toUpperCase(); // This method call does not modify 'message'\nconsole.log('Message after toUpperCase() (still original):', message); // Output: JavaScript\nmessage = message.toUpperCase(); // Assign the result of toUpperCase() back to 'message'\nconsole.log('Uppercase message (after reassignment):', message); // Output: JAVASCRIPT\n\n// Common String methods\nconst text = '  Example String  ';\nconsole.log('Length of text:', text.length);         // Output: 18 (includes spaces)\nconsole.log('Character at index 0 (charAt(0)):', text.charAt(0));   // Output: ' ' (space)\nconsole.log('Index of 'E' (indexOf('E')):', text.indexOf('E')); // Output: 2\nconsole.log('Substring from index 2 to 9 (slice(2, 9)):', text.slice(2, 9));   // Output: 'Example'\nconsole.log('Substring from index 2 to 9 (substring(2, 9)):', text.substring(2, 9)); // Output: 'Example'\nconsole.log('Uppercase version (toUpperCase()):', text.toUpperCase()); // Output: '  EXAMPLE STRING  '\nconsole.log('Lowercase version (toLowerCase()):', text.toLowerCase()); // Output: '  example string  '\nconsole.log('String after trimming whitespace (trim()):', text.trim());           // Output: 'Example String' (removes leading/trailing spaces)\nconsole.log('Split string into array by space (split(' ')):', text.split(' '));     // Output: ['', '', 'Example', 'String', '', '']\n\n// Template literals for string interpolation and multiline strings\nconst name = 'Alice';\nconst age = 30;\nconst greeting = `Hello, ${name}! You are ${age} years old.`; // Interpolation\nconsole.log('Greeting using template literal:', greeting); // Output: Hello, Alice! You are 30 years old.\n\nconst multiline = `This is a\nmultiline string\nusing template literals.`; // Multiline string\nconsole.log('Multiline string using template literal:\n', multiline);",
+      "keyPoints": [
+        "Strings are sequences of characters and a primitive data type in JavaScript, used for representing textual data.",
+        "Strings are immutable in JavaScript. Operations that appear to modify a string actually create and return a new string, leaving the original string unchanged.",
+        "Strings can be created using single quotes (`'`), double quotes (`\"`), or template literals (backticks ``). Template literals offer additional features like interpolation and multiline support.",
+        "Template literals allow for string interpolation using `${expression}`, embedding JavaScript expressions directly into strings, and for creating multiline strings without special characters.",
+        "`length` property returns the number of characters in a string. String indices are zero-based, starting from 0 for the first character.",
+        "`charAt(index)` method returns the character at a specified index. `indexOf(substring)` finds the index of the first occurrence of a substring within a string.",
+        "`slice(start, end)` and `substring(start, end)` methods extract a portion of a string and return it as a new string. `slice` can also handle negative indices, counting from the end of the string.",
+        "`toUpperCase()` and `toLowerCase()` methods convert a string to uppercase or lowercase, respectively, returning new strings.",
+        "`trim()` method removes whitespace characters from both ends of a string, returning a new trimmed string.",
+        "`split(separator)` method splits a string into an array of substrings, using a specified separator string to determine where to make each split.",
+        "Strings are fundamental for displaying text, processing user input, working with text-based data formats, and many other common tasks in web development."
+      ],
+      "quiz": [
+        {
+          "question": "Are JavaScript strings mutable or immutable?",
+          "options": ["Mutable", "Immutable", "Mutable under certain conditions", "Depends on the declaration type"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which string method is used to remove whitespace from both ends of a string?",
+          "options": ["`trim()`", "`slice()`", "`substring()`", "`replace()`"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "What is the primary advantage of using template literals over single or double quoted strings in JavaScript?",
+          "options": ["Template literals are more performant", "Template literals are automatically escaped to prevent security issues", "Template literals allow for string interpolation and multiline strings", "Template literals are only supported in modern browsers"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "If you have a string `str = 'example'`, what will `str.slice(1, 4)` return?",
+          "options": ["`'xamp'`", "`'xampl'`", "`'ample'`", "`'exam'`"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Which method would you use to convert a string to an array of substrings, separated by commas?",
+          "options": ["`join(',')`", "`split(',')`", "`toArray(',')`", "`substring(',')`"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "String Method Exploration - Manipulation and Extraction",
+          "code": "let sampleText = 'JavaScript is fun!';\nconsole.log('Original text:', sampleText);\nconsole.log('Length:', sampleText.length);\nconsole.log('Substring (0, 10) using substring():', sampleText.substring(0, 10));\nconsole.log('Substring from index 5 to end using slice(5):', sampleText.slice(5)); // Slice from index 5 to the end\nconsole.log('Replace 'fun' with 'awesome' using replace():', sampleText.replace('fun', 'awesome'));\nconsole.log('Uppercase version using toUpperCase():', sampleText.toUpperCase());\nconsole.log('Lowercase version using toLowerCase():', sampleText.toLowerCase());\n\n// Original string remains unchanged\nconsole.log('Original text after methods:', sampleText);\n\n// Experiment with different string methods and parameters"
+        },
+        {
+          "title": "Template Literals in Practice - Dynamic String Generation",
+          "code": "const productName = 'Laptop';\nconst productPrice = 1200;\nconst discountPercentage = 10;\n\n// Using template literals for dynamic string creation\nconst productDescription = `\n  Product Name: ${productName}\n  Price: $${productPrice}\n  Discount: ${discountPercentage}%\n  Final Price: $${productPrice * (1 - discountPercentage / 100)}\n`;\nconsole.log('Product Description using template literal:\n', productDescription);\n\n// Experiment with different expressions and variables inside template literals"
+        }
+      ]
+    },
+    {
+      "id": "js-numbers-math",
+      "title": "Numbers and Math",
+      "description": "Learn about numbers in JavaScript, number types, numeric operators, the Math object, and common math functions.",
+      "difficulty": "beginner",
+      "category": "data-types",
+      "explanation": "JavaScript has a single number type, which is used for both integers and floating-point numbers. Internally, JavaScript numbers are represented as double-precision 64-bit floating point format (IEEE 754), which allows for a wide range of values and precision. In addition to standard numeric values, JavaScript also includes special numeric values like `NaN` (Not-a-Number), `Infinity`, and `-Infinity`, which represent results of operations that are not valid numbers or exceed the representable range. JavaScript supports standard arithmetic operators (+, -, *, /, %, **) for basic mathematical operations, as well as the `Math` object, which is a built-in object that provides a collection of mathematical functions and constants. The `Math` object is static, meaning you can use its methods and properties directly without creating an instance of `Math`. It includes functions for rounding, ceiling, flooring, absolute value, exponentiation, square root, random number generation, trigonometric functions, and constants like PI and E. Understanding numbers and the `Math` object is crucial for performing calculations, handling numeric data, and implementing mathematical logic in JavaScript applications, from simple arithmetic to complex scientific computations.",
+      "example": "// Number types in JavaScript\nlet integerNumber = 10; // Integer\nlet floatNumber = 3.14; // Floating-point number\nlet scientificNotation = 1.23e5; // Scientific notation (1.23 * 10^5 = 123000)\nlet negativeNumber = -5; // Negative number\n\nconsole.log('Integer number:', integerNumber, ', Type:', typeof integerNumber); // Output: number\nconsole.log('Float number:', floatNumber, ', Type:', typeof floatNumber);     // Output: number\nconsole.log('Scientific notation:', scientificNotation, ', Type:', typeof scientificNotation); // Output: number\nconsole.log('Negative number:', negativeNumber, ', Type:', typeof negativeNumber);   // Output: number\n\n// Special numeric values - NaN, Infinity, -Infinity\nconsole.log('NaN (Not-a-Number):', NaN);             // Output: NaN (result of invalid numeric operations)\nconsole.log('Infinity:', Infinity);     // Output: Infinity (result of division by zero, or exceeding max number)\nconsole.log('-Infinity:', -Infinity);   // Output: -Infinity\nconsole.log('Is NaN (isNaN('hello')):', isNaN('hello'));    // Output: true (checks if value is NaN)\nconsole.log('Is Finite (isFinite(1000)):', isFinite(1000)); // Output: true (checks if value is a finite number)\nconsole.log('Is Finite (isFinite(Infinity)):', isFinite(Infinity)); // Output: false\n\n// Arithmetic operations\nlet num1 = 20;\nlet num2 = 5;\nconsole.log('Addition (num1 + num2):', num1 + num2);       // Output: 25\nconsole.log('Subtraction (num1 - num2):', num1 - num2);    // Output: 15\nconsole.log('Multiplication (num1 * num2):', num1 * num2); // Output: 100\nconsole.log('Division (num1 / num2):', num1 / num2);       // Output: 4\nconsole.log('Modulus (num1 % num2):', num1 % num2);        // Output: 0 (remainder of division)\nconsole.log('Exponentiation (num2 ** 3):', num2 ** 3);     // Output: 125 (num2 to the power of 3)\n\n// Math object methods and constants\nconsole.log('Math.PI:', Math.PI);          // Output: 3.14159... (constant for Pi)\nconsole.log('Math.round(4.6):', Math.round(4.6)); // Output: 5 (rounds to nearest integer)\nconsole.log('Math.ceil(4.2):', Math.ceil(4.2));   // Output: 5 (rounds up to nearest integer)\nconsole.log('Math.floor(4.8):', Math.floor(4.8)); // Output: 4 (rounds down to nearest integer)\nconsole.log('Math.abs(-5):', Math.abs(-5));     // Output: 5 (absolute value, positive value)\nconsole.log('Math.pow(2, 3):', Math.pow(2, 3));    // Output: 8 (base to the power of exponent)\nconsole.log('Math.sqrt(25):', Math.sqrt(25));   // Output: 5 (square root)\nconsole.log('Math.random():', Math.random());   // Output: Random float between 0 (inclusive) and 1 (exclusive)\nconsole.log('Math.max(1, 5, 2):', Math.max(1, 5, 2)); // Output: 5 (returns the largest of given numbers)\nconsole.log('Math.min(1, 5, 2):', Math.min(1, 5, 2)); // Output: 1 (returns the smallest of given numbers)",
+      "keyPoints": [
+        "JavaScript has a single `number` data type for both integers and floating-point numbers, represented internally as double-precision 64-bit floating point numbers (IEEE 754).",
+        "Special numeric values include `NaN` (Not-a-Number), `Infinity`, and `-Infinity`. Use `isNaN()` to check for `NaN` and `isFinite()` to determine if a value is a finite number.",
+        "Standard arithmetic operators in JavaScript are: addition (+), subtraction (-), multiplication (*), division (/), modulus (%) for remainder, and exponentiation (**) for raising to a power. Increment (++) and decrement (--) are also arithmetic operators.",
+        "The `Math` object is a built-in static object that provides a wide range of mathematical functions and constants. You access its properties and methods directly using `Math.property` or `Math.method()`, without needing to create an instance.",
+        "Commonly used `Math` methods include: `Math.round()`, `Math.ceil()`, `Math.floor()` for rounding numbers; `Math.abs()` for absolute value; `Math.pow()` for exponentiation; `Math.sqrt()` for square root; `Math.random()` for generating pseudo-random numbers; `Math.max()` and `Math.min()` for finding maximum and minimum values.",
+        "`Math.random()` generates a pseudo-random floating-point number in the range [0, 1) (inclusive of 0, but not 1). To get random numbers in other ranges, you need to scale and shift the result.",
+        "`parseInt()` and `parseFloat()` functions are used to convert strings to numbers. `parseInt()` parses a string and returns an integer, while `parseFloat()` parses a string and returns a floating-point number. Be aware of `parseInt`'s behavior with non-numeric strings and leading zeros.",
+        "Number methods like `toFixed(digits)` and `toPrecision(precision)` are used for formatting numbers as strings, controlling the number of decimal places or total significant digits.",
+        "JavaScript numbers can accurately represent integers up to `Number.MAX_SAFE_INTEGER`. For working with integers larger than this, consider using `BigInt` (introduced in ES2020) for arbitrary-precision integers."
+      ],
+      "quiz": [
+        {
+          "question": "What is the primary data type for numbers in JavaScript?",
+          "options": ["`integer`", "`float`", "`number`", "`numeric`"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Which `Math` method rounds a number to the nearest integer?",
+          "options": ["`Math.ceil()`", "`Math.floor()`", "`Math.round()`", "`Math.abs()`"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What range of values does `Math.random()` return?",
+          "options": ["Integers from 0 to 1", "Floating-point numbers from 0 to 1 (inclusive)", "Floating-point numbers from 0 (inclusive) to 1 (exclusive)", "Integers from 1 to 100"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What special numeric value does JavaScript use to represent the result of an invalid numeric operation (e.g., dividing zero by zero)?",
+          "options": ["`Infinity`", "`-Infinity`", "`null`", "`NaN`"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Which function is used to check if a value is *not* a number (NaN)?",
+          "options": ["`isNumber()`", "`isNaN()`", "`isNotNumber()`", "`checkNaN()`"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Exploring Math Object Methods - Rounding and Absolute Value",
+          "code": "let numberValue = 4.567;\nconsole.log('Original number:', numberValue);\nconsole.log('Math.round():', Math.round(numberValue)); // Round to nearest integer\nconsole.log('Math.ceil():', Math.ceil(numberValue));   // Round up to nearest integer\nconsole.log('Math.floor():', Math.floor(numberValue)); // Round down to nearest integer\nconsole.log('Math.abs(-numberValue):', Math.abs(-numberValue)); // Absolute value (positive)\n\nlet anotherNumber = -7.89;\nconsole.log('Math.ceil() of negative number:', Math.ceil(anotherNumber)); // Ceil of negative\nconsole.log('Math.floor() of negative number:', Math.floor(anotherNumber)); // Floor of negative\n\n// Experiment with different Math.round, Math.ceil, Math.floor values"
+        },
+        {
+          "title": "Number Conversion and Formatting - String to Number and Number to String",
+          "code": "// String to number conversion using parseInt and parseFloat\nlet stringNumberInt = '123';\nlet stringNumberFloat = '123.45';\nlet parsedInt = parseInt(stringNumberInt); // Parse as integer\nlet parseFloatNum = parseFloat(stringNumberFloat); // Parse as float\nconsole.log('parseInt(' + stringNumberInt + '):', parsedInt, ', Type:', typeof parsedInt);\nconsole.log('parseFloat(' + stringNumberFloat + '):', parseFloatNum, ', Type:', typeof parseFloatNum);\n\n// Number formatting using toFixed and toPrecision\nlet numToFormat = 1234.5678;\nconsole.log('toFixed(2):', numToFormat.toFixed(2));      // Format to 2 decimal places (string)\nconsole.log('toPrecision(4):', numToFormat.toPrecision(4)); // Format to 4 significant digits (string)\nconsole.log('toString():', numToFormat.toString());      // Convert number to string\n\n// Experiment with different string inputs and formatting options"
+        }
+      ]
+    },
+    {
+      "id": "js-booleans-conditionals",
+      "title": "Booleans and Conditionals",
+      "description": "Understand boolean data type, logical operations, truthy and falsy values, and conditional statements in JavaScript.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "Booleans are a fundamental data type in JavaScript representing logical values: `true` or `false`. They are essential for decision-making and controlling program flow. Boolean values are often the result of comparison operations (e.g., `x > y`, `a === b`) or logical operations. JavaScript provides logical operators (`&&` - AND, `||` - OR, `!` - NOT) to combine or negate boolean values, allowing for complex conditional logic. An important concept in JavaScript is truthy and falsy values. Every value in JavaScript inherently evaluates to either truthy or falsy when used in a boolean context (like in an `if` condition). Falsy values are `false`, `0`, `''` (empty string), `null`, `undefined`, and `NaN`. All other values are considered truthy, including non-empty strings, any number other than 0, objects, and arrays. Conditional statements (`if`, `else if`, `else`, ternary operator) use boolean expressions to control the flow of execution based on whether a condition evaluates to `true` or `false`. Mastering booleans, truthy/falsy values, and conditional statements is crucial for creating dynamic, responsive, and logic-driven JavaScript code.",
+      "example": "// Boolean values - true and false literals\nlet isTrue = true;\nlet isFalse = false;\n\nconsole.log('Boolean true:', isTrue, ', Type:', typeof isTrue);   // Output: true, boolean\nconsole.log('Boolean false:', isFalse, ', Type:', typeof isFalse); // Output: false, boolean\n\n// Comparison operators resulting in boolean values\nlet num1 = 10;\nlet num2 = 5;\nconsole.log('num1 > num2:', num1 > num2);    // Output: true (10 is greater than 5)\nconsole.log('num1 === num2:', num1 === num2); // Output: false (10 is not strictly equal to 5)\nconsole.log('num1 <= num2:', num1 <= num2);    // Output: false (10 is not less than or equal to 5)\n\n// Logical operators - AND (&&), OR (||), NOT (!)\nlet condition1 = true;\nlet condition2 = false;\nconsole.log('condition1 && condition2:', condition1 && condition2); // Output: false (AND - both must be true)\nconsole.log('condition1 || condition2:', condition1 || condition2); // Output: true (OR - at least one must be true)\nconsole.log('!condition1:', !condition1);         // Output: false (NOT - inverts the boolean value)\n\n// Truthy and falsy values - Implicit boolean conversion\nconsole.log('Boolean of 0:', Boolean(0));         // Output: false (falsy)\nconsole.log('Boolean of '':', Boolean(''));        // Output: false (falsy - empty string)\nconsole.log('Boolean of null:', Boolean(null));       // Output: false (falsy)\nconsole.log('Boolean of undefined:', Boolean(undefined)); // Output: false (falsy)\nconsole.log('Boolean of NaN:', Boolean(NaN));        // Output: false (falsy)\nconsole.log('Boolean of 1:', Boolean(1));         // Output: true (truthy - non-zero number)\nconsole.log('Boolean of 'hello':', Boolean('hello'));   // Output: true (truthy - non-empty string)\nconsole.log('Boolean of {}:', Boolean({}));        // Output: true (truthy - object)\nconsole.log('Boolean of []:', Boolean([]));        // Output: true (truthy - array)\n\n// Conditional statements - if, else if, else, ternary operator\nlet age = 15;\nif (age >= 18) {\n  console.log('You are an adult.');\n} else {\n  console.log('You are a minor.'); // Executed if age < 18\n}\n\nlet isLoggedIn = true;\nlet message = isLoggedIn ? 'Welcome back!' : 'Please log in.'; // Ternary operator: condition ? valueIfTrue : valueIfFalse\nconsole.log('Conditional message:', message); // Output: Welcome back! (if isLoggedIn is true)",
+      "keyPoints": [
+        "Boolean data type in JavaScript has only two values: `true` and `false`. They are used to represent logical states and are the result of comparisons and logical operations.",
+        "Boolean values are often produced by comparison operators (>, <, >=, <=, ==, ===, !=, !==) and logical operators (&&, ||, !).",
+        "Logical operators are `&&` (AND - returns true if both operands are true), `||` (OR - returns true if at least one operand is true), and `!` (NOT - inverts the boolean value of its operand).",
+        "Truthy values are values that evaluate to `true` in a boolean context. Falsy values are those that evaluate to `false`. Understanding truthy and falsy values is crucial for conditional logic in JavaScript.",
+        "The six falsy values in JavaScript are: `false`, `0`, `''` (empty string), `null`, `undefined`, and `NaN`. Every other value is truthy, including objects, arrays, non-empty strings, and non-zero numbers.",
+        "Conditional statements (`if`, `else if`, `else`) allow you to execute different blocks of code based on boolean conditions. `if` executes a block if the condition is truthy. `else if` provides additional conditions to check if the preceding `if` or `else if` conditions are falsy. `else` provides a default block if no preceding conditions are truthy.",
+        "The ternary operator `condition ? exprIfTrue : exprIfFalse` is a concise shorthand for a simple `if-else` statement. It evaluates a condition and returns one of two expressions based on whether the condition is truthy or falsy.",
+        "Boolean logic and conditional statements are fundamental for decision-making, branching, and controlling the flow of execution in JavaScript programs. They are used extensively in all types of JavaScript applications, from frontend interactions to backend logic.",
+        "Being able to effectively use booleans and conditionals is essential for writing dynamic and responsive JavaScript code that can handle different inputs and scenarios."
+      ],
+      "quiz": [
+        {
+          "question": "Which of the following is NOT considered a falsy value in JavaScript?",
+          "options": ["`0`", "`''`", "`null`", "`'false'` (string 'false')"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "What is the result of the logical OR operation: `true || false`?",
+          "options": ["`true`", "`false`", "`undefined`", "`null`"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "Which operator is a shorthand for a simple `if-else` statement in JavaScript?",
+          "options": ["`if-else` statement", "`switch` statement", "Ternary operator (`?:`)", "Logical AND operator (`&&`)"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "If a variable `value` is assigned `null`, what will `Boolean(value)` evaluate to?",
+          "options": ["`true`", "`false`", "`undefined`", "It will throw an error"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Which statement allows you to execute one block of code if a condition is true and another block of code if the condition is false?",
+          "options": ["`for` loop", "`switch` statement", "`if-else` statement", "`while` loop"],
+          "correctAnswer": 2
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Truthy and Falsy Values - Experiment and Observe",
+          "code": "// Explore truthy and falsy values using Boolean() constructor\nconsole.log('Boolean(0):', Boolean(0));\nconsole.log('Boolean(1):', Boolean(1));\nconsole.log('Boolean(''):', Boolean(''));\nconsole.log('Boolean('hello'):', Boolean('hello'));\nconsole.log('Boolean(null):', Boolean(null));\nconsole.log('Boolean(undefined):', Boolean(undefined));\nconsole.log('Boolean(NaN):', Boolean(NaN));\nconsole.log('Boolean([]):', Boolean([])); // Empty array is truthy\nconsole.log('Boolean({}):', Boolean({})); // Empty object is truthy\n\n// Try different values and observe the boolean output - understand truthy/falsy concept"
+        },
+        {
+          "title": "Conditional Statements in Action - If-Else and Ternary Operator",
+          "code": "// If-else example based on temperature\nlet currentTemperature = 20;\nif (currentTemperature >= 25) {\n  console.log('It's hot!');\n} else if (currentTemperature >= 15) {\n  console.log('It's warm.');\n} else {\n  console.log('It's cool.');\n}\n\n// Ternary operator example for even/odd check\nlet numberToCheck = 7;\nlet resultMessage = numberToCheck % 2 === 0 ? `${numberToCheck} is even.` : `${numberToCheck} is odd.`;\nconsole.log(resultMessage);\n\nlet userRole = 'admin';\nlet accessLevel = userRole === 'admin' ? 'Full Access' : 'Limited Access';\nconsole.log('Access Level:', accessLevel);\n\n// Modify temperature, numberToCheck, and userRole to see different conditional outputs"
+        }
+      ]
+    },
+    {
+      "id": "js-null-undefined",
+      "title": "Null and Undefined",
+      "description": "Distinguish between `null` and `undefined` in JavaScript, understand their use cases and differences.",
+      "difficulty": "beginner",
+      "category": "data-types",
+      "explanation": "`null` and `undefined` are two primitive values in JavaScript that represent the absence of a value, but they are used in distinct contexts and have subtle differences. `undefined` is typically JavaScript's way of saying 'value is not assigned yet'. It is the default value of a variable that has been declared but not initialized (assigned a value), or when a function does not explicitly return a value. It's also returned when you try to access a non-existent property of an object. In essence, `undefined` is often system-level and automatic, indicating something is missing or not yet available. `null`, on the other hand, is an assignment value. It represents the intentional absence of an object value. It must be explicitly assigned by the programmer to indicate that a variable or object property should intentionally have no value or object reference. While both represent 'no value', the key distinction is that `undefined` is often encountered due to the state of variables or properties by default, whereas `null` is a deliberate action by the programmer to signify 'no value'. Understanding their nuances is important for writing correct and debugging JavaScript code, especially when dealing with variables, function returns, and object properties.",
+      "example": "// Undefined examples - Default value, no return, non-existent property\nlet myVariable; // Declared but not assigned a value\nconsole.log('myVariable:', myVariable, ', Type:', typeof myVariable);         // Output: undefined, undefined\n\nfunction noReturnValue() {\n  // Function with no explicit return statement\n}\nconsole.log('noReturnValue():', noReturnValue(), ', Type:', typeof noReturnValue());     // Output: undefined, undefined\n\nconst myObject = { name: 'Example' };\nconsole.log('Non-existent property (myObject.age):', myObject.age, ', Type:', typeof myObject.age); // Output: undefined, undefined\n\n// Null examples - Explicit assignment of null\nlet data = null; // Explicitly assigning null to a variable\nconsole.log('data:', data, ', Type:', typeof data);               // Output: null, object (Note: typeof null is a historical bug, should logically be 'null')\n\nfunction returnNull() {\n  return null; // Function explicitly returning null\n}\nconsole.log('returnNull():', returnNull(), ', Type:', typeof returnNull());       // Output: null, object\n\n// Checking for null and undefined - Using strict equality (===)\nlet valueToCheck;\nif (valueToCheck === undefined) {\n  console.log('valueToCheck is strictly undefined');\n}\n\nlet anotherValue = null;\nif (anotherValue === null) {\n  console.log('anotherValue is strictly null');\n}\n\n// Loose vs Strict equality - == vs ===\nconsole.log('null == undefined:', null == undefined);   // Output: true (loose equality considers them equal)\nconsole.log('null === undefined:', null === undefined);  // Output: false (strict equality - different types)\n\n// Common use cases - Initialization and intentional no value\n// Initialize a variable that might not get a value immediately, or to indicate absence initially\nlet userDetails = undefined; // Or simply: let userDetails;\n// Indicate that a variable should intentionally have no value, or reset a value to 'nothing'\nlet resetValue = null;",
+      "keyPoints": [
+        "`undefined` is the default value assigned by JavaScript to variables that are declared but not initialized, functions that do not return a value, and when accessing non-existent object properties. It indicates a system-level absence of value.",
+        "`null` is an assignment value that represents the intentional absence of an object value. It must be explicitly set by the programmer to indicate that a variable should deliberately have no value.",
+        "`typeof undefined` correctly returns 'undefined', while `typeof null` returns 'object'. This is a historical quirk in JavaScript; logically, `null` should have its own type 'null'.",
+        "`undefined` is often system-generated, indicating that a variable or property is missing or uninitialized. `null` is programmer-assigned, signaling a deliberate non-value or absence of an object.",
+        "In boolean contexts, both `null` and `undefined` are falsy values, meaning they will evaluate to `false` in conditions.",
+        "Loose equality (`==`) in JavaScript considers `null` and `undefined` to be equal due to type coercion, whereas strict equality (`===`) correctly distinguishes between them as different types and values.",
+        "For specific checks of `null` or `undefined`, use strict equality (`=== null` or `=== undefined`) to avoid type coercion and ensure accurate comparisons.",
+        "Use `undefined` to check if a variable has been initialized or if an object property exists (or rather, does not exist). Use `null` to intentionally represent 'no value' or to reset a variable to a state of having no value.",
+        "It is generally recommended to avoid explicitly assigning `undefined` in your code. Let JavaScript use `undefined` as its default for uninitialized variables. Prefer using `null` when you need to intentionally represent the absence of a value or object."
+      ],
+      "quiz": [
+        {
+          "question": "What is the default value assigned to a variable that is declared but not initialized in JavaScript?",
+          "options": ["`null`", "`undefined`", "`0`", "`''` (empty string)"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What does `typeof null` return in JavaScript, and is this considered a quirk?",
+          "options": ["`'null'`, and it is correct", "`'undefined'`, and it is incorrect", "`'object'`, and it is a historical quirk", "`'primitive'`, and it is correct"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Which value is used to represent the *intentional* absence of an object value and must be explicitly assigned by the programmer?",
+          "options": ["`undefined`", "`null`", "`NaN`", "`0`"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "In terms of loose equality (`==`), how do `null` and `undefined` compare?",
+          "options": ["They are considered equal", "They are considered not equal", "`null` is loosely greater than `undefined`", "`undefined` is loosely greater than `null`"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "When would you typically use `null` in your JavaScript code?",
+          "options": ["To indicate that a variable has not been declared", "To represent a function that does not return a value", "To intentionally signify that a variable should have no value or object reference", "As the default value for uninitialized variables"],
+          "correctAnswer": 2
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Undefined in Different Contexts - Variable, Function, Property",
+          "code": "// Undefined variable - Declaration without initialization\nlet uninitializedVariable;\nconsole.log('Uninitialized variable:', uninitializedVariable, ', Type:', typeof uninitializedVariable);\n\n// Function with no explicit return - Implicitly returns undefined\nfunction funcWithoutReturn() {\n  console.log('Function executed, but no return value');\n}\nconsole.log('Function return value:', funcWithoutReturn(), ', Type:', typeof funcWithoutReturn());\n\n// Non-existent object property - Accessing a property that does not exist\nconst objExample = { name: 'Example Object' };\nconsole.log('Non-existent property (objExample.age):', objExample.age, ', Type:', typeof objExample.age);\n\n// Observe the output - all are undefined, indicating absence of value or property"
+        },
+        {
+          "title": "Null Assignment and Checking - Explicitly Setting No Value",
+          "code": "// Assigning null to a variable - Intentional absence of value\nlet dataValue = null;\nconsole.log('Data value assigned null:', dataValue, ', Type:', typeof dataValue);\n\n// Function returning null - Indicating no data found or operation failed\nfunction fetchData() {\n  // Simulate scenario where no data is found\n  return null;\n}\nlet fetchedData = fetchData();\nconsole.log('Fetched data (null):', fetchedData, ', Type:', typeof fetchedData);\n\n// Checking for null and undefined - Using == and ===\nlet checkValue;\nif (checkValue == null) { // Checks for both null and undefined due to loose equality\n  console.log('checkValue is null or undefined (using ==)');\n}\nif (checkValue === undefined) {\n  console.log('checkValue is strictly undefined (using ===)');\n}\n\n// Experiment with different checks and scenarios"
+        }
+      ]
+    },
+    {
+      "id": "js-type-coercion",
+      "title": "Type Coercion in JavaScript",
+      "description": "Understand JavaScript's type coercion, how it works, and common scenarios where it occurs, especially with operators like `+`, `==`, and `!=`.",
+      "difficulty": "intermediate",
+      "category": "fundamentals",
+      "explanation": "Type coercion in JavaScript is the automatic or implicit conversion of values from one data type to another. It's a feature of JavaScript's dynamically-typed nature, where the interpreter automatically attempts to convert values to the expected data type when operators or functions are used with values of different types. This often happens in situations where an operation expects a certain type but receives another. Common scenarios where type coercion is prevalent include: Arithmetic operators, especially the `+` operator, which can perform both addition (for numbers) and string concatenation (for strings). Comparison operators like `==` and `!=` (loose equality and inequality), which perform type coercion before comparison, unlike strict equality `===` and strict inequality `!==` that do not. Logical operators, which often convert values to booleans in boolean contexts (e.g., in `if` conditions). Understanding type coercion is crucial for avoiding unexpected behavior and writing predictable JavaScript code. While coercion can sometimes be convenient, it can also lead to subtle bugs if not fully grasped. Best practice often recommends using strict equality (`===` and `!==`) to avoid implicit type coercion in comparisons, unless type coercion is intentionally desired and well-understood.",
+      "example": "// String coercion - Number converted to string for concatenation\nconsole.log('String + Number:', '5' + 3);       // Output: '53' (Number 3 is coerced to string '3')\nconsole.log('Number + String:', 3 + '5');       // Output: '35' (Number 3 is coerced to string '3')\nconsole.log('String + Boolean:', 'true' + true);  // Output: 'truetrue' (Boolean true is coerced to string 'true')\n\n// Number coercion - String converted to number for arithmetic operations\nconsole.log('String - Number:', '10' - 5);      // Output: 5 (String '10' is coerced to Number 10)\nconsole.log('String * Number:', '4' * 2);       // Output: 8 (String '4' is coerced to Number 4)\nconsole.log('String / Number:', '15' / 3);      // Output: 5 (String '15' is coerced to Number 15)\nconsole.log('String % Number:', '7' % 2);       // Output: 1 (String '7' is coerced to Number 7)\nconsole.log('String ** Number:', '2' ** 3);      // Output: 8 (String '2' is coerced to Number 2)\n\n// Boolean coercion - Values converted to boolean in logical contexts and comparisons\nconsole.log('Number == String (1 == '1'):', 1 == '1');      // Output: true (String '1' is coerced to Number 1 before comparison)\nconsole.log('Boolean == Number (true == 1):', true == 1);     // Output: true (Boolean true is coerced to Number 1)\nconsole.log('Boolean == String (false == '0'):', false == '0');   // Output: true (Boolean false is coerced to Number 0, String '0' to Number 0)\nconsole.log('Null == Undefined (null == undefined):', null == undefined); // Output: true (Both are loosely equal - special case)\nconsole.log('0 == false (0 == false):', 0 == false);         // Output: true (Boolean false is coerced to Number 0)\nconsole.log(''' == false ('' == false):', '' == false);        // Output: true (Boolean false is coerced to String '')\n\n// Falsy/Truthy coercion in logical context - Values coerced to boolean in if conditions\nif ('0') { // String '0' is truthy (non-empty string, even if it represents number 0)\n  console.log('String \"0\" is truthy in if condition'); // This block executes\n}\nif (0) { // Number 0 is falsy\n  console.log('Number 0 is truthy in if condition'); // This block does not execute\n}\nif (null) { // null is falsy\n  console.log('null is truthy in if condition'); // This block does not execute\n}\nif (undefined) { // undefined is falsy\n  console.log('undefined is truthy in if condition'); // This block does not execute\n}\n\n// Avoiding coercion with strict equality - No type conversion, strict comparison\nconsole.log('Strict Equal (1 === '1'):', 1 === '1');     // Output: false (No coercion, types are different - Number vs String)\nconsole.log('Strict Equal (true === 1):', true === 1);    // Output: false (No coercion, types are different - Boolean vs Number)\nconsole.log('Strict Equal (null === undefined):', null === undefined); // Output: false (No coercion, types are different - Null vs Undefined)",
+      "keyPoints": [
+        "Type coercion in JavaScript is the automatic, implicit conversion of values from one data type to another by the JavaScript engine, typically when operators are applied to values of different types.",
+        "Coercion commonly occurs with operators like `+` (string concatenation or addition depending on operands), `==` and `!=` (loose equality and inequality comparisons).",
+        "When using `+` operator, if one of the operands is a string, JavaScript usually coerces the other operand to a string and performs string concatenation. If both are numbers, it performs addition.",
+        "With arithmetic operators other than `+` (like `-`, `*`, `/`, `%`, `**`), JavaScript generally attempts to coerce strings to numbers. If the string cannot be converted to a valid number, it often results in `NaN`.",
+        "Loose equality (`==` and `!=`) performs type coercion before comparing values, which can sometimes lead to unexpected results. It attempts to convert operands to a common type, often number, before comparison.",
+        "Falsy values (false, 0, '', null, undefined, NaN) are coerced to `false` in boolean contexts (like in `if` conditions or with logical operators). All other values are coerced to `true` (truthy).",
+        "Strict equality (`===` and `!==`) does not perform type coercion. It checks for both value and type equality. If the types are different, the result is immediately `false` for `===` and `true` for `!==`.",
+        "Understanding type coercion helps in debugging and writing predictable JavaScript code. Be aware of implicit type conversions, especially with loose equality and the `+` operator.",
+        "For clearer and more predictable comparisons, especially when dealing with values of potentially different types, it is generally recommended to use strict equality (`===` and `!==`) to avoid unintended type coercion.",
+        "Explicit type conversion (using functions like `Number()`, `String()`, `Boolean()`, `parseInt()`, `parseFloat()`) can be used to intentionally control type conversions and make code more readable and maintainable when type conversion is required."
+      ],
+      "quiz": [
+        {
+          "question": "What is type coercion in JavaScript?",
+          "options": ["Explicit conversion of data types by the programmer", "Automatic or implicit conversion of data types by JavaScript", "A mechanism to prevent type conversion in JavaScript", "Throwing an error when data types mismatch"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the result of `'10' + 5` in JavaScript, and why?",
+          "options": ["`15` (Number), because JavaScript performs addition", "`'15'` (String), because JavaScript converts '10' to a number and adds", "`5` (Number), because JavaScript subtracts 5 from 10", "`'105'` (String), because JavaScript coerces 5 to a string and concatenates"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Does strict equality (`===`) in JavaScript perform type coercion before comparison?",
+          "options": ["Yes, it always performs type coercion", "No, it does not perform type coercion", "Sometimes, depending on the data types being compared", "Only when comparing numbers and strings"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "In a boolean context (like an `if` condition), what is `'0'` (the string '0') coerced to?",
+          "options": ["`true`", "`false`", "`null`", "`undefined`"],
+          "correctAnswer": 0
+        },
+        {
+          "question": "Which operator is more likely to lead to unexpected results due to type coercion: loose equality (`==`) or strict equality (`===`)?",
+          "options": ["Loose equality (`==`)", "Strict equality (`===`)", "Both are equally likely to cause unexpected results", "Neither is likely to cause unexpected results"],
           "correctAnswer": 0
         }
       ],
       "interactiveExamples": [
         {
-          "title": "Closure Example",
-          "code": "function counter() {\n  let count = 0;\n  return {\n    increment: () => ++count,\n    getCount: () => count\n  };\n}"
+          "title": "Type Coercion with + Operator - String vs Number",
+          "code": "// String concatenation vs. number addition with '+' operator\nconsole.log(''10' + 5 = ', '10' + 5); // String concatenation - Number 5 coerced to string '5'\nconsole.log('10 + 5 = ', 10 + 5);       // Number addition - Both operands are numbers\nconsole.log(''5' + '3' = ', '5' + '3'); // String concatenation - Both operands are strings\nconsole.log('5 + '3' = ', 5 + '3');   // String concatenation - Number 5 coerced to string '5'\n\n// Experiment with different combinations of strings and numbers using '+' and observe the results"
+        },
+        {
+          "title": "Loose vs. Strict Equality - Observing Type Coercion in Comparisons",
+          "code": "// Loose equality (==) - Demonstrating type coercion in comparisons\nconsole.log('1 == '1' : ', 1 == '1'); // String '1' coerced to Number 1, true\nconsole.log('true == 1 : ', true == 1); // Boolean true coerced to Number 1, true\nconsole.log('false == '0' : ', false == '0'); // Boolean false coerced to Number 0, String '0' to Number 0, true\nconsole.log('null == undefined : ', null == undefined); // Special case, true\n\n// Strict equality (===) - No type coercion, strict comparison\nconsole.log('1 === '1' : ', 1 === '1'); // Types are different (Number vs String), false\nconsole.log('true === 1 : ', true === 1); // Types are different (Boolean vs Number), false\nconsole.log('false === '0' : ', false === '0'); // Types are different (Boolean vs String), false\nconsole.log('null === undefined : ', null === undefined); // Types are different (Null vs Undefined), false\n\n// Observe the differences and understand how type coercion affects loose equality but not strict equality"
         }
       ]
-    }
+    },
+    {
+      "id": "js-error-handling",
+      "title": "Error Handling",
+      "description": "Learn about error handling in JavaScript using try, catch, finally, and how to throw and handle exceptions.",
+      "difficulty": "intermediate",
+      "category": "fundamentals",
+      "explanation": "Error handling in JavaScript is a critical aspect of writing robust and reliable code. It allows you to anticipate, manage, and gracefully recover from errors that may occur during program execution, rather than letting them crash your application or lead to unpredictable behavior. JavaScript provides structured error handling mechanisms using `try`, `catch`, and `finally` blocks. The `try` block encloses code that might potentially throw an error. If an error occurs within the `try` block, the normal flow of execution is interrupted, and control immediately jumps to the `catch` block. The `catch` block is designed to handle the error, allowing you to log the error, display a user-friendly error message, attempt to recover from the error, or perform other error-handling actions. The optional `finally` block is executed after both the `try` and `catch` blocks (or just after the `try` block if no error occurred), regardless of whether an error was thrown or caught. It's typically used for cleanup tasks like closing files, releasing resources, or finalizing operations that should always be performed. You can also explicitly generate errors using the `throw` statement, which allows you to create custom error objects or throw built-in error types like `Error`, `TypeError`, `RangeError`, etc., to signal exceptional conditions in your code. Effective error handling is essential for building applications that are resilient, user-friendly, and maintainable, especially in web development where unexpected inputs and network issues are common.",
+      "example": "// Try, catch, finally example - Handling potential division by zero error\nfunction safeDivide(numerator, denominator) {\n  try { // Code that might throw an error is placed in try block\n    if (denominator === 0) {\n      throw new Error('Division by zero error!'); // Explicitly throw an Error object\n    }\n    return numerator / denominator;\n  } catch (error) { // Catch block to handle errors thrown in try block\n    console.error('Error occurred during division:', error.message); // Log the error message\n    return null; // Return null or handle error as needed\n  } finally { // Finally block always executes, for cleanup or finalization\n    console.log('Division operation attempt completed (finally block executed).');\n  }\n}\n\nconsole.log('Result of safeDivide(10, 2):', safeDivide(10, 2));   // Output: 5 (normal execution)\nconsole.log('Result of safeDivide(5, 0):', safeDivide(5, 0));    // Output: null (error handled, returns null)\n\n// Throwing different types of errors - Demonstrating specific error types\nfunction checkAge(age) {\n  if (typeof age !== 'number') {\n    throw new TypeError('Age must be a number'); // Throw TypeError for type mismatch\n  } else if (age < 0) {\n    throw new RangeError('Age cannot be negative'); // Throw RangeError for out-of-range value\n  } else if (age < 18) {\n    throw new Error('You are too young to proceed'); // Generic Error for business logic condition\n  } else {\n    console.log('Age is valid and access granted.');\n  }\n}\n\ntry {\n  checkAge('twenty'); // This will throw a TypeError\n} catch (error) {\n  if (error instanceof TypeError) { // Check if the error is a TypeError\n    console.error('Type Error caught:', error.message);\n  } else { // Generic error handling for other error types\n    console.error('Generic Error caught:', error.message);\n  }\n}\n\ntry {\n  checkAge(-5);      // This will throw a RangeError\n} catch (error) {\n  if (error instanceof RangeError) { // Check if the error is a RangeError\n    console.error('Range Error caught:', error.message);\n  } else {\n    console.error('Generic Error caught:', error.message);\n  }\n}\n\ntry {\n  checkAge(15);      // This will throw a generic Error\n} catch (error) {\n  console.error('Generic Error caught:', error.message);\n}\n\ncheckAge(25);       // No error thrown - normal execution",
+      "keyPoints": [
+        "Error handling in JavaScript is primarily managed using `try`, `catch`, and `finally` blocks. This structured approach helps in gracefully managing potential runtime errors.",
+        "Code that is expected to potentially throw an error is placed within the `try` block. This block monitors for exceptions during its execution.",
+        "If an error occurs within the `try` block, the execution flow immediately jumps to the `catch` block. The `catch` block is used to handle the error and prevent program crashes.",
+        "The `catch` block receives an error object as its argument. This error object typically contains details about the error, such as `message` (error description), `name` (error type), and `stack` (call stack trace).",
+        "The optional `finally` block always executes after the `try` and `catch` blocks have completed, regardless of whether an error occurred or was caught. It's used for cleanup operations that must always be performed.",
+        "You can explicitly throw errors using the `throw` statement followed by an error object. You can throw built-in error types like `Error`, `TypeError`, `RangeError`, `SyntaxError`, or create custom error objects.",
+        "Use the `instanceof` operator in the `catch` block to check the type of error. This allows for specific error handling logic based on the error type (e.g., different handling for `TypeError` vs. `RangeError`).",
+        "Effective error handling is crucial for preventing application crashes, providing users with meaningful error messages, and ensuring a better user experience, especially in web applications.",
+        "Unhandled errors can propagate up the call stack and potentially crash the application or lead to unexpected behavior. Proper error handling prevents this and makes applications more robust.",
+        "Asynchronous error handling (e.g., with Promises and `async/await`) also utilizes `try...catch` blocks to handle promise rejections and errors in asynchronous operations, providing a consistent error handling pattern."
+      ],
+      "quiz": [
+        {
+          "question": "In JavaScript error handling, which block is used to enclose code that is expected to potentially throw an error?",
+          "options": ["`error`", "`catch`", "`try`", "`finally`"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Which block in a `try-catch-finally` structure is guaranteed to be executed regardless of whether an error occurred in the `try` block?",
+          "options": ["`error`", "`catch`", "`try`", "`finally`"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "How do you explicitly generate or 'raise' an error in JavaScript code?",
+          "options": ["Using the `error` keyword", "Using the `throw` keyword", "Using the `catch` keyword", "Errors are thrown automatically without a keyword"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the purpose of the `catch` block in error handling?",
+          "options": ["To define code that might throw an error", "To handle and recover from errors that occur in the `try` block", "To ensure code always runs after `try` and `catch`", "To prevent errors from occurring in the first place"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What operator can you use in a `catch` block to check the specific type of error that was caught (e.g., `TypeError`, `RangeError`)?",
+          "options": ["`typeof`", "`instanceof`", "`getErrorType()`", "`checkError()`"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Try-Catch-Finally in Action - Handling Division by Zero",
+          "code": "function interactiveSafeDivide(numeratorStr, denominatorStr) {\n  let numerator = Number(numeratorStr);\n  let denominator = Number(denominatorStr);\n\n  try {\n    console.log('Attempting division...');\n    if (isNaN(numerator) || isNaN(denominator)) {\n      throw new TypeError('Numerator and denominator must be numbers');\n    }\n    if (denominator === 0) {\n      throw new Error('Cannot divide by zero');\n    }\n    const result = numerator / denominator;\n    return `Result of division: ${result}`;\n  } catch (error) {\n    console.error('Error caught:', error.message);\n    return `Error: ${error.message}`; // Return error message to display\n  } finally {\n    console.log('Division attempt completed.');\n  }\n}\n\n// Get input from user (simulated via prompts - in real browser, use input fields)\nconst numInput = prompt('Enter numerator:');\nconst denInput = prompt('Enter denominator:');\n\nconst divisionResult = interactiveSafeDivide(numInput, denInput);\nalert(divisionResult); // Display result in an alert box\n\n// Try different inputs, including non-numbers and zero denominator, to see error handling"
+        },
+        {
+          "title": "Throwing Custom Errors - Input Validation Example",
+          "code": "function validateUserInput(userInput) {\n  if (typeof userInput !== 'string') {\n    throw new TypeError('Input must be a string');\n  } else if (userInput.length < 5) {\n    throw new RangeError('Input string is too short (minimum 5 characters)');\n  } else if (userInput.includes('@')) {\n    throw new Error('Input cannot contain '@' symbol'); // Custom business rule violation\n  } else {\n    return 'Input is valid';\n  }\n}\n\nfunction processUserInput(inputData) {\n  try {\n    const validationResult = validateUserInput(inputData);\n    console.log('Validation result:', validationResult);\n    alert('Input is valid: ' + validationResult); // Alert on success\n  } catch (error) {\n    let errorMessage = 'Validation failed: ' + error.message;\n    if (error instanceof TypeError) {\n      errorMessage = 'Type Error: ' + error.message;\n    } else if (error instanceof RangeError) {\n      errorMessage = 'Length Error: ' + error.message;\n    }\n    console.error(errorMessage);\n    alert(errorMessage); // Alert with error message\n  }\n}\n\n// Get user input (simulated prompt)\nconst inputString = prompt('Enter some text:');\nprocessUserInput(inputString);\n\n// Experiment with valid and invalid inputs (too short, contains '@', wrong type) to test error handling"
+        }
+      ]
+    },
+    {
+      "id": "js-dom-manipulation-basic",
+      "title": "Basic DOM Manipulation",
+      "description": "Introduction to Document Object Model (DOM) manipulation in JavaScript. Learn to select elements, modify content, attributes, and styles.",
+      "difficulty": "beginner",
+      "category": "dom",
+      "explanation": "The Document Object Model (DOM) is a cross-platform and language-independent convention for representing and interacting with objects in HTML, XHTML, and XML documents. Think of the DOM as a structured representation of an HTML document, where each part of the HTML (like tags, attributes, and text content) is represented as an object. These objects are organized in a tree-like structure, reflecting the hierarchy of the HTML document.  DOM manipulation in JavaScript is the process of using JavaScript code to access and modify this DOM tree. This allows you to dynamically update the content, structure, and style of a web page in response to user interactions or other events, without needing to reload the entire page. Key aspects of basic DOM manipulation include: Selecting HTML elements using various methods provided by the `document` object (like `getElementById`, `querySelector`, `querySelectorAll`). Modifying the text content of elements using properties like `textContent`. Changing the HTML content of elements using `innerHTML`. Getting and setting HTML attributes (like `class`, `id`, `src`, `href`) using methods like `getAttribute` and `setAttribute`. Applying inline styles to elements using the `style` property. Basic DOM manipulation is fundamental for creating interactive and dynamic web pages, enabling JavaScript to bring HTML documents to life by responding to user actions and updating the interface in real-time.",
+      "example": "// Selecting DOM elements - Different selection methods\nconst mainHeading = document.getElementById('main-heading'); // Select element by its ID\nconst paragraphElements = document.querySelectorAll('p');      // Select all paragraph <p> elements\nconst firstParagraph = document.querySelector('p:first-of-type');   // Select the very first paragraph\nconst containerDiv = document.querySelector('.content-area'); // Select the first element with class 'content-area'\n\nconsole.log('Heading element:', mainHeading); // Output: HTMLHeadingElement (if found)\nconsole.log('All paragraph elements:', paragraphElements); // Output: NodeList of paragraph elements\nconsole.log('First paragraph element:', firstParagraph); // Output: HTMLParagraphElement (if found)\nconsole.log('Container div element:', containerDiv); // Output: HTMLDivElement (if found)\n\n// Modifying text content - Changing the text displayed in elements\nif (mainHeading) {\n  mainHeading.textContent = 'Updated Heading Text via JavaScript'; // Change heading text\n}\nif (firstParagraph) {\n  firstParagraph.textContent = 'This paragraph's text content has been dynamically modified using textContent.'; // Change paragraph text\n}\n\n// Modifying HTML content - Injecting HTML markup into elements\nif (containerDiv) {\n  containerDiv.innerHTML = '<p>New paragraph added via <strong>innerHTML</strong>. <a href=\"#\">Example Link</a></p>'; // Add HTML content\n}\n\n// Modifying attributes - Setting attributes like href, class, id, etc.\nconst exampleLink = document.querySelector('#example-link'); // Select a link, assuming it was added via innerHTML above\nif (exampleLink) {\n  exampleLink.setAttribute('href', 'https://www.frontendmentor.io'); // Set href attribute\n  exampleLink.setAttribute('target', '_blank'); // Set target attribute to open in new tab\n  exampleLink.textContent = 'Visit Frontend Mentor'; // Change link text\n}\n\n// Modifying styles - Applying inline CSS styles to elements\nif (mainHeading) {\n  mainHeading.style.color = 'darkblue'; // Change text color\n  mainHeading.style.fontSize = '2.8em'; // Change font size\n  mainHeading.style.textAlign = 'center'; // Align text to center\n}\nif (firstParagraph) {\n  firstParagraph.style.backgroundColor = '#f0f0f0'; // Change background color\n  firstParagraph.style.padding = '12px'; // Add padding around text\n  firstParagraph.style.border = '1px solid #ccc'; // Add a border\n}",
+      "keyPoints": [
+        "The DOM (Document Object Model) is a platform-neutral interface that treats HTML, XML, or XHTML documents as a tree structure. Each node in the tree represents a part of the document, such as elements, attributes, or text.",
+        "JavaScript can access and manipulate the DOM to dynamically update web page content, structure, and styles. This is the foundation of interactivity in web pages.",
+        "Common methods for selecting DOM elements include: `document.getElementById(id)` (fastest for selecting by ID), `document.querySelector(selector)` (selects the first element matching a CSS selector), `document.querySelectorAll(selector)` (selects all elements matching a CSS selector), `document.getElementsByClassName(className)` (returns a live HTMLCollection of elements with a class name), `document.getElementsByTagName(tagName)` (returns a live HTMLCollection of elements with a tag name). For modern CSS selector-based selection, `querySelector` and `querySelectorAll` are generally preferred for their flexibility and power.",
+        "`textContent` property is used to get or set the text content of an element, excluding any HTML markup. It is generally safer than `innerHTML`, especially when dealing with user-generated content, as it prevents XSS (Cross-Site Scripting) attacks by escaping HTML entities.",
+        "`innerHTML` property is used to get or set the HTML content of an element, including HTML markup. Use with caution, especially when setting content that includes user input, due to potential security risks (XSS).",
+        "`setAttribute(attributeName, attributeValue)` method is used to set or change the value of an attribute on an HTML element. `getAttribute(attributeName)` method retrieves the current value of an attribute.",
+        "The `style` property of a DOM element is an object representing the inline styles of that element. You can modify CSS properties directly using JavaScript (e.g., `element.style.color = 'red'`, `element.style.fontSize = '1.5em'`). Styles set via JavaScript `style` property have higher precedence than styles from CSS stylesheets.",
+        "DOM manipulation is essential for creating dynamic web applications, handling user events, updating UI elements based on data changes, and building interactive user interfaces.",
+        "Performance considerations are important when manipulating the DOM, as frequent DOM operations can be relatively slow and impact page performance. It's best to batch DOM updates and minimize direct DOM manipulations where possible. Techniques like using document fragments or virtual DOM (in frameworks like React) can help optimize performance."
+      ],
+      "quiz": [
+        {
+          "question": "What does DOM stand for in the context of web development?",
+          "options": ["Data Object Model", "Document Order Model", "Document Object Manipulation", "Document Object Model"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Which JavaScript method is most efficient for selecting a *single* HTML element by its unique ID?",
+          "options": ["`document.querySelector()`", "`document.getElementsByClassName()`", "`document.getElementsByTagName()`", "`document.getElementById()`"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Which property should you use to change the *text* content of an HTML element, while avoiding potential security issues when handling user input?",
+          "options": ["`innerHTML`", "`textContent`", "`innerText`", "`element.content`"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "What is the primary way to apply *inline* CSS styles to an HTML element using JavaScript DOM manipulation?",
+          "options": ["Using `element.setAttribute('style', '...')`", "Using `element.style.cssText = '...'`", "Using `element.style.setProperty('...', '...')`", "All of the above are valid"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Why is it important to be mindful of performance when performing DOM manipulation in JavaScript?",
+          "options": ["DOM operations are always very fast and efficient", "Frequent DOM manipulations can be slow and impact page rendering performance", "DOM manipulation only affects backend performance, not frontend", "Modern browsers automatically optimize all DOM manipulations"],
+          "correctAnswer": 1
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "DOM Element Selection - Practice with Different Selectors",
+          "code": "// HTML structure (in index.html):\n// <div id='selector-demo'>\n//   <h1 id='demo-title'>DOM Selector Demo</h1>\n//   <p class='demo-paragraph'>First paragraph with class 'demo-paragraph'.</p>\n//   <p class='demo-paragraph'>Second paragraph with class 'demo-paragraph'.</p>\n//   <ul id='demo-list'>\n//     <li class='list-item'>Item 1</li>\n//     <li class='list-item'>Item 2</li>\n//   </ul>\n// </div>\n\n// JavaScript code (in script.js):\nconst titleElementSelector = document.querySelector('#demo-title'); // Select by ID using querySelector\nconst paragraphElementsSelector = document.querySelectorAll('.demo-paragraph'); // Select by class using querySelectorAll\nconst listElementById = document.getElementById('demo-list'); // Select list by ID using getElementById\nconst listItemsByClass = document.getElementsByClassName('list-item'); // Select list items by class using getElementsByClassName\n\nconsole.log('Title Element (querySelector #id):', titleElementSelector);\nconsole.log('Paragraph Elements (querySelectorAll .class):', paragraphElementsSelector);\nconsole.log('List Element (getElementById):', listElementById);\nconsole.log('List Items (getElementsByClassName):', listItemsByClass);\n\n// Experiment by selecting other elements using different selectors and methods"
+        },
+        {
+          "title": "Modifying DOM Content and Attributes - Dynamic Updates",
+          "code": "// HTML structure (in index.html):\n// <div id='content-area-modify'>\n//   <h2 id='content-title'>Initial Title</h2>\n//   <p id='content-paragraph'>This is the initial paragraph content.</p>\n//   <button id='content-button'>Click to Change</button>\n//   <a href='#' id='content-link'>Example Link</a>\n// </div>\n\n// JavaScript code (in script.js):\nconst contentTitle = document.getElementById('content-title');\nconst contentParagraph = document.getElementById('content-paragraph');\nconst contentButton = document.getElementById('content-button');\nconst contentLink = document.getElementById('content-link');\n\ncontentButton.addEventListener('click', function() {\n  contentTitle.textContent = 'Title Updated by Button Click!'; // Change text content\n  contentParagraph.innerHTML = 'Paragraph content changed to <strong>emphasized text</strong> using innerHTML.'; // Change HTML content\n  contentLink.setAttribute('href', 'https://www.mozilla.org'); // Change link href attribute\n  contentLink.textContent = 'Visit MDN'; // Change link text\n});\n\n// Click the button to see the content and attributes of elements change dynamically"
+        }
+      ]
+    },
+     {
+      "id": "js-events-basic",
+      "title": "Basic JavaScript Events",
+      "description": "Introduction to JavaScript events. Learn about event listeners, common event types, and handling user interactions.",
+      "difficulty": "beginner",
+      "category": "dom-events",
+      "explanation": "JavaScript events are signals or notifications that something has happened in the browser environment. These occurrences can be triggered by user interactions (like mouse clicks, key presses, form submissions), browser actions (like page load completion, window resizing), or other system-level events. Events are the fundamental mechanism for making web pages interactive and responsive. To react to events, you need to use JavaScript to 'listen' for specific events on HTML elements. This is done by attaching event listeners to these elements. An event listener is essentially a function that you set up to be executed when a particular type of event occurs on the element it's attached to.  JavaScript provides a rich set of event types, categorized broadly into: Mouse events (e.g., `click`, `mouseover`, `mouseout`, `mousedown`, `mouseup`, `mousemove`) that are triggered by mouse interactions. Keyboard events (e.g., `keydown`, `keypress`, `keyup`) for handling keyboard input. Form events (e.g., `submit`, `focus`, `blur`, `change`, `input`) for managing form interactions. Document/Window events (e.g., `load`, `DOMContentLoaded`, `resize`, `scroll`) related to the browser window and document loading. Touch events (e.g., `touchstart`, `touchmove`, `touchend`, `touchcancel`) for touch interactions on touch devices. Understanding events and event handling is crucial for creating dynamic and interactive web experiences, allowing your JavaScript code to respond to user actions and browser states.",
+      "example": "// Adding a click event listener to a button - Responding to button clicks\nconst clickMeButton = document.getElementById('clickMeButton');\nif (clickMeButton) {\n  clickMeButton.addEventListener('click', function() { // Anonymous function as event handler\n    alert('Button with ID 'clickMeButton' was clicked!'); // Action to perform on click\n  });\n}\n\n// Adding click event listener using arrow function - More concise syntax\nconst anotherButtonExample = document.getElementById('anotherButtonExample');\nif (anotherButtonExample) {\n  anotherButtonExample.addEventListener('click', () => { // Arrow function as event handler\n    console.log('Button with ID 'anotherButtonExample' clicked (Arrow function)!');\n  });\n}\n\n// Example of mouseover and mouseout events - Changing element style on hover\nconst hoverAreaElement = document.getElementById('hoverAreaElement');\nif (hoverAreaElement) {\n  hoverAreaElement.addEventListener('mouseover', function() { // Mouse pointer enters the element\n    hoverAreaElement.style.backgroundColor = 'lightcoral'; // Change background color on mouseover\n  });\n\n  hoverAreaElement.addEventListener('mouseout', function() { // Mouse pointer leaves the element\n    hoverAreaElement.style.backgroundColor = 'white'; // Reset background color on mouseout\n  });\n}\n\n// Example of keydown event on an input field - Logging key presses\nconst inputFieldElement = document.getElementById('inputFieldElement');\nif (inputFieldElement) {\n  inputFieldElement.addEventListener('keydown', function(event) { // Key press event listener\n    console.log('Key pressed:', event.key, ', Code:', event.code); // Log the key and key code\n  });\n}\n\n// Example of form submit event - Preventing default form submission\nconst sampleFormElement = document.getElementById('sampleFormElement');\nif (sampleFormElement) {\n  sampleFormElement.addEventListener('submit', function(event) { // Form submit event listener\n    event.preventDefault(); // Prevent the default form submission action (page reload)\n    alert('Form submission prevented by JavaScript!'); // Custom form handling message\n    // Here you would typically add your custom form data handling logic (e.g., AJAX request)\n  });\n}",
+      "keyPoints": [
+        "JavaScript events are actions or occurrences that happen in the browser, triggered by user interactions, browser actions, or system events. They are the basis for interactivity in web pages.",
+        "Event listeners are functions that are attached to HTML elements to 'listen' for specific events. When the event occurs on the element, the listener function is executed.",
+        "Event listeners are added using the `element.addEventListener(eventType, listenerFunction)` method. `eventType` is a string specifying the event type (e.g., 'click', 'mouseover'), and `listenerFunction` is the function to execute when the event occurs.",
+        "Common event types include: Mouse events (click, mouseover, mouseout, mousedown, mouseup, mousemove, etc.), Keyboard events (keydown, keypress, keyup), Form events (submit, reset, focus, blur, change, input), Document/Window events (load, DOMContentLoaded, scroll, resize, unload, etc.), Touch events (touchstart, touchmove, touchend, touchcancel).",
+        "When an event listener function is executed, it receives an event object as its first argument. This event object contains properties and methods that provide detailed information about the event that occurred.",
+        "Key properties of the event object include: `event.type` (the type of event that occurred, e.g., 'click'), `event.target` (the DOM element that triggered the event), `event.currentTarget` (the element to which the event listener is attached), `event.key` and `event.code` (for keyboard events), `event.clientX` and `event.clientY` (mouse coordinates for mouse events), and `event.preventDefault()` method.",
+        "The `event.preventDefault()` method is frequently used, especially with form `submit` events and link clicks, to prevent the browser's default action for that event (e.g., preventing form submission to a server or preventing navigation to a URL when a link is clicked).",
+        "Event bubbling and event capturing are two phases in the DOM event flow model, describing the order in which event listeners are called when an event occurs on a nested element. By default, events propagate in the bubbling phase (from the target element up to the document root).",
+        "Event delegation is a powerful technique for efficiently handling events for a large number of similar elements. Instead of attaching event listeners to each element, you attach a single listener to a common ancestor element and use event properties like `event.target` to determine which element within the ancestor triggered the event."
+      ],
+      "quiz": [
+        {
+          "question": "What is a JavaScript event listener primarily used for?",
+          "options": ["To style HTML elements dynamically", "To execute code repeatedly at intervals", "To define HTML element structure", "To execute a function in response to a specific event on an HTML element"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Which method is used to attach an event listener to an HTML element in JavaScript?",
+          "options": ["`element.attachListener()`", "`element.setEventListener()`", "`element.on()`", "`element.addEventListener()`"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "When an event listener function is executed, what is passed as the first argument to this function?",
+          "options": ["The HTML element that triggered the event", "The type of event that occurred (as a string)", "An event object containing details about the event", "The return value of the event listener function"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "What is the purpose of `event.preventDefault()` in JavaScript event handling?",
+          "options": ["To prevent the event listener from being executed", "To stop the event from propagating up the DOM tree (event bubbling)", "To cancel the default action associated with the event (e.g., form submission, link navigation)", "To pause the event handling process temporarily"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Which of the following is an example of a *form event* in JavaScript?",
+          "options": ["`click`", "`mouseover`", "`keydown`", "`submit`"],
+          "correctAnswer": 3
+        }
+      ],
+      "interactiveExamples": [
+        {
+          "title": "Click Event Listener - Dynamically Changing Text",
+          "code": "// HTML structure (in index.html):\n// <button id='clickButtonExample'>Click to Change Text</button>\n// <div id='textDisplayArea'>Initial Text</div>\n\n// JavaScript code (in script.js):\nconst buttonElementClick = document.getElementById('clickButtonExample');\nconst displayAreaElement = document.getElementById('textDisplayArea');\n\nbuttonElementClick.addEventListener('click', function() {\n  displayAreaElement.textContent = 'Text changed dynamically on button click!'; // Update text content\n});\n\n// Click the button to see the text in the div change dynamically"
+        },
+        {
+          "title": "Mouseover and Mouseout Events - Interactive Style Change",
+          "code": "// HTML structure (in index.html):\n// <div id='hoverDivArea' style='width: 150px; height: 100px; border: 2px solid blue; text-align: center; line-height: 100px;'>\n//   Hover Here\n// </div>\n\n// JavaScript code (in script.js):\nconst hoverDiv = document.getElementById('hoverDivArea');\n\nhoverDiv.addEventListener('mouseover', function() {\n  hoverDiv.style.backgroundColor = 'lightblue'; // Change background on mouseover\n  hoverDiv.style.color = 'white';\n  hoverDiv.textContent = 'Mouse Over!';\n});\n\nhoverDiv.addEventListener('mouseout', function() {\n  hoverDiv.style.backgroundColor = 'white'; // Reset background on mouseout\n  hoverDiv.style.color = 'black';\n  hoverDiv.textContent = 'Hover Here';\n});\n\n// Hover your mouse over and out of the div area to see the style and text change"
+        }
+      ]
+    },
+    {
+      "id": "js-strict-mode",
+      "title": "Strict Mode",
+      "description": "Learn about JavaScript strict mode, how to enable it, and the benefits of using strict mode for writing safer and cleaner code.",
+      "difficulty": "intermediate",
+      "category": "best-practices",
+      "explanation": "Strict mode in JavaScript is a deliberate choice to enforce stricter parsing and error handling rules on your JavaScript code at runtime. Introduced in ECMAScript 5, strict mode is enabled by adding `'use strict'` or `\"use strict\"` as the very first statement in a JavaScript file (script) or within a function. Once enabled, strict mode changes several JavaScript behaviors, making the language's semantics more rigorous and less forgiving of common coding mistakes that might otherwise be silently ignored or lead to unexpected behavior in 'sloppy' (non-strict) mode. The primary goals of strict mode are to eliminate some JavaScript 'silent errors' by changing them to explicit errors (making debugging easier), fix some quirks that could make it difficult for JavaScript engines to perform optimizations (potentially improving performance), and to forbid certain syntax that is likely to be problematic in future versions of ECMAScript (helping to future-proof code). Using strict mode is widely considered a best practice for writing modern, cleaner, more maintainable, and safer JavaScript code, especially in professional and collaborative projects. It helps catch errors early in development and promotes better coding habits.",
+      "example": "// Strict mode enabled for an entire script (file)\n'use strict'; // Must be the first statement in the script\n\n// Undeclared variable assignment in strict mode - Throws ReferenceError\n// x = 10; // Uncommenting this line will throw ReferenceError: x is not defined\n\nlet y = 20; // Declared variable - Works fine in strict mode\nconsole.log('Declared variable y in strict mode:', y); // Output: 20\n\n// Strict mode enabled within a function - Scope of strict mode is function-local\nfunction exampleStrictFunction() {\n  'use strict'; // Strict mode is only active within this function\n  // Undeclared variable inside strict function - Throws ReferenceError\n  // z = 30; // Uncommenting this line will throw ReferenceError: z is not defined\n  let w = 40; // Declared variable - Works fine within strict function\n  console.log('Declared variable w in strict function:', w); // Output: 40\n}\nexampleStrictFunction();\n\n// 'this' keyword in strict mode - 'this' is undefined in functions called directly\nfunction checkThisInStrict() {\n  'use strict';\n  console.log('this' in strict function:', this === undefined ? 'undefined' : this); // Output: undefined\n}\ncheckThisInStrict(); // 'this' is undefined in strict mode for functions called directly\n\nfunction checkThisInNonStrict() {\n  console.log(''this' in non-strict function:', this === window ? 'global object (window)' : this); // Output: global object (window in browsers)\n}\ncheckThisInNonStrict(); // 'this' is the global object (window in browsers) in non-strict mode\n\n// Strict mode prevents duplicate parameter names in function definitions - SyntaxError\n// function functionWithDuplicateParams(a, a) { // Uncommenting this function declaration will cause SyntaxError\n//   'use strict';\n//   return a + a;\n// }\n\n// Octal numeric literals are not allowed in strict mode - SyntaxError\n// let octalNumber = 010; // In non-strict mode, 010 is octal for 8. In strict mode, it's a SyntaxError.\n// 'use strict';\n// let strictOctalNumber = 010; // Uncommenting this line will cause SyntaxError: Octal literals are not allowed in strict mode.",
+      "keyPoints": [
+        "Strict mode is enabled by adding the directive `'use strict'` or `\"use strict\"` as the first line of a JavaScript file (to apply to the entire script) or at the beginning of a function body (to apply strict mode only to that function).",
+        "Strict mode prevents accidental creation of global variables. Assigning a value to an undeclared variable in strict mode throws a `ReferenceError`, making it easier to catch unintentional global variable leaks.",
+        "In strict mode, the value of `this` inside functions called directly (not as methods or constructors) is `undefined` instead of the global object (`window` in browsers). This prevents accidental modification of the global object.",
+        "Strict mode prohibits duplicate parameter names in function definitions. In non-strict mode, duplicate parameter names are allowed, but only the last occurrence is accessible within the function. Strict mode makes this a `SyntaxError`",
+    "Strict mode disallows octal numeric literals (e.g., `010` which is 8 in octal). In strict mode, using octal literals results in a `SyntaxError`. Leading zeros in numbers are treated as decimal numbers in strict mode.",
+            "Strict mode makes assignments to read-only properties on objects and attempts to add properties to non-extensible objects throw `TypeError` errors. In non-strict mode, these operations might fail silently.",
+            "Attempting to delete undeletable properties (like built-in properties or variables declared with `var` in global scope in non-strict mode) will throw a `SyntaxError` in strict mode, whereas in non-strict mode, these delete operations might be ignored.",
+            "`eval()` in strict mode operates in its own scope. Variables declared inside `eval()` in strict mode are not created in the surrounding scope, preventing potential scope pollution.",
+            "Using strict mode is a proactive approach to writing cleaner, safer, and more maintainable JavaScript code. It helps catch common mistakes and encourages better coding practices by enforcing stricter language rules.",
+            "It is highly recommended to use strict mode in all modern JavaScript projects, especially for web frontend development, to benefit from its error detection and code quality enhancements."
+          ],
+          "quiz": [
+            {
+              "question": "How do you enable strict mode for a single JavaScript function?",
+              "options": ["By adding `\"strict mode\";` at the end of the function", "By adding `'use-strict';` at the beginning of the function body", "By adding `'use strict';` as the first statement inside the function body", "Strict mode cannot be enabled for individual functions, only for entire scripts"],
+              "correctAnswer": 2
+            },
+            {
+              "question": "In strict mode, what is the value of `this` in a regular function (not a method or arrow function) when called in the global context?",
+              "options": ["The global object (window in browsers)", "The function itself", "`undefined`", "It depends on how the function is called"],
+              "correctAnswer": 2
+            },
+            {
+              "question": "Which of the following actions will result in an error in strict mode but might not in sloppy mode?",
+              "options": ["Declaring a variable with `let`", "Assigning a value to a property of an object", "Assigning a value to an undeclared variable", "Calling a function"],
+              "correctAnswer": 2
+            },
+            {
+              "question": "What is one of the primary benefits of using strict mode in JavaScript?",
+              "options": ["It makes JavaScript code run faster", "It prevents all types of errors in JavaScript", "It helps catch common coding mistakes and promotes cleaner code", "It automatically fixes errors in your code"],
+              "correctAnswer": 2
+            },
+            {
+              "question": "Are octal numeric literals allowed in JavaScript strict mode?",
+              "options": ["Yes, they are allowed and treated as octal numbers", "Yes, they are allowed but treated as decimal numbers", "No, they are not allowed and result in a `SyntaxError`", "They are allowed only in specific contexts within strict mode"],
+              "correctAnswer": 2
+            }
+          ],
+          "interactiveExamples": [
+            {
+              "title": "Strict Mode - Undeclared Variable Error",
+              "code": "// Run in non-strict mode (for comparison)\nfunction nonStrictModeTest() {\n  mistypedVar = 'Global in sloppy mode'; // No 'use strict', accidental global\n  console.log('Non-strict mode: mistypedVar is now global:', mistypedVar);\n}\nnonStrictModeTest();\nconsole.log('Global access in non-strict mode:', mistypedVar);\n\n// Run in strict mode\nfunction strictModeVarErrorTest() {\n  'use strict';\n  // mistypedVarStrict = 'Error in strict mode'; // Uncommenting this will throw ReferenceError\n  let declaredVar = 'Correct in strict mode';\n  console.log('Strict mode: declaredVar works:', declaredVar);\n}\nstrictModeVarErrorTest();\n// console.log('Global access attempt in strict mode:', mistypedVarStrict); // Error - mistypedVarStrict is not defined\n\n// Observe the ReferenceError in strict mode when trying to use an undeclared variable"
+            },
+            {
+              "title": "Strict Mode - 'this' Keyword Behavior Difference",
+              "code": "// 'this' in a function in non-strict mode\nfunction nonStrictThisContext() {\n  console.log('Non-strict mode 'this' === window:', this === window); // In browser, 'this' is global window object\n}\nnonStrictThisContext();\n\n// 'this' in a function in strict mode\nfunction strictThisContext() {\n  'use strict';\n  console.log('Strict mode 'this' === undefined:', this === undefined); // 'this' is undefined in strict mode\n}\nstrictThisContext();\n\n// Class methods and 'this' are implicitly in strict mode behavior in modern JS\nclass ExampleClass {\n  classMethodThis() {\n    console.log('Class method 'this' (implicitly strict):', this); // 'this' is instance of ExampleClass\n  }\n}\nconst classInstance = new ExampleClass();\nclassInstance.classMethodThis();\n\n// Compare 'this' behavior in strict vs. non-strict functions"
+            }
+          ]
+        }
   ]
-} 
+}
+
+
+
+
+
+

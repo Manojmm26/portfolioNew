@@ -17,7 +17,7 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
     <div class="list-container">
       <header class="list-header">
         <div class="header-content">
-          <h1>CSS Concepts</h1>
+          <h1>CSS Concepts ({{filteredConcepts.length}})</h1>
           <p>Learn CSS from basic to advanced concepts with interactive examples and quizzes.</p>
         </div>
         
