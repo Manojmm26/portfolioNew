@@ -33,4 +33,21 @@ export class AngularConceptsService {
   getConcepts(): Observable<AngularConceptsResponse> {
     return this.http.get<AngularConceptsResponse>('/assets/data/angular-concepts.json');
   }
+
+  getConcept(id: string): Observable<AngularConcept> {
+    return new Observable(observer => {
+      this.getConcepts().subscribe({
+        next: (response) => {
+          const concept = response.concepts.find(c => c.id === id);
+          if (concept) {
+            observer.next(concept);
+          } else {
+            observer.error('Concept not found');
+          }
+          observer.complete();
+        },
+        error: (error) => observer.error(error)
+      });
+    });
+  }
 } 

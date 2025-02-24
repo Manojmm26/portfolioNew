@@ -573,16 +573,23 @@ export class JavascriptConceptComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const conceptId = this.route.snapshot.paramMap.get('conceptId');
+    const conceptId = this.route.snapshot.paramMap.get('id');
     if (conceptId) {
-      this.conceptService.getConcept(conceptId).subscribe(content => {
-        if (content) {
-          this.content = content;
-          this.currentCode = content.example;
-          this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
-            content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-          );
-          this.checkSyntax();
+      this.conceptService.getConcept(conceptId).subscribe(concept => {
+        if (concept) {
+          this.content = concept;
+          if (concept.explanation) {
+            this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
+              concept.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            );
+          }
+          this.currentCode = concept.example || '';
+          setTimeout(() => {
+            Prism.highlightAll();
+          });
+        } else {
+          console.error('Concept not found');
+          // Handle concept not found case
         }
       });
     }

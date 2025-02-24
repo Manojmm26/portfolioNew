@@ -430,16 +430,23 @@ export class AngularConceptComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const conceptId = this.route.snapshot.paramMap.get('conceptId');
+    const conceptId = this.route.snapshot.paramMap.get('id');
     if (conceptId) {
-      this.conceptsService.getConcepts().subscribe(response => {
-        this.content = response.concepts.find(c => c.id === conceptId) || null;
-        if (this.content) {
-          this.currentCode = this.content.example;
+      this.conceptsService.getConcept(conceptId).subscribe({
+        next: (concept: AngularConcept) => {
+          this.content = concept;
           this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
-            this.content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            concept.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
           );
+          this.currentCode = concept.example;
           this.updatePreview();
+          setTimeout(() => {
+            Prism.highlightAll();
+          });
+        },
+        error: (error) => {
+          console.error('Error loading concept:', error);
+          // Handle error appropriately
         }
       });
     }
