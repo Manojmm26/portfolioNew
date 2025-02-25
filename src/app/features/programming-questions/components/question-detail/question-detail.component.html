@@ -77,18 +77,20 @@
               </mat-form-field>
             </div>
             <div class="editor-actions">
-              <button mat-button color="warn" (click)="resetCode(question)" [disabled]="isRunning">
-                <mat-icon>restart_alt</mat-icon>
-                Reset Code
-              </button>
-              <button mat-button color="primary" (click)="copyCode(code)" [disabled]="isRunning">
-                <mat-icon>content_copy</mat-icon>
-                Copy Code
-              </button>
-              <button mat-raised-button color="primary" (click)="runCode()" [disabled]="isRunning">
-                <mat-icon>play_arrow</mat-icon>
-                {{ isRunning ? 'Running...' : 'Run Code' }}
-              </button>
+              <div class="action-buttons">
+                <button mat-button color="warn" (click)="resetCode(question)" [disabled]="isRunning">
+                  <mat-icon>restart_alt</mat-icon>
+                  <span class="button-text">Reset</span>
+                </button>
+                <button mat-button color="primary" (click)="copyCode(code)" [disabled]="isRunning">
+                  <mat-icon>content_copy</mat-icon>
+                  <span class="button-text">Copy</span>
+                </button>
+                <button mat-raised-button color="primary" (click)="runCode()" [disabled]="isRunning">
+                  <mat-icon>play_arrow</mat-icon>
+                  <span class="button-text">{{ isRunning ? 'Running...' : 'Run' }}</span>
+                </button>
+              </div>
             </div>
           </div>
 

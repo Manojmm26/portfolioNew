@@ -31,7 +31,7 @@ export class AngularConceptsService {
   constructor(private http: HttpClient) {}
 
   getConcepts(): Observable<AngularConceptsResponse> {
-    return this.http.get<AngularConceptsResponse>('/assets/data/angular-concepts.json');
+    return this.http.get<AngularConceptsResponse>('./assets/data/angular-concepts.json');
   }
 
   getConcept(id: string): Observable<AngularConcept> {

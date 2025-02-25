@@ -192,28 +192,61 @@
 
     .editor-header {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
       margin-bottom: 1rem;
 
-      .solution-selector {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-
-        h3 {
-          margin: 0;
-        }
-
-        mat-form-field {
-          width: 250px;
-        }
+      .mat-form-field {
+        min-width: 200px;
+        flex: 1;
       }
 
       .editor-actions {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
+        width: 100%;
+        margin-top: 0.5rem;
+        
+        .action-buttons {
+          display: flex;
+          gap: 8px;
+          justify-content: flex-end;
+          
+          button {
+            min-width: auto;
+            padding: 0 12px;
+            
+            .mat-icon {
+              margin-right: 4px;
+            }
+          }
+        }
+      }
+    }
+
+    @media screen and (min-width: 601px) {
+      .editor-header {
+        .editor-actions {
+          width: auto;
+          margin-top: 0;
+        }
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .editor-header {
+        .editor-actions {
+          .action-buttons {
+            justify-content: stretch;
+            
+            button {
+              flex: 1;
+              
+              .button-text {
+                font-size: 14px;
+              }
+            }
+          }
+        }
       }
     }
 
