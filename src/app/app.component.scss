@@ -4,17 +4,24 @@
 
 mat-sidenav-container {
   height: calc(100vh - 64px);
+  background-color: var(--background-color);
+  transition: background-color var(--transition-speed) ease;
 }
 
 .app-sidenav {
   width: 250px;
   padding: 16px;
+  background-color: var(--surface-color);
+  border-right: 1px solid var(--border-color);
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
 }
 
 .content-container {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  color: var(--text-color);
+  transition: color var(--transition-speed) ease;
 }
 
 mat-nav-list {
@@ -22,13 +29,53 @@ mat-nav-list {
     display: flex;
     align-items: center;
     gap: 12px;
+    color: var(--text-color);
+    transition: color var(--transition-speed) ease;
     
     mat-icon {
       margin-right: 8px;
+      color: var(--text-light);
+      transition: color var(--transition-speed) ease;
+    }
+
+    span {
+      color: var(--text-color);
+      transition: color var(--transition-speed) ease;
+    }
+
+    &:hover {
+      background-color: var(--shadow-color);
+      
+      mat-icon {
+        color: var(--primary-color);
+      }
+      
+      span {
+        color: var(--primary-color);
+      }
     }
   }
 }
 
 .active {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--primary-light) !important;
+  color: var(--text-on-primary) !important;
+
+  mat-icon {
+    color: var(--text-on-primary) !important;
+  }
+  
+  span {
+    color: var(--text-on-primary) !important;
+  }
+}
+
+mat-toolbar {
+  background-color: var(--primary-color) !important;
+  color: var(--text-on-primary) !important;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.fill-remaining-space {
+  flex: 1 1 auto;
 }

@@ -1,0 +1,28 @@
+.theme-switcher {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 8px;
+
+  mat-button-toggle-group {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+  }
+
+  mat-button-toggle {
+    background-color: var(--surface-color);
+    color: var(--text-light);
+    transition: all var(--transition-speed) ease;
+
+    &.mat-button-toggle-checked {
+      background-color: var(--primary-color);
+      color: var(--text-on-primary);
+    }
+
+    .mat-icon {
+      margin: 0;
+    }
+  }
+}

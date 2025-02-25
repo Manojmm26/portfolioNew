@@ -102,6 +102,9 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: all var(--transition-speed) ease;
 
       .list-header {
         text-align: center;
@@ -109,13 +112,13 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
 
         h1 {
           font-size: 2.5rem;
-          color: #333;
+          color: var(--text-color);
           margin-bottom: 1rem;
         }
 
         p {
           font-size: 1.2rem;
-          color: #666;
+          color: var(--text-light);
         }
       }
 
@@ -141,11 +144,14 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
 
         .concept-card {
           cursor: pointer;
-          transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+          transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+          background-color: var(--card-color);
+          border: 1px solid var(--border-color);
+          box-shadow: 0 4px 8px var(--shadow-color);
 
           &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px var(--shadow-color);
           }
 
           mat-card-header {
@@ -156,20 +162,55 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
 
             mat-card-title {
               font-size: 1.5rem;
-              color: #333;
+              color: var(--text-color);
+              margin-bottom: 0.5rem;
+            }
+
+            mat-chip-set {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+              margin: 0;
+              padding: 0;
+            }
+
+            mat-chip {
+              height: 24px;
+              font-size: 0.85rem;
+              padding: 0 8px;
+              
+              mat-icon {
+                font-size: 16px;
+                height: 16px;
+                width: 16px;
+                margin-right: 4px;
+              }
+
+              &.beginner { 
+                background-color: var(--easy-bg); 
+                color: var(--easy-text); 
+              }
+              &.intermediate { 
+                background-color: var(--medium-bg); 
+                color: var(--medium-text); 
+              }
+              &.advanced { 
+                background-color: var(--hard-bg); 
+                color: var(--hard-text); 
+              }
             }
           }
 
           mat-card-content {
             p {
-              color: #666;
+              color: var(--text-color);
               margin-bottom: 1rem;
             }
 
             .concept-meta {
               display: flex;
               gap: 1rem;
-              color: #666;
+              color: var(--text-light);
 
               .meta-item {
                 display: flex;
@@ -180,6 +221,7 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
                   font-size: 1.2rem;
                   width: 1.2rem;
                   height: 1.2rem;
+                  color: var(--text-light);
                 }
               }
             }
@@ -187,36 +229,15 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
 
           mat-card-actions {
             padding: 1rem;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
 
             button {
               display: flex;
               align-items: center;
               gap: 0.5rem;
+              color: var(--primary-color);
             }
           }
-
-          mat-chip {
-            &.beginner { background-color: #4CAF50; color: white; }
-            &.intermediate { background-color: #FF9800; color: white; }
-            &.advanced { background-color: #F44336; color: white; }
-          }
-        }
-      }
-
-      @media (max-width: 768px) {
-        padding: 1rem;
-
-        .list-header {
-          margin-bottom: 2rem;
-
-          h1 {
-            font-size: 2rem;
-          }
-        }
-
-        .concepts-grid {
-          grid-template-columns: 1fr;
         }
       }
     }

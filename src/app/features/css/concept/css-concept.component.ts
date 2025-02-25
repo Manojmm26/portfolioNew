@@ -147,9 +147,11 @@ declare var Prism: any;
   `,
   styles: [`
     .concept-container {
+      padding: 2rem;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      background-color: var(--theme-background-color);
+      color: var(--theme-text-color);
     }
 
     .concept-header {
@@ -160,17 +162,33 @@ declare var Prism: any;
       h1 {
         font-size: 2.5rem;
         margin-bottom: 1rem;
+        color: var(--theme-text-color);
       }
 
       p {
         font-size: 1.1rem;
         line-height: 1.6;
-        color: rgba(0, 0, 0, 0.7);
+        color: var(--theme-secondary-text-color);
       }
     }
 
     .concept-meta {
       margin: 1rem 0;
+      
+      .beginner {
+        background-color: var(--theme-beginner-color) !important;
+        color: var(--theme-beginner-text-color) !important;
+      }
+      
+      .intermediate {
+        background-color: var(--theme-intermediate-color) !important;
+        color: var(--theme-intermediate-text-color) !important;
+      }
+      
+      .advanced {
+        background-color: var(--theme-advanced-color) !important;
+        color: var(--theme-advanced-text-color) !important;
+      }
     }
 
     .tab-content {
@@ -187,7 +205,7 @@ declare var Prism: any;
     }
 
     .mini-editor {
-      background: #f5f5f5;
+      background: var(--theme-card-background);
       border-radius: 4px;
       padding: 1rem;
       margin: 1rem 0;
@@ -200,33 +218,36 @@ declare var Prism: any;
       margin-bottom: 0.5rem;
     }
 
-    .code-block {
-      background: #1e1e1e;
+    pre {
+      background: var(--theme-code-background);
       border-radius: 4px;
       padding: 1rem;
       margin: 0;
       overflow-x: auto;
+      color: var(--theme-code-text-color);
     }
 
     .example-result {
       margin-top: 1rem;
       padding: 1rem;
-      background: white;
+      background: var(--theme-card-background);
       border-radius: 4px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--theme-border-color);
     }
 
     .key-points {
       margin-top: 2rem;
       padding: 1.5rem;
-      background: #f8f9fa;
+      background: var(--theme-card-background);
       border-radius: 8px;
+      border: 1px solid var(--theme-border-color);
 
       h3 {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         margin-bottom: 1rem;
+        color: var(--theme-text-color);
       }
 
       ul {
@@ -242,56 +263,71 @@ declare var Prism: any;
         margin-bottom: 0.8rem;
 
         mat-icon {
-          color: #4caf50;
+          color: var(--theme-success-color);
           font-size: 20px;
         }
+      }
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .concept-container {
+        padding: 1rem;
+      }
+
+      .header-content h1 {
+        font-size: 2rem;
       }
     }
 
     .example-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+      gap: 1rem;
       margin-top: 1rem;
 
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
       .code-section {
-        background-color: #272822;
+        background-color: var(--theme-card-background);
         border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid var(--theme-border-color);
         
         .code-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
           padding: 0.5rem 1rem;
-          background-color: #1e1f1c;
-          border-radius: 4px 4px 0 0;
+          background-color: var(--theme-card-header-background);
+          border-bottom: 1px solid var(--theme-border-color);
 
           h3 {
-            color: #f8f8f2;
             margin: 0;
+            color: var(--theme-text-color);
           }
 
           .code-actions {
             display: flex;
             gap: 0.5rem;
           }
-
-          button {
-            color: #f8f8f2;
-          }
         }
 
-        .code-editor {
-          padding: 1rem;
+        .editor {
           display: flex;
-          gap: 1rem;
+          background-color: var(--theme-code-background);
 
           .line-numbers {
+            display: flex;
+            flex-direction: column;
+            min-width: 40px;
             user-select: none;
             text-align: right;
-            color: #75715e;
+            color: var(--theme-code-comment-color);
             padding-right: 0.5rem;
-            border-right: 1px solid #3c3d37;
+            border-right: 1px solid var(--theme-border-color);
 
             .line-number {
               font-family: 'Fira Code', monospace;
@@ -303,8 +339,8 @@ declare var Prism: any;
           textarea {
             flex: 1;
             min-height: 300px;
-            background-color: #272822;
-            color: #f8f8f2;
+            background-color: var(--theme-code-background);
+            color: var(--theme-code-text-color);
             border: none;
             font-family: 'Fira Code', monospace;
             font-size: 0.9rem;
@@ -314,21 +350,21 @@ declare var Prism: any;
             line-height: 1.5;
 
             &:focus {
-              outline: 1px solid #525252;
+              outline: 1px solid var(--theme-border-color);
             }
           }
         }
 
         .syntax-errors {
           padding: 1rem;
-          background-color: #1e1f1c;
-          border-top: 1px solid #3c3d37;
+          background-color: var(--theme-code-background);
+          border-top: 1px solid var(--theme-border-color);
 
           .error {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #f44336;
+            color: var(--theme-error-color);
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
 
@@ -340,7 +376,7 @@ declare var Prism: any;
       }
 
       .preview-section {
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--theme-border-color);
         border-radius: 4px;
 
         .preview-header {
@@ -348,24 +384,25 @@ declare var Prism: any;
           justify-content: space-between;
           align-items: center;
           padding: 0.5rem 1rem;
-          border-bottom: 1px solid #e0e0e0;
+          border-bottom: 1px solid var(--theme-border-color);
+          background-color: var(--theme-card-header-background);
 
           h3 {
             margin: 0;
-            color: #333;
+            color: var(--theme-text-color);
           }
         }
 
         .preview-container {
           min-height: 300px;
           padding: 1rem;
-          background-color: #ffffff;
+          background-color: var(--theme-card-background);
           overflow: auto;
 
           &.mobile {
             max-width: 375px;
             margin: 0 auto;
-            border: 10px solid #333;
+            border: 10px solid var(--theme-border-color);
             border-radius: 20px;
             min-height: 600px;
           }
@@ -373,138 +410,53 @@ declare var Prism: any;
       }
     }
 
-    mat-chip {
-      &.beginner { background-color: #4CAF50; color: white; }
-      &.intermediate { background-color: #FF9800; color: white; }
-      &.advanced { background-color: #F44336; color: white; }
-    }
+    .quiz-card {
+      margin-bottom: 1rem;
+      background-color: var(--theme-card-background);
+      border: 1px solid var(--theme-border-color);
 
-    /* Mobile Responsive Styles */
-    @media (max-width: 768px) {
-      .concept-container {
-        padding: 12px;
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
       }
 
-      .header-content {
-        h1 {
-          font-size: 1.8rem;
-        }
-
-        p {
-          font-size: 1rem;
-        }
-      }
-
-      .explanation-content {
-        font-size: 1rem;
-      }
-
-      .example-description {
-        display: none;
-      }
-
-      .mini-editor {
-        padding: 0.5rem;
-      }
-
-      .code-block {
-        padding: 0.5rem;
-        font-size: 0.9rem;
-      }
-
-      .key-points {
+      .answer-feedback {
+        margin-top: 1rem;
         padding: 1rem;
-
-        li {
-          gap: 0.3rem;
-          margin-bottom: 0.6rem;
-          
-          .key-point-text {
-            font-size: 0.95rem;
-          }
-        }
-      }
-
-      .example-container {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-
-        .code-section {
-          .code-editor {
-            padding: 0.5rem;
-            
-            textarea {
-              font-size: 0.85rem;
-              min-height: 200px;
-            }
-
-            .line-numbers {
-              .line-number {
-                font-size: 0.85rem;
-              }
-            }
+        border-radius: 4px;
+        background-color: var(--theme-card-background);
+        border: 1px solid var(--theme-border-color);
           }
         }
 
-        .preview-section {
-          .preview-container {
-            min-height: 200px;
-
-            &.mobile {
-              max-width: 100%;
-              border-width: 5px;
-              min-height: 400px;
-            }
-          }
-        }
-      }
-    }
-
-    @media (max-width: 480px) {
-      .concept-container {
-        padding: 8px;
+    .quiz-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
       }
 
-      .header-content {
-        h1 {
-          font-size: 1.5rem;
-        }
-      }
-
-      .mat-expansion-panel-header {
-        padding: 0 12px;
-      }
-
-      .code-header {
-        h3 {
-          font-size: 1rem;
-        }
-      }
-
-      .preview-section {
-        .preview-header {
-          h3 {
-            font-size: 1rem;
-          }
-        }
-      }
+    .quiz-results {
+      text-align: center;
+      margin-bottom: 2rem;
     }
   `],
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTabsModule,
-    MatChipsModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    MatExpansionModule,
-    MatBadgeModule
-  ]
+    encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [
+      CommonModule,
+      FormsModule,
+      MatCardModule,
+      MatButtonModule,
+      MatIconModule,
+      MatTabsModule,
+      MatChipsModule,
+      MatSnackBarModule,
+      MatTooltipModule,
+      MatExpansionModule,
+      MatBadgeModule
+    ]
 })
 export class CssConceptComponent implements OnInit, AfterViewInit {
   @ViewChild('previewStyleContainer') previewStyleContainer!: ElementRef;

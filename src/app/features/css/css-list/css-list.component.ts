@@ -84,6 +84,9 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: all var(--transition-speed) ease;
 
       .list-header {
         text-align: center;
@@ -94,13 +97,13 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
 
           h1 {
             font-size: 2.5rem;
-            color: #333;
+            color: var(--text-color);
             margin-bottom: 1rem;
           }
 
           p {
             font-size: 1.2rem;
-            color: #666;
+            color: var(--text-light);
           }
         }
 
@@ -125,34 +128,57 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
           height: 100%;
           display: flex;
           flex-direction: column;
-          transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+          transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+          background-color: var(--card-color);
+          border: 1px solid var(--border-color);
+          box-shadow: 0 4px 8px var(--shadow-color);
 
           &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px var(--shadow-color);
           }
 
           &.beginner {
-            border-top: 4px solid #4CAF50;
+            border-top: 4px solid var(--easy-bg);
           }
 
           &.intermediate {
-            border-top: 4px solid #FF9800;
+            border-top: 4px solid var(--medium-bg);
           }
 
           &.advanced {
-            border-top: 4px solid #F44336;
+            border-top: 4px solid var(--hard-bg);
           }
 
           mat-card-header {
             margin-bottom: 1rem;
+
+            mat-icon {
+              color: var(--text-light);
+
+              &.beginner {
+                color: var(--easy-bg);
+              }
+
+              &.intermediate {
+                color: var(--medium-bg);
+              }
+
+              &.advanced {
+                color: var(--hard-bg);
+              }
+            }
+
+            mat-card-title {
+              color: var(--text-color);
+            }
           }
 
           mat-card-content {
             flex: 1;
             
             p {
-              color: #666;
+              color: var(--text-color);
               margin-bottom: 1rem;
             }
 
@@ -165,12 +191,13 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                color: #666;
+                color: var(--text-light);
 
                 mat-icon {
                   font-size: 1.2rem;
                   width: 1.2rem;
                   height: 1.2rem;
+                  color: var(--text-light);
                 }
               }
             }
@@ -178,73 +205,15 @@ import { ConceptService, ConceptContent } from '../../../shared/services/concept
 
           mat-card-actions {
             padding: 1rem;
-            display: flex;
-            justify-content: flex-end;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
 
             button {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-            }
-          }
-
-          mat-chip {
-            &.beginner { background-color: #4CAF50; color: white; }
-            &.intermediate { background-color: #FF9800; color: white; }
-            &.advanced { background-color: #F44336; color: white; }
-          }
-        }
-      }
-    }
-
-    @media (max-width: 768px) {
-      .list-container {
-        padding: 1rem;
-
-        .list-header {
-          .filters {
-            flex-direction: column;
-            align-items: stretch;
-
-            mat-form-field {
-              width: 100%;
+              background-color: var(--primary-color);
+              color: var(--primary-contrast);
             }
           }
         }
-
-        .concepts-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    }
-
-    mat-chip-set {
-      display: flex;
-    }
-
-    mat-chip {
-      &.beginner { background-color: #4CAF50; color: white; }
-      &.intermediate { background-color: #FF9800; color: white; }
-      &.advanced { background-color: #F44336; color: white; }
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-wrap: nowrap;
-      white-space: nowrap;
-      width: fit-content;
-      flex: 0 0 auto;
-      padding: 4px 8px;
-      border-radius: 16px;
-      height: 24px;
-      font-size: 14px;
-
-      mat-icon {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        font-size: 18px;
-        height: 18px;
-        width: 18px;
       }
     }
   `],
@@ -324,4 +293,4 @@ export class CssListComponent implements OnInit {
   learnConcept(conceptId: string) {
     this.router.navigate(['/css', 'concept', conceptId]);
   }
-} 
+}

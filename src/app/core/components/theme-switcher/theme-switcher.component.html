@@ -1,0 +1,12 @@
+<div class="theme-switcher">
+  <mat-button-toggle-group [value]="currentTheme">
+    <mat-button-toggle 
+      *ngFor="let theme of availableThemes" 
+      [value]="theme.name" 
+      (change)="setTheme(theme.name)"
+      [matTooltip]="theme.displayName + ' Theme'"
+      matTooltipPosition="below">
+      <mat-icon>{{ getThemeIcon(theme.name) }}</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>

@@ -1,0 +1,198 @@
+// _theme.scss
+:root {
+  // Primary colors
+  --primary-color: #3f51b5;
+  --primary-light: #757de8;
+  --primary-dark: #002984;
+  
+  // Secondary colors
+  --secondary-color: #e91e63;
+  --secondary-light: #ff6090;
+  --secondary-dark: #b0003a;
+  
+  // Accent colors
+  --accent-color: #00bcd4;
+  --accent-light: #62efff;
+  --accent-dark: #008ba3;
+  
+  // Background colors
+  --background-color: #f5f5f5;
+  --surface-color: #ffffff;
+  --card-color: #ffffff;
+  
+  // Text colors
+  --text-color: #333333;
+  --text-light: #757575;
+  --text-on-primary: #ffffff;
+  --text-on-secondary: #ffffff;
+  
+  // Status colors
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --info-color: #2196f3;
+  
+  // Difficulty level colors
+  --easy-bg: #e7f4e4;
+  --easy-text: #2e7d32;
+  --medium-bg: #fff3e0;
+  --medium-text: #ef6c00;
+  --hard-bg: #fde7e7;
+  --hard-text: #d32f2f;
+  
+  // Border and shadow
+  --border-color: #e0e0e0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  
+  // Animation
+  --transition-speed: 0.2s;
+}
+
+.dark-theme {
+  // Primary colors
+  --primary-color: #9fa8da;
+  --primary-light: #d1d9ff;
+  --primary-dark: #6f79a8;
+  
+  // Secondary colors
+  --secondary-color: #f06292;
+  --secondary-light: #ff94c2;
+  --secondary-dark: #ba2d65;
+  
+  // Accent colors
+  --accent-color: #4dd0e1;
+  --accent-light: #88ffff;
+  --accent-dark: #009faf;
+  
+  // Background colors
+  --background-color: #303030;
+  --surface-color: #424242;
+  --card-color: #484848;
+  
+  // Text colors
+  --text-color: #ffffff;
+  --text-light: #b0b0b0;
+  --text-on-primary: #000000;
+  --text-on-secondary: #000000;
+  
+  // Status colors
+  --success-color: #81c784;
+  --warning-color: #ffb74d;
+  --error-color: #e57373;
+  --info-color: #64b5f6;
+  
+  // Difficulty level colors
+  --easy-bg: #1b5e20;
+  --easy-text: #a5d6a7;
+  --medium-bg: #e65100;
+  --medium-text: #ffcc80;
+  --hard-bg: #b71c1c;
+  --hard-text: #ef9a9a;
+  
+  // Border and shadow
+  --border-color: #616161;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  
+  // Animation
+  --transition-speed: 0.2s;
+}
+
+// Nature theme
+.nature-theme {
+  // Primary colors
+  --primary-color: #388e3c;
+  --primary-light: #6abf69;
+  --primary-dark: #00600f;
+  
+  // Secondary colors
+  --secondary-color: #8d6e63;
+  --secondary-light: #be9c91;
+  --secondary-dark: #5f4339;
+  
+  // Accent colors
+  --accent-color: #fdd835;
+  --accent-light: #ffff6b;
+  --accent-dark: #c6a700;
+  
+  // Background colors
+  --background-color: #f1f8e9;
+  --surface-color: #ffffff;
+  --card-color: #ffffff;
+  
+  // Text colors
+  --text-color: #33691e;
+  --text-light: #689f38;
+  --text-on-primary: #ffffff;
+  --text-on-secondary: #ffffff;
+  
+  // Status colors
+  --success-color: #558b2f;
+  --warning-color: #ff8f00;
+  --error-color: #c62828;
+  --info-color: #0277bd;
+  
+  // Difficulty level colors
+  --easy-bg: #c8e6c9;
+  --easy-text: #1b5e20;
+  --medium-bg: #ffe0b2;
+  --medium-text: #e65100;
+  --hard-bg: #ffcdd2;
+  --hard-text: #b71c1c;
+  
+  // Border and shadow
+  --border-color: #c5e1a5;
+  --shadow-color: rgba(76, 175, 80, 0.1);
+  
+  // Animation
+  --transition-speed: 0.2s;
+}
+
+// Ocean theme
+.ocean-theme {
+  // Primary colors
+  --primary-color: #0288d1;
+  --primary-light: #5eb8ff;
+  --primary-dark: #005b9f;
+  
+  // Secondary colors
+  --secondary-color: #00acc1;
+  --secondary-light: #5ddef4;
+  --secondary-dark: #007c91;
+  
+  // Accent colors
+  --accent-color: #26a69a;
+  --accent-light: #64d8cb;
+  --accent-dark: #00766c;
+  
+  // Background colors
+  --background-color: #e0f7fa;
+  --surface-color: #ffffff;
+  --card-color: #ffffff;
+  
+  // Text colors
+  --text-color: #01579b;
+  --text-light: #0288d1;
+  --text-on-primary: #ffffff;
+  --text-on-secondary: #ffffff;
+  
+  // Status colors
+  --success-color: #00897b;
+  --warning-color: #fb8c00;
+  --error-color: #d32f2f;
+  --info-color: #1976d2;
+  
+  // Difficulty level colors
+  --easy-bg: #b2ebf2;
+  --easy-text: #006064;
+  --medium-bg: #ffe0b2;
+  --medium-text: #e65100;
+  --hard-bg: #ffcdd2;
+  --hard-text: #b71c1c;
+  
+  // Border and shadow
+  --border-color: #b2ebf2;
+  --shadow-color: rgba(0, 188, 212, 0.1);
+  
+  // Animation
+  --transition-speed: 0.2s;
+}

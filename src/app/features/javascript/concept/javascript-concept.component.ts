@@ -220,9 +220,11 @@ declare var Prism: any;
   `,
   styles: [`
     .concept-container {
+      padding: 2rem;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      background-color: var(--theme-background-color);
+      color: var(--theme-text-color);
     }
 
     .concept-header {
@@ -233,20 +235,33 @@ declare var Prism: any;
       h1 {
         font-size: 2.5rem;
         margin-bottom: 1rem;
+        color: var(--theme-text-color);
       }
 
       p {
         font-size: 1.1rem;
         line-height: 1.6;
-        color: rgba(0, 0, 0, 0.7);
+        color: var(--theme-secondary-text-color);
       }
     }
 
     .concept-meta {
       margin: 1rem 0;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+      
+      .beginner {
+        background-color: var(--theme-beginner-color) !important;
+        color: var(--theme-beginner-text-color) !important;
+      }
+      
+      .intermediate {
+        background-color: var(--theme-intermediate-color) !important;
+        color: var(--theme-intermediate-text-color) !important;
+      }
+      
+      .advanced {
+        background-color: var(--theme-advanced-color) !important;
+        color: var(--theme-advanced-text-color) !important;
+      }
     }
 
     .tab-content {
@@ -263,7 +278,7 @@ declare var Prism: any;
     }
 
     .mini-editor {
-      background: #f5f5f5;
+      background: var(--theme-card-background);
       border-radius: 4px;
       padding: 1rem;
       margin: 1rem 0;
@@ -277,34 +292,35 @@ declare var Prism: any;
     }
 
     pre {
-      background: #1e1e1e;
+      background: var(--theme-code-background);
       border-radius: 4px;
       padding: 1rem;
       margin: 0;
       overflow-x: auto;
-      font-size: 0.9rem;
-      line-height: 1.5;
+      color: var(--theme-code-text-color);
     }
 
     .example-result {
       margin-top: 1rem;
       padding: 1rem;
-      background: white;
+      background: var(--theme-card-background);
       border-radius: 4px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--theme-border-color);
     }
 
     .key-points {
       margin-top: 2rem;
       padding: 1.5rem;
-      background: #f8f9fa;
+      background: var(--theme-card-background);
       border-radius: 8px;
+      border: 1px solid var(--theme-border-color);
 
       h3 {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         margin-bottom: 1rem;
+        color: var(--theme-text-color);
       }
 
       ul {
@@ -320,57 +336,71 @@ declare var Prism: any;
         margin-bottom: 0.8rem;
 
         mat-icon {
-          color: #4caf50;
+          color: var(--theme-success-color);
           font-size: 20px;
-          flex-shrink: 0;
         }
+      }
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .concept-container {
+        padding: 1rem;
+      }
+
+      .header-content h1 {
+        font-size: 2rem;
       }
     }
 
     .example-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+      gap: 1rem;
       margin-top: 1rem;
 
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
       .code-section {
-        background-color: #272822;
+        background-color: var(--theme-card-background);
         border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid var(--theme-border-color);
         
         .code-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
           padding: 0.5rem 1rem;
-          background-color: #1e1f1c;
-          border-radius: 4px 4px 0 0;
+          background-color: var(--theme-card-header-background);
+          border-bottom: 1px solid var(--theme-border-color);
 
           h3 {
-            color: #f8f8f2;
             margin: 0;
+            color: var(--theme-text-color);
           }
 
           .code-actions {
             display: flex;
             gap: 0.5rem;
           }
-
-          button {
-            color: #f8f8f2;
-          }
         }
 
-        .code-editor {
-          padding: 1rem;
+        .editor {
           display: flex;
-          gap: 1rem;
+          background-color: var(--theme-code-background);
 
           .line-numbers {
+            display: flex;
+            flex-direction: column;
+            min-width: 40px;
             user-select: none;
             text-align: right;
-            color: #75715e;
+            color: var(--theme-code-comment-color);
             padding-right: 0.5rem;
-            border-right: 1px solid #3c3d37;
+            border-right: 1px solid var(--theme-border-color);
 
             .line-number {
               font-family: 'Fira Code', monospace;
@@ -382,8 +412,8 @@ declare var Prism: any;
           textarea {
             flex: 1;
             min-height: 300px;
-            background-color: #272822;
-            color: #f8f8f2;
+            background-color: var(--theme-code-background);
+            color: var(--theme-code-text-color);
             border: none;
             font-family: 'Fira Code', monospace;
             font-size: 0.9rem;
@@ -393,37 +423,33 @@ declare var Prism: any;
             line-height: 1.5;
 
             &:focus {
-              outline: 1px solid #525252;
+              outline: 1px solid var(--theme-border-color);
             }
           }
         }
 
         .syntax-errors {
           padding: 1rem;
-          background-color: #1e1f1c;
-          border-top: 1px solid #3c3d37;
+          background-color: var(--theme-code-background);
+          border-top: 1px solid var(--theme-border-color);
 
           .error {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #f44336;
+            color: var(--theme-error-color);
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
 
             &:last-child {
               margin-bottom: 0;
             }
-
-            mat-icon {
-              flex-shrink: 0;
-            }
           }
         }
       }
 
       .output-section {
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--theme-border-color);
         border-radius: 4px;
 
         .output-header {
@@ -431,54 +457,30 @@ declare var Prism: any;
           justify-content: space-between;
           align-items: center;
           padding: 0.5rem 1rem;
-          border-bottom: 1px solid #e0e0e0;
+          border-bottom: 1px solid var(--theme-border-color);
+          background-color: var(--theme-card-header-background);
 
           h3 {
             margin: 0;
-            color: #333;
+            color: var(--theme-text-color);
           }
         }
 
-        .console-output {
+        .output-container {
           min-height: 300px;
-          max-height: 500px;
-          overflow-y: auto;
           padding: 1rem;
-          background-color: #1e1e1e;
+          background-color: var(--theme-card-background);
+          overflow: auto;
+          
+          .output-content {
           font-family: 'Fira Code', monospace;
           font-size: 0.9rem;
           line-height: 1.5;
-
-          .log-entry {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            color: #f8f8f2;
-
-            &.error {
-              color: #f44336;
-            }
-
-            &.warn {
-              color: #ffd700;
-            }
-
-            &.info {
-              color: #03a9f4;
-            }
-
-            mat-icon {
-              font-size: 18px;
-              flex-shrink: 0;
-            }
-
-            pre {
+            color: var(--theme-code-text-color);
+            background-color: var(--theme-code-background);
+            padding: 1rem;
+            border-radius: 4px;
               margin: 0;
-              white-space: pre-wrap;
-              word-break: break-word;
-              flex: 1;
-            }
           }
         }
       }
@@ -486,6 +488,8 @@ declare var Prism: any;
 
     .quiz-card {
       margin-bottom: 1rem;
+      background-color: var(--theme-card-background);
+      border: 1px solid var(--theme-border-color);
 
       .options {
         display: flex;
@@ -498,215 +502,22 @@ declare var Prism: any;
         margin-top: 1rem;
         padding: 1rem;
         border-radius: 4px;
-        background-color: #f5f5f5;
-
-        p {
-          margin: 0;
-          
-          &.correct {
-            color: #4caf50;
-            font-weight: 500;
-          }
-
-          &.incorrect {
-            color: #f44336;
-            font-weight: 500;
-          }
-
-          &.explanation {
-            margin-top: 0.5rem;
-            color: #666;
-          }
-        }
+        background-color: var(--theme-card-background);
+        border: 1px solid var(--theme-border-color);
       }
     }
 
-    .quiz-header {
+    .quiz-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .quiz-results {
       text-align: center;
       margin-bottom: 2rem;
-
-      h3 {
-        color: #333;
-        margin-bottom: 0.5rem;
-      }
-
-      p {
-        font-size: 1.2rem;
-        color: #666;
-        margin-bottom: 1rem;
-      }
     }
-
-    mat-chip {
-      &.beginner { background-color: #4CAF50; color: white; }
-      &.intermediate { background-color: #FF9800; color: white; }
-      &.advanced { background-color: #F44336; color: white; }
-    }
-
-    /* Mobile Responsive Styles */
-    @media (max-width: 768px) {
-      .concept-container {
-        padding: 12px;
-      }
-
-      .header-content {
-        h1 {
-          font-size: 1.8rem;
-        }
-
-        p {
-          font-size: 1rem;
-        }
-      }
-
-      .concept-meta {
-        justify-content: flex-start;
-      }
-
-      .explanation-content {
-        font-size: 1rem;
-      }
-
-      mat-expansion-panel-header {
-        padding: 0 12px;
-      }
-
-      .mini-editor {
-        padding: 0.5rem;
-      }
-
-      pre {
-        padding: 0.5rem;
-        font-size: 0.85rem;
-      }
-
-      .key-points {
-        padding: 1rem;
-
-        li {
-          gap: 0.3rem;
-          margin-bottom: 0.6rem;
-          font-size: 0.95rem;
-        }
-      }
-
-      .example-container {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-
-        .code-section {
-          .code-header {
-            padding: 0.5rem;
-
-            h3 {
-              font-size: 1rem;
-            }
-
-            .code-actions {
-              gap: 0.3rem;
-            }
-          }
-
-          .code-editor {
-            padding: 0.5rem;
-
-            textarea {
-              font-size: 0.85rem;
-              min-height: 200px;
-            }
-
-            .line-numbers {
-              .line-number {
-                font-size: 0.85rem;
-              }
-            }
-          }
-        }
-
-        .output-section {
-          .output-header {
-            padding: 0.5rem;
-
-            h3 {
-              font-size: 1rem;
-            }
-          }
-
-          .console-output {
-            min-height: 200px;
-            max-height: 300px;
-            font-size: 0.85rem;
-            padding: 0.5rem;
-
-            .log-entry {
-              gap: 0.3rem;
-              font-size: 0.85rem;
-
-              mat-icon {
-                font-size: 16px;
-              }
-            }
-          }
-        }
-      }
-
-      .quiz-card {
-        .options {
-          button {
-            padding: 8px;
-            font-size: 0.95rem;
-          }
-        }
-
-        .answer-feedback {
-          padding: 0.8rem;
-          font-size: 0.95rem;
-        }
-      }
-    }
-
-    @media (max-width: 480px) {
-      .concept-container {
-        padding: 8px;
-      }
-
-      .header-content {
-        h1 {
-          font-size: 1.5rem;
-        }
-      }
-
-      .concept-meta {
-        flex-direction: column;
-        gap: 0.3rem;
-      }
-
-      mat-chip-set {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-      }
-
-      .code-header {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-
-        h3 {
-          font-size: 0.95rem;
-        }
-      }
-
-      .quiz-header {
-        h3 {
-          font-size: 1.3rem;
-        }
-
-        p {
-          font-size: 1.1rem;
-        }
-      }
-    }
-  `],
+  `]
 })
 export class JavascriptConceptComponent implements OnInit {
   content: ConceptContent | null = null;

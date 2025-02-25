@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { ProgrammingQuestion } from '../../models/programming-question.model';
 import { ProgrammingQuestionsService } from '../../services/programming-questions.service';
+import { ThemeService } from '../../../../core/theme/theme.service';
 
 @Component({
   selector: 'app-question-list',
@@ -32,6 +33,8 @@ import { ProgrammingQuestionsService } from '../../services/programming-question
   ]
 })
 export class QuestionListComponent implements OnInit {
+  @HostBinding('class') themeClass = '';
+
   questions: ProgrammingQuestion[] = [];
   filteredQuestions: ProgrammingQuestion[] = [];
   categories: string[] = [];
@@ -41,9 +44,13 @@ export class QuestionListComponent implements OnInit {
   difficultyFilter = new FormControl('');
   searchQuery = new FormControl('');
 
-  constructor(private programmingQuestionsService: ProgrammingQuestionsService) {}
+  constructor(private programmingQuestionsService: ProgrammingQuestionsService, private themeService: ThemeService) {}
 
   ngOnInit() {
+    this.themeService.theme$.subscribe(theme => {
+      this.themeClass = theme;
+    });
+
     this.loadQuestions();
 
     // Subscribe to filter changes

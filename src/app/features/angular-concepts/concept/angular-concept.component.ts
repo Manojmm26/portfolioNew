@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AngularConceptsService, AngularConcept } from '../services/angular-concepts.service';
 import { highlight, highlightAll } from '../../../shared/utils/prism-config';
+import { ThemeService } from '../../../core/theme/theme.service';
 
 @Component({
   selector: 'app-angular-concept',
@@ -409,6 +410,7 @@ import { highlight, highlightAll } from '../../../shared/utils/prism-config';
   encapsulation: ViewEncapsulation.None
 })
 export class AngularConceptComponent implements OnInit {
+  @HostBinding('class') themeClass = '';
   content: AngularConcept | null = null;
   currentCode: string = '';
   sanitizedExplanation: SafeHtml = '';
@@ -422,10 +424,14 @@ export class AngularConceptComponent implements OnInit {
     private route: ActivatedRoute,
     private conceptsService: AngularConceptsService,
     private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private themeService: ThemeService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.themeService.theme$.subscribe(theme => {
+      this.themeClass = theme;
+    });
     const conceptId = this.route.snapshot.paramMap.get('id');
     if (conceptId) {
       this.conceptsService.getConcept(conceptId).subscribe({
@@ -560,4 +566,4 @@ export class AngularConceptComponent implements OnInit {
 
     return null;
   }
-} 
+}
