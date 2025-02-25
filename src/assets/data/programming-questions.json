@@ -1,0 +1,100 @@
+{
+  "questions": [
+    {
+      "id": "pq1",
+      "title": "Two Sum",
+      "category": "Arrays",
+      "difficulty": "Easy",
+      "description": "Given an array of integers nums and an integer target, return indices of the two numbers in the array that add up to target.",
+      "methodology": {
+        "approach": "Hash Table",
+        "explanation": "There are two main approaches to solve this problem:\n\n1. Hash Table Approach:\n- We use a hash table to store each number and its index as we iterate through the array\n- For each number, we calculate its complement (target - current number)\n- If the complement exists in our hash table, we've found our pair\n- This gives us O(n) time complexity with O(n) space\n\n2. Brute Force Approach:\n- We can use nested loops to check every possible pair of numbers\n- For each number, we check all other numbers to find if they sum to target\n- This gives us O(n²) time complexity but O(1) space\n\nThe Hash Table approach is preferred as it's more efficient in terms of time complexity.",
+        "timeComplexity": "O(n)",
+        "spaceComplexity": "O(n)"
+      },
+      "examples": [
+        {
+          "input": "nums = [2, 7, 11, 15], target = 9",
+          "output": "[0, 1]",
+          "explanation": "Because nums[0] + nums[1] = 2 + 7 = 9"
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Hash Table",
+          "code": "function twoSum(nums, target) {\n  const map = new Map();\n  \n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    \n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    \n    map.set(nums[i], i);\n  }\n  \n  return [];\n}",
+          "explanation": "1. Create an empty hash map\n2. Iterate through the array\n3. For each number, calculate its complement\n4. If complement exists in map, return current index and complement's index\n5. Otherwise, add current number and its index to map"
+        },
+        {
+          "approach": "Brute Force",
+          "code": "function twoSum(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) {\n        return [i, j];\n      }\n    }\n  }\n  return [];\n}",
+          "explanation": "1. Use nested loops to check every possible pair\n2. For each number at index i, check all numbers at index j > i\n3. If any pair sums to target, return their indices\n4. If no solution is found, return empty array"
+        }
+      ]
+    },
+    {
+      "id": "pq2",
+      "title": "String Reversal",
+      "category": "Strings",
+      "difficulty": "Easy",
+      "description": "Write a function that reverses a string without using the built-in reverse() method.",
+      "methodology": {
+        "approach": "Multiple Approaches",
+        "explanation": "There are several ways to reverse a string:\n\n1. Two Pointers Approach:\n- Convert string to array (since strings are immutable in JavaScript)\n- Use two pointers starting from opposite ends\n- Swap characters until pointers meet in middle\n- Join array back to string\n- Time: O(n), Space: O(n)\n\n2. Array Methods Approach:\n- Split string into array of characters\n- Use array reverse method\n- Join back to string\n- Simpler but may be considered using built-in reverse\n- Time: O(n), Space: O(n)\n\n3. Recursive Approach:\n- Base case: empty string or single character\n- Recursive case: last character + recursive call with substring\n- Time: O(n), Space: O(n) due to call stack\n\nThe Two Pointers approach is often preferred as it's explicit and efficient.",
+        "timeComplexity": "O(n)",
+        "spaceComplexity": "O(n)"
+      },
+      "examples": [
+        {
+          "input": "hello",
+          "output": "olleh",
+          "explanation": "Swap 'h' with 'o', then 'e' with 'l', middle 'l' stays in place"
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Two Pointers",
+          "code": "function reverseString(str) {\n  const arr = str.split('');\n  let left = 0;\n  let right = arr.length - 1;\n  \n  while (left < right) {\n    [arr[left], arr[right]] = [arr[right], arr[left]];\n    left++;\n    right--;\n  }\n  \n  return arr.join('');\n}",
+          "explanation": "1. Convert string to array of characters\n2. Initialize two pointers at start and end\n3. Swap characters at both pointers\n4. Move pointers towards center\n5. Join array back to string"
+        },
+        {
+          "approach": "Recursive",
+          "code": "function reverseString(str) {\n  if (str.length <= 1) return str;\n  return str[str.length - 1] + reverseString(str.slice(0, -1));\n}",
+          "explanation": "1. Base case: return if string length <= 1\n2. Take last character\n3. Recursively reverse rest of string\n4. Concatenate last char with reversed substring"
+        }
+      ]
+    },
+    {
+      "id": "pq3",
+      "title": "Fibonacci Sequence",
+      "category": "Dynamic Programming",
+      "difficulty": "Medium",
+      "description": "Write a function to generate the nth Fibonacci number using different approaches (recursive, iterative, and memoization).",
+      "methodology": {
+        "approach": "Multiple Approaches",
+        "explanation": "There are several ways to solve this problem:\n\n1. Recursive Approach:\n- Base case: F(0) = 0, F(1) = 1\n- Recursive case: F(n) = F(n-1) + F(n-2)\n- Time: O(2^n), Space: O(n) due to call stack\n\n2. Memoization Approach:\n- Store previously calculated Fibonacci numbers in a cache\n- Before calculating F(n), check if it's in the cache\n- If not, calculate and store it in the cache\n- Time: O(n), Space: O(n)\n\n3. Iterative Approach:\n- Use two variables to track previous Fibonacci numbers\n- Update them in each iteration\n- Time: O(n), Space: O(1)\n\nThe Iterative approach is often preferred as it's efficient in terms of time and space complexity.",
+        "timeComplexity": "O(n) for optimized solutions, O(2^n) for naive recursive",
+        "spaceComplexity": "O(n) for memoization, O(1) for iterative"
+      },
+      "examples": [
+        {
+          "input": "n = 6",
+          "output": "8",
+          "explanation": "Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8"
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Iterative",
+          "code": "function fibIterative(n) {\n  if (n <= 1) return n;\n  \n  let prev = 0, curr = 1;\n  for (let i = 2; i <= n; i++) {\n    [prev, curr] = [curr, prev + curr];\n  }\n  return curr;\n}",
+          "explanation": "1. Use two variables to track previous numbers\n2. Update them in each iteration\n3. Return the nth Fibonacci number"
+        },
+        {
+          "approach": "Memoization",
+          "code": "function fibMemo(n, memo = {}) {\n  if (n in memo) return memo[n];\n  if (n <= 1) return n;\n  \n  memo[n] = fibMemo(n - 1, memo) + fibMemo(n - 2, memo);\n  return memo[n];\n}",
+          "explanation": "1. Store previously calculated Fibonacci numbers in a cache\n2. Before calculating F(n), check if it's in the cache\n3. If not, calculate and store it in the cache\n4. Return the nth Fibonacci number"
+        }
+      ]
+    }
+  ]
+}

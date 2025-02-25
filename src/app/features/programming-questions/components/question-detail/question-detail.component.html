@@ -1,0 +1,127 @@
+<div class="question-detail" *ngIf="question$ | async as question">
+  <mat-card class="question-header">
+    <mat-card-header>
+      <mat-card-title>{{question.title}}</mat-card-title>
+      <mat-card-subtitle>
+        <span class="category">{{question.category}}</span>
+        <span class="difficulty" [ngClass]="question.difficulty.toLowerCase()">
+          {{question.difficulty}}
+        </span>
+      </mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <mat-tab-group [(selectedIndex)]="activeTab" animationDuration="0ms" class="content-tabs">
+    <mat-tab label="Description">
+      <div class="tab-content">
+        <h3>Problem Description</h3>
+        <p>{{question.description}}</p>
+
+        <h3>Examples</h3>
+        <mat-card *ngFor="let example of question.examples" class="example-card">
+          <mat-card-content>
+            <div class="example-item">
+              <strong>Input:</strong>
+              <code>{{example.input}}</code>
+            </div>
+            <div class="example-item">
+              <strong>Output:</strong>
+              <code>{{example.output}}</code>
+            </div>
+            <div class="example-item">
+              <strong>Explanation:</strong>
+              <p>{{example.explanation}}</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Solution">
+      <div class="tab-content">
+        <h3>Methodology</h3>
+        <mat-card class="methodology-card">
+          <mat-card-content>
+            <div class="methodology-item">
+              <strong>Approach:</strong>
+              <p>{{question.methodology.approach}}</p>
+            </div>
+            <div class="methodology-item">
+              <strong>Explanation:</strong>
+              <p class="whitespace-pre-line">{{question.methodology.explanation}}</p>
+            </div>
+            <div class="complexity">
+              <div class="complexity-item">
+                <strong>Time Complexity:</strong>
+                <code>{{question.methodology.timeComplexity}}</code>
+              </div>
+              <div class="complexity-item">
+                <strong>Space Complexity:</strong>
+                <code>{{question.methodology.spaceComplexity}}</code>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <div class="editor-section">
+          <div class="editor-header">
+            <div class="solution-selector">
+              <h3>Solution Code</h3>
+              <mat-form-field>
+                <mat-label>Select Solution Approach</mat-label>
+                <mat-select [(value)]="selectedSolutionIndex" (selectionChange)="onSolutionChange($event.value, question)">
+                  <mat-option *ngFor="let solution of question.solutions; let i = index" [value]="i">
+                    {{solution.approach}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="editor-actions">
+              <button mat-button color="warn" (click)="resetCode(question)" [disabled]="isRunning">
+                <mat-icon>restart_alt</mat-icon>
+                Reset Code
+              </button>
+              <button mat-button color="primary" (click)="copyCode(code)" [disabled]="isRunning">
+                <mat-icon>content_copy</mat-icon>
+                Copy Code
+              </button>
+              <button mat-raised-button color="primary" (click)="runCode()" [disabled]="isRunning">
+                <mat-icon>play_arrow</mat-icon>
+                {{ isRunning ? 'Running...' : 'Run Code' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="solution-explanation" *ngIf="question.solutions[selectedSolutionIndex]">
+            <p>{{question.solutions[selectedSolutionIndex].explanation}}</p>
+          </div>
+
+          <div class="editor-container">
+            <ngx-monaco-editor
+              *ngIf="isEditorReady"
+              class="code-editor"
+              [(ngModel)]="code"
+              [options]="editorOptions"
+              (onInit)="onEditorInit($event)">
+            </ngx-monaco-editor>
+            <div *ngIf="!isEditorReady" class="editor-loading">
+              Loading editor...
+            </div>
+          </div>
+
+          <div class="output-section">
+            <div class="output-header">
+              <h3>Output</h3>
+              <button mat-icon-button (click)="output = ''" *ngIf="output">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+            <div class="output-container" #outputContainer>
+              <pre>{{output}}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

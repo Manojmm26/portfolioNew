@@ -21,14 +21,10 @@ export const routes: Routes = [
     path: 'angular-concepts',
     loadChildren: () => import('./features/angular-concepts/angular-concepts.module').then(m => m.AngularConceptsModule)
   },
-//   {
-//     path: 'angular',
-//     loadChildren: () => import('./features/angular/angular.module').then(m => m.AngularModule)
-//   },
-//   {
-//     path: 'quiz',
-//     loadChildren: () => import('./features/quiz/quiz.module').then(m => m.QuizModule)
-//   },
+  {
+    path: 'programming-questions',
+    loadChildren: () => import('./features/programming-questions/programming-questions.module').then(m => m.ProgrammingQuestionsModule)
+  },
   {
     path: '**',
     redirectTo: ''

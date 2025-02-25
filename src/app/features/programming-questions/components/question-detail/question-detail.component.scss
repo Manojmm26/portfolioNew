@@ -1,0 +1,325 @@
+.question-detail {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .question-header {
+    margin-bottom: 24px;
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    mat-card-subtitle {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+
+      .category {
+        color: #666;
+        font-weight: 500;
+        padding: 4px 12px;
+        background-color: #f0f0f0;
+        border-radius: 16px;
+      }
+
+      .difficulty {
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+
+        &.easy {
+          background-color: #e8f5e9;
+          color: #2e7d32;
+        }
+
+        &.medium {
+          background-color: #fff3e0;
+          color: #ef6c00;
+        }
+
+        &.hard {
+          background-color: #ffebee;
+          color: #c62828;
+        }
+      }
+    }
+  }
+
+  .content-tabs {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+
+    ::ng-deep {
+      .mat-mdc-tab-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .mat-mdc-tab {
+        min-width: 120px;
+        
+        &.mdc-tab--active {
+          .mdc-tab__text-label {
+            color: #1976d2;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    .tab-content {
+      padding: 24px;
+
+      h3 {
+        color: #2c3e50;
+        font-size: 1.25rem;
+        margin: 0 0 16px;
+        font-weight: 500;
+      }
+
+      p {
+        color: #546e7a;
+        line-height: 1.6;
+        margin-bottom: 24px;
+      }
+    }
+  }
+
+  .example-card {
+    margin: 16px 0;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fafafa;
+    
+    .example-item {
+      margin: 12px 0;
+
+      strong {
+        display: block;
+        color: #455a64;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      code {
+        background: #f5f5f5;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.9rem;
+        color: #37474f;
+        border: 1px solid #e0e0e0;
+      }
+
+      p {
+        margin: 8px 0 0;
+        color: #607d8b;
+      }
+    }
+  }
+
+  .methodology-card {
+    margin: 16px 0;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #f8f9fa;
+
+    .methodology-item {
+      margin: 16px 0;
+      margin-bottom: 1rem;
+
+      strong {
+        display: block;
+        color: #455a64;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+        color: #333;
+      }
+
+      p {
+        color: #546e7a;
+        line-height: 1.6;
+        margin: 0.5rem 0;
+        white-space: pre-line;
+      }
+    }
+
+    .complexity {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+
+      .complexity-item {
+        flex: 1;
+
+        strong {
+          color: #455a64;
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        code {
+          display: inline-block;
+          margin-top: 8px;
+          background: #e3f2fd;
+          padding: 8px 12px;
+          border-radius: 6px;
+          font-family: 'Fira Code', monospace;
+          font-size: 0.9rem;
+          color: #1976d2;
+          border: 1px solid #bbdefb;
+        }
+      }
+    }
+  }
+
+  .editor-section {
+    margin-top: 2rem;
+
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+
+      .solution-selector {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        h3 {
+          margin: 0;
+        }
+
+        mat-form-field {
+          width: 250px;
+        }
+      }
+
+      .editor-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+    }
+
+    .editor-container {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 400px;
+      background-color: #1e1e1e;
+
+      .code-editor {
+        height: 100%;
+        width: 100%;
+      }
+
+      .editor-loading {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 16px;
+        background: linear-gradient(45deg, #1e1e1e, #2d2d2d);
+      }
+
+      ::ng-deep {
+        .monaco-editor {
+          padding: 8px 0;
+          .monaco-editor-background {
+            background-color: #1e1e1e !important;
+          }
+        }
+      }
+    }
+
+    .output-section {
+      margin-top: 24px;
+      
+      .output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+
+        h3 {
+          margin: 0;
+          color: #2c3e50;
+        }
+      }
+
+      .output-container {
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        padding: 16px;
+        min-height: 120px;
+        max-height: 240px;
+        overflow-y: auto;
+        color: #ffffff;
+        font-family: 'Consolas', monospace;
+        border: 1px solid #2d2d2d;
+        transition: border-color 0.3s ease;
+
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #2d2d2d;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #555;
+          border-radius: 4px;
+        }
+
+        &.has-output {
+          border-color: #4CAF50;
+        }
+
+        pre {
+          margin: 0;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          font-size: 14px;
+          line-height: 1.5;
+        }
+      }
+    }
+
+    .solution-explanation {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      
+      h3 {
+        color: #2c3e50;
+        margin: 0 0 16px;
+        font-size: 1.1rem;
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.6;
+        white-space: pre-line;
+      }
+    }
+  }
+}
