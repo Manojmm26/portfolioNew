@@ -5,7 +5,13 @@
   </header>
 
   <div class="filters">
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
+      <mat-label>Search questions</mat-label>
+      <input matInput [formControl]="searchQuery" placeholder="Search by title or description">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
       <mat-label>Filter by Category</mat-label>
       <mat-select [formControl]="categoryFilter">
         <mat-option [value]="">All Categories</mat-option>
@@ -15,7 +21,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
       <mat-label>Filter by Difficulty</mat-label>
       <mat-select [formControl]="difficultyFilter">
         <mat-option [value]="">All Difficulties</mat-option>

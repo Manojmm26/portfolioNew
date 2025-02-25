@@ -3400,6 +3400,209 @@
           "explanation": "Optimized recursive (exponentiation by squaring):\n- Base cases: `exponent === 0`, `exponent === 1`.\n- Handle negative exponent.\n- `if (exponent % 2 === 0)` (even exponent):\n  - `halfPower = powerRecursiveOptimized(base, exponent / 2)`: Recursive call for half exponent.\n  - `return halfPower * halfPower`: Square the result.\n- `else` (odd exponent):\n  - `halfPower = powerRecursiveOptimized(base, Math.floor(exponent / 2))`: Recursive call for floor of half exponent.\n  - `return base * halfPower * halfPower`: base * (base^(exponent/2))^2."
         }
       ]
+    },
+    {
+      "id": "q1",
+      "title": "Reverse Words in a Sentence",
+      "category": "String Manipulation, Loops, Conditionals",
+      "difficulty": "Easy",
+      "description": "Write a JavaScript function `reverseWords` that takes a sentence as input and returns the sentence with the order of words reversed.",
+      "methodology": {
+        "approach": "Split, Reverse, Join",
+        "explanation": "The `reverseWords` function starts by splitting the sentence into individual words using the `split(' ')` method. This creates an array of words. Next, the function uses the `reverse()` method to reverse the order of the words in the array. The reversed words are then joined back together using the `join(' ')` method, where the space character ' ' is used as the separator. Finally, the reversed sentence is returned.",
+        "timeComplexity": "O(n), where n is the length of the sentence, due to split, reverse, and join operations.",
+        "spaceComplexity": "O(n), to store the array of words.",
+        "javascriptSpecific": true
+      },
+      "examples": [
+        {
+          "input": "JavaScript is awesome",
+          "output": "awesome is JavaScript",
+          "explanation": "The words in the input sentence are reversed to produce the output sentence."
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Using JavaScript built-in methods: split, reverse, and join",
+          "code": "function reverseWords(sentence) {\n  const words = sentence.split(\" \");\n  const reversedWords = words.reverse();\n  const reversedSentence = reversedWords.join(\" \");\n  return reversedSentence;\n}",
+          "explanation": "The solution utilizes the `split(' ')` method to break the sentence into words, `reverse()` to reverse the array of words, and `join(' ')` to reconstruct the reversed sentence."
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "title": "Find the Nth Largest Element in an Array",
+      "category": "Arrays, Algorithmic Problem Solving",
+      "difficulty": "Easy",
+      "description": "Write a JavaScript function `findNthLargest` that takes an array of numbers and an integer `n` as input, and returns the nth largest element from the array.",
+      "methodology": {
+        "approach": "Sorting",
+        "explanation": "The `findNthLargest` function starts by sorting the `numbers` array in descending order using the `sort()` method with a custom comparison function `(a, b) => b - a`. This places the largest numbers at the beginning of the array. Then, the function returns the element at index `n - 1` since arrays are zero-indexed. In our example, we want to find the 3rd largest element, so we access `numbers[2]`, which is 5.",
+        "timeComplexity": "O(n log n), where n is the number of elements in the array, due to the sorting operation.",
+        "spaceComplexity": "O(1) or O(n) depending on the sorting algorithm implementation (in-place sort can be O(1), but some implementations might use O(n) extra space).",
+        "javascriptSpecific": true
+      },
+      "examples": [
+        {
+          "input": "numbers = [10, 5, 3, 8, 2], n = 3",
+          "output": "5",
+          "explanation": "The 3rd largest element in the array [10, 5, 3, 8, 2] is 5."
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Sorting the array in descending order and accessing the (n-1)th index",
+          "code": "function findNthLargest(numbers, n) {\n  numbers.sort((a, b) => b - a);\n  return numbers[n - 1];\n}",
+          "explanation": "The solution sorts the input array in descending order and returns the element at the (n-1)th index, which corresponds to the nth largest element."
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "title": "Implementing a Linked List",
+      "category": "Data Structures",
+      "difficulty": "Medium",
+      "description": "Implement a Linked List in JavaScript with the following operations: `insert(value)`, `delete(value)`, and `search(value)`.",
+      "methodology": {
+        "approach": "Linked List Data Structure Implementation",
+        "explanation": "The code snippet demonstrates the implementation of a Linked List in JavaScript. The `Node` class represents a single node in the Linked List, containing a `value` and a `next` pointer. The `LinkedList` class manages the list with a `head` pointer. The `insert` method adds a node at the end, `delete` removes the first occurrence of a node with a given value, and `search` checks for the existence of a node with a given value.",
+        "timeComplexity": {
+          "insert": "O(n) in the worst case (inserting at the end requires traversal to the last node).",
+          "delete": "O(n) in the worst case (requires traversal to find the node to delete).",
+          "search": "O(n) in the worst case (requires traversal to find the node)."
+        },
+        "spaceComplexity": "O(n), where n is the number of nodes in the linked list, to store the list nodes.",
+        "javascriptSpecific": true
+      },
+      "examples": [
+        {
+          "input": "Insert nodes 5, 10, 15; delete node 10; search for 5 and 10.",
+          "output": "search(5) returns true, search(10) returns false",
+          "explanation": "Demonstrates the basic operations of insert, delete, and search on the implemented Linked List."
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Class-based implementation of Node and LinkedList with insert, delete, and search methods.",
+          "code": "class Node {\n  constructor(value) {\n    this.value = value;\n    this.next = null;\n  }\n}\n\nclass LinkedList {\n  constructor() {\n    this.head = null;\n  }\n\n  insert(value) {\n    const newNode = new Node(value);\n    if (!this.head) {\n      this.head = newNode;\n    } else {\n      let current = this.head;\n      while (current.next) {\n        current = current.next;\n      }\n      current.next = newNode;\n    }\n  }\n\n  delete(value) {\n    if (!this.head) {\n      return;\n    }\n    if (this.head.value === value) {\n      this.head = this.head.next;\n      return;\n    }\n    let current = this.head;\n    let previous = null;\n    while (current && current.value !== value) {\n      previous = current;\n      current = current.next;\n    }\n    if (!current) {\n      return;\n    }\n    previous.next = current.next;\n  }\n\n  search(value) {\n    let current = this.head;\n    while (current) {\n      if (current.value === value) {\n        return true;\n      }\n      current = current.next;\n    }\n    return false;\n  }\n}",
+          "explanation": "Provides a class-based implementation for a Singly Linked List in JavaScript, including Node and LinkedList classes with insert, delete, and search functionalities."
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "title": "Implementing a Class Hierarchy with Inheritance",
+      "category": "Object-Oriented Programming (OOP), Inheritance",
+      "difficulty": "Medium",
+      "description": "Implement a class hierarchy in JavaScript with inheritance, including a base class `Shape` and subclasses `Rectangle` and `Circle`.",
+      "methodology": {
+        "approach": "Class Inheritance and Polymorphism",
+        "explanation": "The `Shape` class serves as the base class, providing a common `name` property and a placeholder `area()` method. The `Rectangle` and `Circle` classes extend `Shape`, inheriting the `name` property and overriding the `area()` method to calculate the area specific to each shape. This demonstrates inheritance and polymorphism.",
+        "timeComplexity": {
+          "area (Rectangle)": "O(1)",
+          "area (Circle)": "O(1)"
+        },
+        "spaceComplexity": "O(1), for object instantiation.",
+        "javascriptSpecific": true
+      },
+      "examples": [
+        {
+          "input": "Create a Rectangle with width 5 and height 3, and a Circle with radius 4.",
+          "output": "Rectangle area: 15, Circle area: approximately 50.27",
+          "explanation": "Demonstrates the calculation of area for Rectangle and Circle objects using their respective `area()` methods."
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Using JavaScript classes and the `extends` keyword to implement inheritance.",
+          "code": "class Shape {\n  constructor(name) {\n    this.name = name;\n  }\n  area() {\n    // To be implemented by subclasses\n  }\n}\n\nclass Rectangle extends Shape {\n  constructor(name, width, height) {\n    super(name);\n    this.width = width;\n    this.height = height;\n  }\n  area() {\n    return this.width * this.height;\n  }\n}\n\nclass Circle extends Shape {\n  constructor(name, radius) {\n    super(name);\n    this.radius = radius;\n  }\n  area() {\n    return Math.PI * Math.pow(this.radius, 2);\n  }\n}",
+          "explanation": "This code implements a class hierarchy with `Shape` as the base class and `Rectangle` and `Circle` as subclasses, showcasing inheritance and method overriding for area calculation."
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "title": "Finding the Longest Substring Without Repeating Characters",
+      "category": "Problem-Solving, String Manipulation, Sliding Window",
+      "difficulty": "Medium",
+      "description": "Write a JavaScript function `findLongestSubstring` that takes a string as input and returns the length of the longest substring without repeating characters.",
+      "methodology": {
+        "approach": "Sliding Window Technique",
+        "explanation": "The `findLongestSubstring` function utilizes the sliding window technique. It uses a `charMap` to keep track of the most recent index of each character encountered. The `start` variable marks the beginning of the current substring. As it iterates through the string, if a repeating character is found within the current window, the `start` index is moved to the position after the previous occurrence of the character, effectively sliding the window. The maximum length is tracked throughout the process.",
+        "timeComplexity": "O(n), where n is the length of the string, as we iterate through the string once.",
+        "spaceComplexity": "O(m), where m is the size of the character set (alphabet). In the worst case, it could be O(n) if all characters are unique, but generally bounded by the alphabet size.",
+        "javascriptSpecific": true
+      },
+      "examples": [
+        {
+          "input": "abcabcbb",
+          "output": "3",
+          "explanation": "The longest substring without repeating characters in 'abcabcbb' is 'abc', which has a length of 3."
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Sliding window with a character map (hash map)",
+          "code": "function findLongestSubstring(str) {\n  let maxLength = 0;\n  let start = 0;\n  const charMap = {};\n  for (let i = 0; i < str.length; i++) {\n    const currentChar = str[i];\n    if (charMap[currentChar] >= start) {\n      start = charMap[currentChar] + 1;\n    }\n    charMap[currentChar] = i;\n    maxLength = Math.max(maxLength, i - start + 1);\n  }\n  return maxLength;\n}",
+          "explanation": "Implements the sliding window approach using a hash map `charMap` to store character indices and efficiently track the start of the window to find the longest substring without repeating characters."
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "title": "Sum of Two Numbers in an Array",
+      "category": "Problem-Solving, Arrays, Hash Map",
+      "difficulty": "Easy-Medium",
+      "description": "Write a JavaScript function `findSumOfTwo` that takes an array of numbers and a target sum as input and returns an array containing two numbers that add up to the target sum. If no such pair is found, return an empty array.",
+      "methodology": {
+        "approach": "Hash Map (One-Pass)",
+        "explanation": "The `findSumOfTwo` function uses a hash map `numMap` to efficiently find the pair. For each number, it calculates the `complement` (target - number) and checks if the `complement` is already in `numMap`. If found, it means a pair is found. Otherwise, it adds the current `num` and its index to `numMap` for future lookups.",
+        "timeComplexity": "O(n), where n is the length of the array, as we iterate through the array once.",
+        "spaceComplexity": "O(n), in the worst case, to store all numbers in the hash map.",
+        "javascriptSpecific": true
+      },
+      "examples": [
+        {
+          "input": "arr = [2, 4, 7, 11, 15], target = 9",
+          "output": "[2, 7]",
+          "explanation": "The numbers 2 and 7 from the array sum up to the target 9."
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Using a hash map to store numbers and check for complements in one pass.",
+          "code": "function findSumOfTwo(arr, target) {\n  const numMap = {};\n  for (let i = 0; i < arr.length; i++) {\n    const num = arr[i];\n    const complement = target - num;\n    if (numMap[complement] !== undefined) {\n      return [complement, num];\n    }\n    numMap[num] = i;\n  }\n  return [];\n}",
+          "explanation": "This solution efficiently finds the pair using a hash map to store encountered numbers and quickly check if the complement needed to reach the target sum has already been seen."
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "title": "Working with Asynchronous JavaScript and Callbacks",
+      "category": "Asynchronous JavaScript, Callbacks",
+      "difficulty": "Easy-Medium",
+      "description": "Write a JavaScript function `fetchData` that simulates an asynchronous API call and takes a callback function as an argument. The callback function should be invoked with the retrieved data as its parameter.",
+      "methodology": {
+        "approach": "Asynchronous Simulation with `setTimeout` and Callbacks",
+        "explanation": "The `fetchData` function simulates an asynchronous operation using `setTimeout`. It waits for 2 seconds and then invokes the provided `callback` function with mock data. This demonstrates the basic pattern of asynchronous operations and callback usage in JavaScript.",
+        "timeComplexity": "Asynchronous operation, the `fetchData` function itself is O(1). The callback execution is delayed by the `setTimeout` duration.",
+        "spaceComplexity": "O(1), for the function itself.",
+        "javascriptSpecific": true
+      },
+      "examples": [
+        {
+          "input": "Define a callback function `handleData` that logs received data and pass it to `fetchData`.",
+          "output": "Output in console: 'Received data: { name: 'John', age: 28, city: 'New York' }' after 2 seconds.",
+          "explanation": "Demonstrates how to use a callback function to handle data retrieved asynchronously from a simulated API call."
+        }
+      ],
+      "solutions": [
+        {
+          "approach": "Simulating asynchronous behavior with `setTimeout` and invoking a callback function.",
+          "code": "function fetchData(callback) {\n  // Simulating an asynchronous API call with a setTimeout\n  setTimeout(() => {\n    const data = { name: 'John', age: 28, city: 'New York' };\n    callback(data);\n  }, 2000);\n}",
+          "explanation": "This code simulates an asynchronous data fetching operation using `setTimeout` and demonstrates how to pass and invoke a callback function to handle the asynchronously retrieved data."
+        }
+      ]
     }
   ]
 }

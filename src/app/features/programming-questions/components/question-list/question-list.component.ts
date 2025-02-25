@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 import { ProgrammingQuestion } from '../../models/programming-question.model';
 import { ProgrammingQuestionsService } from '../../services/programming-questions.service';
@@ -26,7 +27,8 @@ import { ProgrammingQuestionsService } from '../../services/programming-question
     MatButtonModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatIconModule
+    MatIconModule,
+    MatInputModule
   ]
 })
 export class QuestionListComponent implements OnInit {
@@ -37,6 +39,7 @@ export class QuestionListComponent implements OnInit {
   
   categoryFilter = new FormControl('');
   difficultyFilter = new FormControl('');
+  searchQuery = new FormControl('');
 
   constructor(private programmingQuestionsService: ProgrammingQuestionsService) {}
 
@@ -46,6 +49,7 @@ export class QuestionListComponent implements OnInit {
     // Subscribe to filter changes
     this.categoryFilter.valueChanges.subscribe(() => this.filterQuestions());
     this.difficultyFilter.valueChanges.subscribe(() => this.filterQuestions());
+    this.searchQuery.valueChanges.subscribe(() => this.filterQuestions());
   }
 
   loadQuestions() {
@@ -61,7 +65,11 @@ export class QuestionListComponent implements OnInit {
     this.filteredQuestions = this.questions.filter(question => {
       const matchesCategory = !this.categoryFilter.value || question.category === this.categoryFilter.value;
       const matchesDifficulty = !this.difficultyFilter.value || question.difficulty === this.difficultyFilter.value;
-      return matchesCategory && matchesDifficulty;
+      const matchesSearch = !this.searchQuery.value || 
+        question.title.toLowerCase().includes(this.searchQuery.value.toLowerCase()) ||
+        question.description.toLowerCase().includes(this.searchQuery.value.toLowerCase());
+
+      return matchesCategory && matchesDifficulty && matchesSearch;
     });
   }
 
