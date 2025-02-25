@@ -220,271 +220,430 @@ declare var Prism: any;
   `,
   styles: [`
     .concept-container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 20px;
+    }
 
-      .concept-header {
-        text-align: center;
-        margin-bottom: 2rem;
+    .concept-header {
+      margin-bottom: 2rem;
+    }
 
-        .header-content {
-          margin-bottom: 1rem;
-        }
-
-        h1 {
-          font-size: 2.5rem;
-          color: #333;
-          margin-bottom: 1rem;
-        }
-
-        p {
-          font-size: 1.2rem;
-          color: #666;
-        }
-
-        .concept-meta {
-          display: flex;
-          justify-content: center;
-          margin-bottom: 1rem;
-        }
+    .header-content {
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
       }
 
-      .explanation-content {
-        .interactive-examples {
-          margin-top: 2rem;
+      p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: rgba(0, 0, 0, 0.7);
+      }
+    }
 
-          .mini-editor {
-            margin-top: 1rem;
+    .concept-meta {
+      margin: 1rem 0;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
 
-            .code-header {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 0.5rem;
+    .tab-content {
+      margin-top: 1rem;
+    }
+
+    .explanation-content {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .interactive-examples {
+      margin: 2rem 0;
+    }
+
+    .mini-editor {
+      background: #f5f5f5;
+      border-radius: 4px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    pre {
+      background: #1e1e1e;
+      border-radius: 4px;
+      padding: 1rem;
+      margin: 0;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .example-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .key-points {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+
+      h3 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+
+        mat-icon {
+          color: #4caf50;
+          font-size: 20px;
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    .example-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1rem;
+
+      .code-section {
+        background-color: #272822;
+        border-radius: 4px;
+        
+        .code-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          background-color: #1e1f1c;
+          border-radius: 4px 4px 0 0;
+
+          h3 {
+            color: #f8f8f2;
+            margin: 0;
+          }
+
+          .code-actions {
+            display: flex;
+            gap: 0.5rem;
+          }
+
+          button {
+            color: #f8f8f2;
+          }
+        }
+
+        .code-editor {
+          padding: 1rem;
+          display: flex;
+          gap: 1rem;
+
+          .line-numbers {
+            user-select: none;
+            text-align: right;
+            color: #75715e;
+            padding-right: 0.5rem;
+            border-right: 1px solid #3c3d37;
+
+            .line-number {
+              font-family: 'Fira Code', monospace;
+              font-size: 0.9rem;
+              line-height: 1.5;
             }
+          }
 
-            pre {
-              background-color: #272822;
-              padding: 1rem;
-              border-radius: 4px;
-              margin: 0;
-            }
+          textarea {
+            flex: 1;
+            min-height: 300px;
+            background-color: #272822;
+            color: #f8f8f2;
+            border: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            padding: 0 0.5rem;
+            outline: none;
+            line-height: 1.5;
 
-            .example-result {
-              margin-top: 1rem;
-              padding: 1rem;
-              background-color: #f5f5f5;
-              border-radius: 4px;
+            &:focus {
+              outline: 1px solid #525252;
             }
           }
         }
 
-        .key-points {
-          margin-top: 2rem;
+        .syntax-errors {
           padding: 1rem;
-          background-color: #e3f2fd;
-          border-radius: 4px;
+          background-color: #1e1f1c;
+          border-top: 1px solid #3c3d37;
 
-          h3 {
+          .error {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #1976d2;
-            margin-top: 0;
-          }
+            color: #f44336;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
 
-          ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+            &:last-child {
+              margin-bottom: 0;
+            }
 
-            li {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              margin-bottom: 0.5rem;
-
-              mat-icon {
-                color: #4CAF50;
-                font-size: 1.2rem;
-              }
+            mat-icon {
+              flex-shrink: 0;
             }
           }
         }
       }
 
-      .tab-content {
-        padding: 2rem 0;
+      .output-section {
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
 
-        pre {
-          margin: 0;
-          border-radius: 4px;
+        .output-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          border-bottom: 1px solid #e0e0e0;
+
+          h3 {
+            margin: 0;
+            color: #333;
+          }
         }
 
-        code {
+        .console-output {
+          min-height: 300px;
+          max-height: 500px;
+          overflow-y: auto;
+          padding: 1rem;
+          background-color: #1e1e1e;
           font-family: 'Fira Code', monospace;
           font-size: 0.9rem;
+          line-height: 1.5;
+
+          .log-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #f8f8f2;
+
+            &.error {
+              color: #f44336;
+            }
+
+            &.warn {
+              color: #ffd700;
+            }
+
+            &.info {
+              color: #03a9f4;
+            }
+
+            mat-icon {
+              font-size: 18px;
+              flex-shrink: 0;
+            }
+
+            pre {
+              margin: 0;
+              white-space: pre-wrap;
+              word-break: break-word;
+              flex: 1;
+            }
+          }
+        }
+      }
+    }
+
+    .quiz-card {
+      margin-bottom: 1rem;
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .answer-feedback {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 4px;
+        background-color: #f5f5f5;
+
+        p {
+          margin: 0;
+          
+          &.correct {
+            color: #4caf50;
+            font-weight: 500;
+          }
+
+          &.incorrect {
+            color: #f44336;
+            font-weight: 500;
+          }
+
+          &.explanation {
+            margin-top: 0.5rem;
+            color: #666;
+          }
+        }
+      }
+    }
+
+    .quiz-header {
+      text-align: center;
+      margin-bottom: 2rem;
+
+      h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 1rem;
+      }
+    }
+
+    mat-chip {
+      &.beginner { background-color: #4CAF50; color: white; }
+      &.intermediate { background-color: #FF9800; color: white; }
+      &.advanced { background-color: #F44336; color: white; }
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .concept-container {
+        padding: 12px;
+      }
+
+      .header-content {
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+
+      .concept-meta {
+        justify-content: flex-start;
+      }
+
+      .explanation-content {
+        font-size: 1rem;
+      }
+
+      mat-expansion-panel-header {
+        padding: 0 12px;
+      }
+
+      .mini-editor {
+        padding: 0.5rem;
+      }
+
+      pre {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .key-points {
+        padding: 1rem;
+
+        li {
+          gap: 0.3rem;
+          margin-bottom: 0.6rem;
+          font-size: 0.95rem;
         }
       }
 
       .example-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        margin-top: 1rem;
+        grid-template-columns: 1fr;
+        gap: 1rem;
 
         .code-section {
-          background-color: #272822;
-          border-radius: 4px;
-          
           .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background-color: #1e1f1c;
-            border-radius: 4px 4px 0 0;
+            padding: 0.5rem;
 
             h3 {
-              color: #f8f8f2;
-              margin: 0;
+              font-size: 1rem;
             }
 
             .code-actions {
-              display: flex;
-              gap: 0.5rem;
-            }
-
-            button {
-              color: #f8f8f2;
+              gap: 0.3rem;
             }
           }
 
           .code-editor {
-            padding: 1rem;
-            display: flex;
-            gap: 1rem;
-
-            .line-numbers {
-              user-select: none;
-              text-align: right;
-              color: #75715e;
-              padding-right: 0.5rem;
-              border-right: 1px solid #3c3d37;
-
-              .line-number {
-                font-family: 'Fira Code', monospace;
-                font-size: 0.9rem;
-                line-height: 1.5;
-              }
-            }
+            padding: 0.5rem;
 
             textarea {
-              flex: 1;
-              min-height: 300px;
-              background-color: #272822;
-              color: #f8f8f2;
-              border: none;
-              font-family: 'Fira Code', monospace;
-              font-size: 0.9rem;
-              resize: vertical;
-              padding: 0 0.5rem;
-              outline: none;
-              line-height: 1.5;
-
-              &:focus {
-                outline: 1px solid #525252;
-              }
+              font-size: 0.85rem;
+              min-height: 200px;
             }
-          }
 
-          .syntax-errors {
-            padding: 1rem;
-            background-color: #1e1f1c;
-            border-top: 1px solid #3c3d37;
-
-            .error {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              color: #f44336;
-              font-size: 0.9rem;
-              margin-bottom: 0.5rem;
-
-              &:last-child {
-                margin-bottom: 0;
+            .line-numbers {
+              .line-number {
+                font-size: 0.85rem;
               }
             }
           }
         }
 
         .output-section {
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
-          display: flex;
-          flex-direction: column;
-
           .output-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 0.5rem;
 
             h3 {
-              margin: 0;
-              color: #333;
+              font-size: 1rem;
             }
           }
 
           .console-output {
-            flex: 1;
-            min-height: 300px;
-            padding: 1rem;
-            background-color: #2d2d2d;
-            color: #f8f8f2;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            overflow-y: auto;
+            min-height: 200px;
+            max-height: 300px;
+            font-size: 0.85rem;
+            padding: 0.5rem;
 
             .log-entry {
-              display: flex;
-              align-items: flex-start;
-              gap: 0.5rem;
-              margin-bottom: 0.5rem;
-              padding: 0.25rem;
-              border-radius: 4px;
-
-              &.log {
-                color: #f8f8f2;
-              }
-
-              &.info {
-                color: #66d9ef;
-              }
-
-              &.warn {
-                color: #e6db74;
-                background-color: rgba(230, 219, 116, 0.1);
-              }
-
-              &.error {
-                color: #f44336;
-                background-color: rgba(244, 67, 54, 0.1);
-              }
+              gap: 0.3rem;
+              font-size: 0.85rem;
 
               mat-icon {
-                font-size: 1.2rem;
-                width: 1.2rem;
-                height: 1.2rem;
-              }
-
-              pre {
-                margin: 0;
-                white-space: pre-wrap;
-                word-break: break-word;
-                flex: 1;
+                font-size: 16px;
               }
             }
           }
@@ -492,63 +651,59 @@ declare var Prism: any;
       }
 
       .quiz-card {
-        margin-bottom: 1rem;
-
         .options {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          margin-top: 1rem;
+          button {
+            padding: 8px;
+            font-size: 0.95rem;
+          }
         }
 
         .answer-feedback {
-          margin-top: 1rem;
-          padding: 1rem;
-          border-radius: 4px;
+          padding: 0.8rem;
+          font-size: 0.95rem;
+        }
+      }
+    }
 
-          .correct {
-            color: #4CAF50;
-            font-weight: bold;
-          }
+    @media (max-width: 480px) {
+      .concept-container {
+        padding: 8px;
+      }
 
-          .incorrect {
-            color: #F44336;
-            font-weight: bold;
-          }
+      .header-content {
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
 
-          .explanation {
-            margin-top: 0.5rem;
-            color: #666;
-          }
+      .concept-meta {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+      mat-chip-set {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+      .code-header {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        h3 {
+          font-size: 0.95rem;
         }
       }
 
       .quiz-header {
-        text-align: center;
-        margin-bottom: 2rem;
-
         h3 {
-          color: #333;
-          margin-bottom: 0.5rem;
+          font-size: 1.3rem;
         }
 
         p {
-          font-size: 1.2rem;
-          color: #666;
-          margin-bottom: 1rem;
+          font-size: 1.1rem;
         }
-      }
-
-      .quiz-actions {
-        display: flex;
-        justify-content: center;
-        margin-top: 2rem;
-      }
-
-      mat-chip {
-        &.beginner { background-color: #4CAF50; color: white; }
-        &.intermediate { background-color: #FF9800; color: white; }
-        &.advanced { background-color: #F44336; color: white; }
       }
     }
   `],

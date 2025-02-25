@@ -53,7 +53,7 @@ declare var Prism: any;
                           <mat-icon>code</mat-icon>
                           Interactive Example {{ i + 1 }}
                         </mat-panel-title>
-                        <mat-panel-description>
+                        <mat-panel-description class="example-description">
                           Try it yourself!
                         </mat-panel-description>
                       </mat-expansion-panel-header>
@@ -65,7 +65,7 @@ declare var Prism: any;
                             <mat-icon>play_arrow</mat-icon>
                           </button>
                         </div>
-                        <pre><code [innerHTML]="highlightCode(example.code)"></code></pre>
+                        <pre class="code-block"><code [innerHTML]="highlightCode(example.code)"></code></pre>
                         <div class="example-result" *ngIf="example.result">
                           <strong>Result:</strong>
                           <div [innerHTML]="sanitizeHtml(example.result)"></div>
@@ -82,7 +82,7 @@ declare var Prism: any;
                     <ul>
                       <li *ngFor="let point of content.keyPoints">
                         <mat-icon>check_circle</mat-icon>
-                        {{ point }}
+                        <span class="key-point-text">{{ point }}</span>
                       </li>
                     </ul>
                   </div>
@@ -101,96 +101,45 @@ declare var Prism: any;
                     <div class="code-header">
                       <h3>CSS Code</h3>
                       <div class="code-actions">
-                        <button mat-icon-button (click)="copyCode()" matTooltip="Copy to clipboard">
+                        <button mat-icon-button (click)="copyCode()" matTooltip="Copy code">
                           <mat-icon>content_copy</mat-icon>
                         </button>
                         <button mat-icon-button (click)="resetCode()" matTooltip="Reset code">
-                          <mat-icon>restart_alt</mat-icon>
-                        </button>
-                        <button mat-icon-button 
-                          [matBadge]="syntaxErrors.length" 
-                          [matBadgeHidden]="!syntaxErrors.length"
-                          matBadgeColor="warn"
-                          [matTooltip]="syntaxErrors.length ? 'Syntax errors found' : 'No syntax errors'"
-                        >
-                          <mat-icon [color]="syntaxErrors.length ? 'warn' : 'primary'">
-                            {{ syntaxErrors.length ? 'error' : 'check_circle' }}
-                          </mat-icon>
+                          <mat-icon>refresh</mat-icon>
                         </button>
                       </div>
                     </div>
                     <div class="code-editor">
                       <div class="line-numbers">
-                        <div class="line-number" *ngFor="let line of getLineNumbers()">{{ line }}</div>
+                        <div class="line-number" *ngFor="let num of getLineNumbers()">{{ num }}</div>
                       </div>
                       <textarea
-                        #codeEditor
                         [(ngModel)]="currentCode"
-                        (ngModelChange)="onCodeChange()"
+                        (input)="onCodeChange()"
                         (scroll)="syncScroll($event)"
-                        rows="10"
-                        spellcheck="false">
-                      </textarea>
+                        spellcheck="false"
+                      ></textarea>
                     </div>
-                    <div class="syntax-errors" *ngIf="syntaxErrors.length">
+                    <div class="syntax-errors" *ngIf="syntaxErrors.length > 0">
                       <div class="error" *ngFor="let error of syntaxErrors">
-                        <mat-icon color="warn">error</mat-icon>
-                        <span>Line {{ error.line }}: {{ error.message }}</span>
+                        <mat-icon>error</mat-icon>
+                        Line {{ error.line }}: {{ error.message }}
                       </div>
                     </div>
                   </div>
                   <div class="preview-section">
                     <div class="preview-header">
-                      <h3>Live Preview</h3>
-                      <button mat-icon-button (click)="togglePreviewMode()" [matTooltip]="previewMode">
-                        <mat-icon>{{ previewMode === 'desktop' ? 'computer' : 'smartphone' }}</mat-icon>
+                      <h3>Preview</h3>
+                      <button mat-icon-button (click)="togglePreviewMode()" [matTooltip]="previewMode === 'desktop' ? 'Switch to mobile view' : 'Switch to desktop view'">
+                        <mat-icon>{{ previewMode === 'desktop' ? 'smartphone' : 'desktop_windows' }}</mat-icon>
                       </button>
                     </div>
-                    <div class="preview-container" [ngClass]="{'mobile': previewMode === 'mobile'}">
-                      <div #previewStyleContainer></div>
-                      <div #previewContent class="preview-content" [innerHTML]="previewHtml"></div>
+                    <div class="preview-container" [class.mobile]="previewMode === 'mobile'" [innerHTML]="sanitizedPreview">
                     </div>
                   </div>
                 </div>
               </mat-card-content>
             </mat-card>
-          </div>
-        </mat-tab>
-
-        <mat-tab label="Quiz">
-          <div class="tab-content">
-            <div class="quiz-header" *ngIf="quizComplete">
-              <h3>Quiz Results</h3>
-              <p>Score: {{ quizScore }}%</p>
-              <button mat-button color="primary" (click)="resetQuiz()">Retake Quiz</button>
-            </div>
-            <mat-card *ngFor="let question of content.quiz; let i = index" class="quiz-card">
-              <mat-card-content>
-                <h3>Question {{ i + 1 }}</h3>
-                <p>{{ question.question }}</p>
-                <div class="options">
-                  <button mat-button *ngFor="let option of question.options; let j = index"
-                          (click)="checkAnswer(i, j)"
-                          [disabled]="quizComplete"
-                          [color]="getAnswerColor(i, j)">
-                    {{ option }}
-                  </button>
-                </div>
-                <div class="answer-feedback" *ngIf="userAnswers[i] !== undefined">
-                  <p [class]="isAnswerCorrect(i) ? 'correct' : 'incorrect'">
-                    {{ isAnswerCorrect(i) ? '✓ Correct!' : '✗ Incorrect' }}
-                  </p>
-                  <p *ngIf="!isAnswerCorrect(i)" class="explanation">
-                    The correct answer is: {{ content.quiz[i].options[content.quiz[i].correctAnswer] }}
-                  </p>
-                </div>
-              </mat-card-content>
-            </mat-card>
-            <div class="quiz-actions" *ngIf="!quizComplete && allQuestionsAnswered">
-              <button mat-raised-button color="primary" (click)="completeQuiz()">
-                Submit Quiz
-              </button>
-            </div>
           </div>
         </mat-tab>
       </mat-tab-group>
@@ -200,118 +149,110 @@ declare var Prism: any;
     .concept-container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 20px;
+    }
 
-      .concept-header {
-        text-align: center;
-        margin-bottom: 2rem;
+    .concept-header {
+      margin-bottom: 2rem;
+    }
 
-        .header-content {
-          margin-bottom: 1rem;
-        }
-
-        h1 {
-          font-size: 2.5rem;
-          color: #333;
-          margin-bottom: 1rem;
-        }
-
-        p {
-          font-size: 1.2rem;
-          color: #666;
-        }
-
-        .concept-meta {
-          display: flex;
-          justify-content: center;
-          margin-bottom: 1rem;
-        }
+    .header-content {
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
       }
 
-      .explanation-content {
-        .interactive-examples {
-          margin-top: 2rem;
+      p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: rgba(0, 0, 0, 0.7);
+      }
+    }
 
-          .mini-editor {
-            margin-top: 1rem;
+    .concept-meta {
+      margin: 1rem 0;
+    }
 
-            .code-header {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 0.5rem;
-            }
+    .tab-content {
+      margin-top: 1rem;
+    }
 
-            pre {
-              background-color: #272822;
-              padding: 1rem;
-              border-radius: 4px;
-              margin: 0;
-            }
+    .explanation-content {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
 
-            .example-result {
-              margin-top: 1rem;
-              padding: 1rem;
-              background-color: #f5f5f5;
-              border-radius: 4px;
-            }
-          }
-        }
+    .interactive-examples {
+      margin: 2rem 0;
+    }
 
-        .key-points {
-          margin-top: 2rem;
-          padding: 1rem;
-          background-color: #e3f2fd;
-          border-radius: 4px;
+    .mini-editor {
+      background: #f5f5f5;
+      border-radius: 4px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
 
-          h3 {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #1976d2;
-            margin-top: 0;
-          }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
 
-          ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+    .code-block {
+      background: #1e1e1e;
+      border-radius: 4px;
+      padding: 1rem;
+      margin: 0;
+      overflow-x: auto;
+    }
 
-            li {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              margin-bottom: 0.5rem;
+    .example-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
 
-              mat-icon {
-                color: #4CAF50;
-                font-size: 1.2rem;
-              }
-            }
-          }
-        }
+    .key-points {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+
+      h3 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
       }
 
-      .tab-content {
-        padding: 2rem 0;
-
-        pre {
-          margin: 0;
-          border-radius: 4px;
-        }
-
-        code {
-          font-family: 'Fira Code', monospace;
-          font-size: 0.9rem;
-        }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
       }
 
-      .example-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        margin-top: 1rem;
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+
+        mat-icon {
+          color: #4caf50;
+          font-size: 20px;
+        }
       }
+    }
+
+    .example-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1rem;
 
       .code-section {
         background-color: #272822;
@@ -401,103 +342,151 @@ declare var Prism: any;
       .preview-section {
         border: 1px solid #e0e0e0;
         border-radius: 4px;
-        overflow: hidden;
-      }
 
-      .preview-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 1rem;
-        background: #f5f5f5;
-        border-bottom: 1px solid #e0e0e0;
-      }
-
-      .preview-container {
-        background: white;
-        min-height: 300px;
-        padding: 1rem;
-        overflow: auto;
-      }
-
-      .preview-container.mobile {
-        max-width: 375px;
-        margin: 1rem auto;
-        min-height: 500px;
-        border: 10px solid #333;
-        border-radius: 20px;
-        padding: 1rem;
-        background: white;
-      }
-
-      .preview-content {
-        height: 100%;
-      }
-
-      .quiz-card {
-        margin-bottom: 1rem;
-
-        .options {
+        .preview-header {
           display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          margin-top: 1rem;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          border-bottom: 1px solid #e0e0e0;
+
+          h3 {
+            margin: 0;
+            color: #333;
+          }
         }
 
-        .answer-feedback {
-          margin-top: 1rem;
+        .preview-container {
+          min-height: 300px;
           padding: 1rem;
-          border-radius: 4px;
+          background-color: #ffffff;
+          overflow: auto;
 
-          .correct {
-            color: #4CAF50;
-            font-weight: bold;
-          }
-
-          .incorrect {
-            color: #F44336;
-            font-weight: bold;
-          }
-
-          .explanation {
-            margin-top: 0.5rem;
-            color: #666;
+          &.mobile {
+            max-width: 375px;
+            margin: 0 auto;
+            border: 10px solid #333;
+            border-radius: 20px;
+            min-height: 600px;
           }
         }
-      }
-
-      .quiz-header {
-        text-align: center;
-        margin-bottom: 2rem;
-
-        h3 {
-          color: #333;
-          margin-bottom: 0.5rem;
-        }
-
-        p {
-          font-size: 1.2rem;
-          color: #666;
-          margin-bottom: 1rem;
-        }
-      }
-
-      .quiz-actions {
-        display: flex;
-        justify-content: center;
-        margin-top: 2rem;
-      }
-
-      mat-chip {
-        &.beginner { background-color: #4CAF50; color: white; }
-        &.intermediate { background-color: #FF9800; color: white; }
-        &.advanced { background-color: #F44336; color: white; }
       }
     }
 
+    mat-chip {
+      &.beginner { background-color: #4CAF50; color: white; }
+      &.intermediate { background-color: #FF9800; color: white; }
+      &.advanced { background-color: #F44336; color: white; }
+    }
+
+    /* Mobile Responsive Styles */
     @media (max-width: 768px) {
+      .concept-container {
+        padding: 12px;
+      }
+
+      .header-content {
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+
+      .explanation-content {
+        font-size: 1rem;
+      }
+
+      .example-description {
+        display: none;
+      }
+
+      .mini-editor {
+        padding: 0.5rem;
+      }
+
+      .code-block {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .key-points {
+        padding: 1rem;
+
+        li {
+          gap: 0.3rem;
+          margin-bottom: 0.6rem;
+          
+          .key-point-text {
+            font-size: 0.95rem;
+          }
+        }
+      }
+
       .example-container {
         grid-template-columns: 1fr;
+        gap: 1rem;
+
+        .code-section {
+          .code-editor {
+            padding: 0.5rem;
+            
+            textarea {
+              font-size: 0.85rem;
+              min-height: 200px;
+            }
+
+            .line-numbers {
+              .line-number {
+                font-size: 0.85rem;
+              }
+            }
+          }
+        }
+
+        .preview-section {
+          .preview-container {
+            min-height: 200px;
+
+            &.mobile {
+              max-width: 100%;
+              border-width: 5px;
+              min-height: 400px;
+            }
+          }
+        }
+      }
+    }
+
+    @media (max-width: 480px) {
+      .concept-container {
+        padding: 8px;
+      }
+
+      .header-content {
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+
+      .mat-expansion-panel-header {
+        padding: 0 12px;
+      }
+
+      .code-header {
+        h3 {
+          font-size: 1rem;
+        }
+      }
+
+      .preview-section {
+        .preview-header {
+          h3 {
+            font-size: 1rem;
+          }
+        }
       }
     }
   `],
@@ -526,6 +515,7 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
   currentCode: string = '';
   previewHtml: SafeHtml = '';
   sanitizedExplanation: SafeHtml = '';
+  sanitizedPreview: SafeHtml = '';
   previewMode: 'desktop' | 'mobile' = 'desktop';
   quizComplete: boolean = false;
   quizScore: number = 0;
@@ -554,6 +544,10 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
 
           this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
             content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          );
+          
+          this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(
+            content.previewHtml || ''
           );
           
           this.checkSyntax();
@@ -647,6 +641,7 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
     try {
       const styleElement = document.createElement('style');
       styleElement.textContent = this.currentCode;
+      
       document.head.appendChild(styleElement);
       document.head.removeChild(styleElement);
     } catch (error: any) {
