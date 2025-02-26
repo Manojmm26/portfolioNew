@@ -118,6 +118,10 @@ declare var Prism: any;
                         (input)="onCodeChange()"
                         (scroll)="syncScroll($event)"
                         spellcheck="false"
+                        rows="20"
+                        wrap="off"
+                        class="code-textarea"
+                        #codeTextarea
                       ></textarea>
                     </div>
                     <div class="syntax-errors" *ngIf="syntaxErrors.length > 0">
@@ -140,6 +144,43 @@ declare var Prism: any;
                 </div>
               </mat-card-content>
             </mat-card>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Quiz">
+          <div class="tab-content">
+            <div class="quiz-header" *ngIf="quizComplete">
+              <h3>Quiz Results</h3>
+              <p>Score: {{ quizScore }}%</p>
+              <button mat-button color="primary" (click)="resetQuiz()">Retake Quiz</button>
+            </div>
+            <mat-card *ngFor="let question of content.quiz; let i = index" class="quiz-card">
+              <mat-card-content>
+                <h3>Question {{ i + 1 }}</h3>
+                <p>{{ question.question }}</p>
+                <div class="options">
+                  <button mat-button *ngFor="let option of question.options; let j = index"
+                          (click)="checkAnswer(i, j)"
+                          [disabled]="quizComplete"
+                          [color]="getAnswerColor(i, j)">
+                    {{ option }}
+                  </button>
+                </div>
+                <div class="answer-feedback" *ngIf="userAnswers[i] !== undefined">
+                  <p [class]="isAnswerCorrect(i) ? 'correct' : 'incorrect'">
+                    {{ isAnswerCorrect(i) ? '✓ Correct!' : '✗ Incorrect' }}
+                  </p>
+                  <p *ngIf="!isAnswerCorrect(i)" class="explanation">
+                    The correct answer is: {{ content.quiz[i].options[content.quiz[i].correctAnswer] }}
+                  </p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <div class="quiz-actions" *ngIf="!quizComplete && allQuestionsAnswered">
+              <button mat-raised-button color="primary" (click)="completeQuiz()">
+                Submit Quiz
+              </button>
+            </div>
           </div>
         </mat-tab>
       </mat-tab-group>
@@ -315,9 +356,13 @@ declare var Prism: any;
           }
         }
 
-        .editor {
+        .code-editor {
           display: flex;
           background-color: var(--theme-code-background);
+          position: relative;
+          min-height: 300px;
+          border: 1px solid var(--theme-border-color);
+          overflow: hidden;
 
           .line-numbers {
             display: flex;
@@ -326,17 +371,21 @@ declare var Prism: any;
             user-select: none;
             text-align: right;
             color: var(--theme-code-comment-color);
-            padding-right: 0.5rem;
+            padding: 0.5rem 0.5rem 0.5rem 0;
             border-right: 1px solid var(--theme-border-color);
+            background-color: var(--theme-code-background);
+            z-index: 1;
 
             .line-number {
               font-family: 'Fira Code', monospace;
               font-size: 0.9rem;
               line-height: 1.5;
+              padding: 0 0.3rem;
+              color: #858585;
             }
           }
 
-          textarea {
+          .code-textarea {
             flex: 1;
             min-height: 300px;
             background-color: var(--theme-code-background);
@@ -344,21 +393,27 @@ declare var Prism: any;
             border: none;
             font-family: 'Fira Code', monospace;
             font-size: 0.9rem;
-            resize: vertical;
-            padding: 0 0.5rem;
+            resize: none;
+            padding: 0.5rem;
             outline: none;
             line-height: 1.5;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+            tab-size: 2;
 
             &:focus {
-              outline: 1px solid var(--theme-border-color);
+              outline: 1px solid var(--theme-primary-color);
             }
           }
         }
 
         .syntax-errors {
-          padding: 1rem;
+          padding: 0.75rem;
           background-color: var(--theme-code-background);
           border-top: 1px solid var(--theme-border-color);
+          max-height: 100px;
+          overflow-y: auto;
 
           .error {
             display: flex;
@@ -370,6 +425,13 @@ declare var Prism: any;
 
             &:last-child {
               margin-bottom: 0;
+            }
+
+            mat-icon {
+              font-size: 18px;
+              height: 18px;
+              width: 18px;
+              line-height: 18px;
             }
           }
         }
@@ -428,18 +490,48 @@ declare var Prism: any;
         border-radius: 4px;
         background-color: var(--theme-card-background);
         border: 1px solid var(--theme-border-color);
-          }
-        }
+      }
+    }
 
     .quiz-actions {
       display: flex;
       justify-content: center;
       margin-top: 2rem;
-      }
+    }
 
     .quiz-results {
       text-align: center;
       margin-bottom: 2rem;
+    }
+
+    .quiz-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      
+      h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      p {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+    }
+    
+    .correct {
+      color: var(--theme-success-color);
+      font-weight: bold;
+    }
+    
+    .incorrect {
+      color: var(--theme-error-color);
+      font-weight: bold;
+    }
+    
+    .explanation {
+      margin-top: 0.5rem;
+      font-style: italic;
     }
   `],
     encapsulation: ViewEncapsulation.None,
@@ -459,9 +551,6 @@ declare var Prism: any;
     ]
 })
 export class CssConceptComponent implements OnInit, AfterViewInit {
-  @ViewChild('previewStyleContainer') previewStyleContainer!: ElementRef;
-  @ViewChild('previewContent') previewContent!: ElementRef;
-
   content: ConceptContent | null = null;
   userAnswers: number[] = [];
   currentCode: string = '';
@@ -472,6 +561,8 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
   quizComplete: boolean = false;
   quizScore: number = 0;
   syntaxErrors: Array<{ line: number; message: string }> = [];
+
+  @ViewChild('codeTextarea') codeTextarea!: ElementRef<HTMLTextAreaElement>;
 
   constructor(
     private route: ActivatedRoute,
@@ -498,11 +589,15 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
             content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
           );
           
+          // Initial sanitization without CSS
           this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(
             content.previewHtml || ''
           );
           
           this.checkSyntax();
+          
+          // Apply CSS to the preview
+          this.updatePreviewStyles();
         }
       });
     }
@@ -510,28 +605,38 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.updatePreviewStyles();
+    
+    // Set initial focus and adjust textarea height if needed
+    setTimeout(() => {
+      if (this.codeTextarea && this.codeTextarea.nativeElement) {
+        // Adjust the height of the textarea to match content
+        this.adjustTextareaHeight();
+      }
+    });
+  }
+  
+  // Helper method to adjust textarea height based on content
+  private adjustTextareaHeight(): void {
+    if (this.codeTextarea && this.codeTextarea.nativeElement) {
+      const textarea = this.codeTextarea.nativeElement;
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.max(300, textarea.scrollHeight) + 'px';
+    }
   }
 
   private updatePreviewStyles() {
-    if (this.previewStyleContainer && this.currentCode) {
-      // Remove any existing style elements
-      const existingStyles = this.previewStyleContainer.nativeElement.querySelectorAll('style');
-      existingStyles.forEach((style: HTMLElement) => style.remove());
-
-      // Create and append new style element with scoped styles
-      const styleElement = document.createElement('style');
-      styleElement.textContent = `
-        .preview-content {
-          height: 100%;
-        }
-        ${this.currentCode}
+    // Create a combined HTML with the CSS applied
+    if (this.currentCode) {
+      // Create HTML with embedded style
+      const htmlWithStyle = `
+        <style>
+          ${this.currentCode}
+        </style>
+        ${this.content?.previewHtml || ''}
       `;
       
-      // Find the preview container and inject styles
-      const previewContainer = this.elementRef.nativeElement.querySelector('.preview-container');
-      if (previewContainer) {
-        previewContainer.appendChild(styleElement);
-      }
+      // Update the sanitized preview with the new HTML that includes the CSS
+      this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(htmlWithStyle);
     }
   }
 
@@ -541,7 +646,7 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
   }
 
   private getBaseStyles(): string {
-    return `
+    return ` 
       .preview-content {
         padding: 1rem;
       }
@@ -579,13 +684,17 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
 
   getLineNumbers(): number[] {
     const lines = this.currentCode.split('\n').length;
-    return Array.from({ length: lines }, (_, i) => i + 1);
+    const minLines = 25; // Ensure we have at least 25 line numbers
+    const numLines = Math.max(lines, minLines);
+    return Array.from({ length: numLines }, (_, i) => i + 1);
   }
 
   syncScroll(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
     const lineNumbers = textarea.previousElementSibling as HTMLElement;
-    lineNumbers.scrollTop = textarea.scrollTop;
+    if (lineNumbers) {
+      lineNumbers.scrollTop = textarea.scrollTop;
+    }
   }
 
   private checkSyntax(): void {
@@ -665,7 +774,12 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
   }
 
   get allQuestionsAnswered(): boolean {
-    return this.content ? this.userAnswers.length === this.content.quiz.length : false;
+    if (!this.content || !this.content.quiz || this.content.quiz.length === 0) {
+      return false;
+    }
+    
+    // Check if we have an answer for each question
+    return this.content.quiz.every((_, index) => this.userAnswers[index] !== undefined);
   }
 
   completeQuiz(): void {

@@ -1,19 +1,30 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, AfterViewInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CommonModule } from '@angular/common';
-import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import loader from '@monaco-editor/loader';
+import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
 import { highlight, highlightAll } from '../../../shared/utils/prism-config';
+
+// Configure Monaco loader to use CDN
+loader.config({ 
+  paths: { 
+    vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs'
+  } 
+});
 
 declare var Prism: any;
 
@@ -27,12 +38,15 @@ declare var Prism: any;
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatTabsModule,
     MatChipsModule,
+    MatExpansionModule,
+    MatTabsModule,
+    MatRadioModule,
     MatSnackBarModule,
     MatTooltipModule,
-    MatExpansionModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatProgressSpinnerModule,
+    MonacoEditorModule
   ],
   template: `
     <div class="concept-container" *ngIf="content">
@@ -139,23 +153,24 @@ declare var Prism: any;
                         </button>
                       </div>
                     </div>
-                    <div class="code-editor">
-                      <div class="line-numbers">
-                        <div class="line-number" *ngFor="let line of getLineNumbers()">{{ line }}</div>
-                      </div>
-                      <textarea
-                        #codeEditor
+                    <div class="editor-container">
+                      <ngx-monaco-editor
+                        *ngIf="isEditorReady"
+                        class="code-editor"
                         [(ngModel)]="currentCode"
-                        (ngModelChange)="onCodeChange()"
-                        (scroll)="syncScroll($event)"
-                        rows="10"
-                        spellcheck="false">
-                      </textarea>
+                        [options]="editorOptions"
+                        (onInit)="onEditorInit($event)"
+                        (ngModelChange)="onCodeChange()">
+                      </ngx-monaco-editor>
+                      <div *ngIf="!isEditorReady" class="editor-loading">
+                        <mat-icon>hourglass_empty</mat-icon>
+                        <span>Loading editor...</span>
+                      </div>
                     </div>
                     <div class="syntax-errors" *ngIf="syntaxErrors.length">
                       <div class="error" *ngFor="let error of syntaxErrors">
                         <mat-icon color="warn">error</mat-icon>
-                        <span>Line {{ error.line }}: {{ error.message }}</span>
+                        <span>Line {{ error }}: {{ error }}</span>
                       </div>
                     </div>
                   </div>
@@ -166,10 +181,10 @@ declare var Prism: any;
                         <mat-icon>clear_all</mat-icon>
                       </button>
                     </div>
-                    <div class="console-output" #consoleContainer>
-                      <div *ngFor="let log of consoleMessages" class="log-entry" [class]="log.type">
-                        <mat-icon>{{ getLogIcon(log.type) }}</mat-icon>
-                        <pre>{{ log.message }}</pre>
+                    <div class="console-output" #consoleOutput>
+                      <div *ngFor="let log of consoleMessages" class="log-entry">
+                        <mat-icon>terminal</mat-icon>
+                        <pre>{{ log }}</pre>
                       </div>
                     </div>
                   </div>
@@ -364,10 +379,9 @@ declare var Prism: any;
       }
 
       .code-section {
-        background-color: var(--theme-card-background);
+        border: 1px solid var(--theme-border-color);
         border-radius: 4px;
         overflow: hidden;
-        border: 1px solid var(--theme-border-color);
         
         .code-header {
           display: flex;
@@ -388,42 +402,48 @@ declare var Prism: any;
           }
         }
 
-        .editor {
+        .editor-container {
+          border: 1px solid var(--theme-border-color);
+          border-radius: 4px;
+          overflow: hidden;
+          height: 300px;
+          background-color: #1e1e1e;
+        }
+
+        .code-editor {
+          height: 100%;
+          width: 100%;
+        }
+
+        .editor-loading {
+          height: 100%;
           display: flex;
-          background-color: var(--theme-code-background);
-
-          .line-numbers {
-            display: flex;
-            flex-direction: column;
-            min-width: 40px;
-            user-select: none;
-            text-align: right;
-            color: var(--theme-code-comment-color);
-            padding-right: 0.5rem;
-            border-right: 1px solid var(--theme-border-color);
-
-            .line-number {
-              font-family: 'Fira Code', monospace;
-              font-size: 0.9rem;
-              line-height: 1.5;
-            }
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: #ffffff;
+          font-size: 16px;
+          background: linear-gradient(45deg, #1e1e1e, #2d2d2d);
+          gap: 1rem;
+          
+          mat-icon {
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+            animation: spin 1.5s linear infinite;
           }
+        }
 
-          textarea {
-            flex: 1;
-            min-height: 300px;
-            background-color: var(--theme-code-background);
-            color: var(--theme-code-text-color);
-            border: none;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            resize: vertical;
-            padding: 0 0.5rem;
-            outline: none;
-            line-height: 1.5;
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
 
-            &:focus {
-              outline: 1px solid var(--theme-border-color);
+        ::ng-deep {
+          .monaco-editor {
+            padding: 8px 0;
+            .monaco-editor-background {
+              background-color: #1e1e1e !important;
             }
           }
         }
@@ -466,21 +486,36 @@ declare var Prism: any;
           }
         }
 
-        .output-container {
-          min-height: 300px;
+        .console-output {
           padding: 1rem;
-          background-color: var(--theme-card-background);
+          background-color: var(--theme-code-background);
           overflow: auto;
-          
-          .output-content {
+          max-height: 300px;
           font-family: 'Fira Code', monospace;
           font-size: 0.9rem;
           line-height: 1.5;
-            color: var(--theme-code-text-color);
-            background-color: var(--theme-code-background);
-            padding: 1rem;
-            border-radius: 4px;
+          color: var(--theme-code-text-color);
+          
+          .log-entry {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            
+            mat-icon {
+              margin-right: 0.5rem;
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+            }
+            
+            pre {
               margin: 0;
+              white-space: pre-wrap;
+              word-break: break-word;
+              flex: 1;
+              background: transparent;
+              padding: 0;
+            }
           }
         }
       }
@@ -519,15 +554,33 @@ declare var Prism: any;
     }
   `]
 })
-export class JavascriptConceptComponent implements OnInit {
+export class JavascriptConceptComponent implements OnInit, AfterViewInit {
+  @ViewChild('consoleOutput') consoleOutput!: ElementRef;
+
   content: ConceptContent | null = null;
-  userAnswers: number[] = [];
   currentCode: string = '';
+  originalCode: string = '';
+  consoleMessages: string[] = [];
+  isRunning: boolean = false;
+  syntaxErrors: string[] = [];
+  isEditorReady: boolean = false;
+  editor: any;
   sanitizedExplanation: SafeHtml = '';
+  userAnswers: number[] = [];
   quizComplete: boolean = false;
   quizScore: number = 0;
-  syntaxErrors: Array<{ line: number; message: string }> = [];
-  consoleMessages: Array<{ type: 'log' | 'info' | 'warn' | 'error', message: string }> = [];
+  
+  editorOptions = {
+    theme: 'vs-dark',
+    language: 'javascript',
+    fontSize: 14,
+    minimap: { enabled: true },
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    formatOnPaste: true,
+    formatOnType: true,
+    readOnly: false
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -536,8 +589,8 @@ export class JavascriptConceptComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit() {
-    const conceptId = this.route.snapshot.paramMap.get('id');
+  ngOnInit(): void {
+    const conceptId = this.route.snapshot.paramMap.get('conceptId');
     if (conceptId) {
       this.conceptService.getConcept(conceptId).subscribe(concept => {
         if (concept) {
@@ -548,6 +601,7 @@ export class JavascriptConceptComponent implements OnInit {
             );
           }
           this.currentCode = concept.example || '';
+          this.originalCode = this.currentCode;
           setTimeout(() => {
             highlightAll();
           });
@@ -556,96 +610,141 @@ export class JavascriptConceptComponent implements OnInit {
         }
       });
     }
-  }
 
-  getLineNumbers(): number[] {
-    if (!this.currentCode) return [1];
-    const lines = this.currentCode.split('\n').length;
-    return Array.from({ length: lines }, (_, i) => i + 1);
-  }
-
-  syncScroll(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    const lineNumbers = textarea.previousElementSibling as HTMLElement;
-    lineNumbers.scrollTop = textarea.scrollTop;
-  }
-
-  onCodeChange(): void {
-    this.checkSyntax();
-  }
-
-  checkSyntax(): void {
-    this.syntaxErrors = [];
-    try {
-      new Function(this.currentCode);
-    } catch (error: any) {
-      const match = error.message.match(/line (\d+)/);
-      const lineNumber = match ? parseInt(match[1], 10) : 1;
-      this.syntaxErrors.push({
-        line: lineNumber,
-        message: error.message
+    // Initialize Monaco Editor
+    loader.init().then(monaco => {
+      this.isEditorReady = true;
+      
+      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: true,
+        noSyntaxValidation: false
       });
-    }
-  }
 
-  runCode(): void {
-    if (this.syntaxErrors.length > 0) {
-      this.snackBar.open('Please fix syntax errors before running the code', 'Close', {
-        duration: 3000
+      monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+        target: monaco.languages.typescript.ScriptTarget.ES2015,
+        allowNonTsExtensions: true
       });
-      return;
-    }
-
-    // Create a safe execution environment
-    const consoleProxy = {
-      log: (message: any) => this.addConsoleOutput('log', message),
-      info: (message: any) => this.addConsoleOutput('info', message),
-      warn: (message: any) => this.addConsoleOutput('warn', message),
-      error: (message: any) => this.addConsoleOutput('error', message)
-    };
-
-    try {
-      // Create a new function with console proxy
-      const code = `
-        return (function() {
-          const console = arguments[0];
-          ${this.currentCode}
-        })
-      `;
-      new Function(code)()(consoleProxy);
-    } catch (error: any) {
-      this.addConsoleOutput('error', error.message);
-    }
-  }
-
-  addConsoleOutput(type: 'log' | 'info' | 'warn' | 'error', message: any): void {
-    this.consoleMessages.push({
-      type,
-      message: this.formatConsoleMessage(message)
+    }).catch(error => {
+      console.error('Failed to initialize Monaco editor:', error);
     });
   }
 
-  formatConsoleMessage(message: any): string {
-    if (typeof message === 'object') {
-      return JSON.stringify(message, null, 2);
-    }
-    return String(message);
+  ngAfterViewInit(): void {
+    // Any post-view initialization if needed
   }
 
-  clearConsole(): void {
+  onEditorInit(editor: any): void {
+    this.editor = editor;
+    console.log('Monaco editor initialized');
+    
+    // Make sure the editor is visible
+    setTimeout(() => {
+      if (editor) {
+        editor.layout();
+        editor.focus();
+      }
+    }, 100);
+  }
+
+  resetCode(): void {
+    this.currentCode = this.originalCode;
+    this.syntaxErrors = [];
     this.consoleMessages = [];
   }
 
-  getLogIcon(type: string): string {
-    switch (type) {
-      case 'info':
-        return 'info';
-      case 'warn':
-        return 'warning';
-      case 'error':
-        return 'error';
+  copyCode(): void {
+    navigator.clipboard.writeText(this.currentCode);
+    this.snackBar.open('Code copied to clipboard!', 'Close', {
+      duration: 2000,
+    });
+  }
+
+  runCode(): void {
+    this.isRunning = true;
+    this.consoleMessages = [];
+    this.syntaxErrors = [];
+
+    try {
+      // Capture console.log output
+      const originalConsole = window.console.log;
+      const logs: string[] = [];
+      
+      window.console.log = (...args) => {
+        const output = args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+        ).join(' ');
+        logs.push(output);
+        this.consoleMessages.push(output);
+        
+        // Update view and scroll to bottom
+        setTimeout(() => {
+          if (this.consoleOutput) {
+            const element = this.consoleOutput.nativeElement;
+            element.scrollTop = element.scrollHeight;
+          }
+        });
+        
+        // Also call the original console.log
+        originalConsole.apply(console, args);
+      };
+
+      // Execute the code
+      const executeCode = new Function(this.currentCode);
+      executeCode();
+
+      // Restore original console.log
+      window.console.log = originalConsole;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.syntaxErrors.push(error.message);
+      }
+    } finally {
+      this.isRunning = false;
+    }
+  }
+
+  onCodeChange(): void {
+    // Check for syntax errors
+    try {
+      new Function(this.currentCode);
+      this.syntaxErrors = [];
+    } catch (error) {
+      if (error instanceof Error) {
+        this.syntaxErrors = [error.message];
+      }
+    }
+  }
+
+  tryExample(index: number): void {
+    if (this.content?.interactiveExamples) {
+      const example = this.content.interactiveExamples[index];
+      this.currentCode = example.code;
+    }
+  }
+
+  getDifficultyIcon(difficulty: string): string {
+    switch (difficulty.toLowerCase()) {
+      case 'beginner':
+        return 'emoji_events';
+      case 'intermediate':
+        return 'fitness_center';
+      case 'advanced':
+        return 'psychology';
       default:
-        return 'terminal';
+        return 'school';
+    }
+  }
+
+  getCategoryIcon(category: string): string {
+    switch (category.toLowerCase()) {
+      case 'syntax':
+        return 'code';
+      case 'functions':
+        return 'functions';
+      case 'objects':
+        return 'category';
+      default:
+        return 'subject';
     }
   }
 
@@ -657,58 +756,6 @@ export class JavascriptConceptComponent implements OnInit {
 
   sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
-  }
-
-  tryExample(index: number): void {
-    if (this.content?.interactiveExamples) {
-      const example = this.content.interactiveExamples[index];
-      this.currentCode = example.code;
-      this.checkSyntax();
-    }
-  }
-
-  getCategoryIcon(category: string): string {
-    switch (category) {
-      case 'fundamentals':
-        return 'school';
-      case 'functions':
-        return 'functions';
-      case 'objects':
-        return 'data_object';
-      case 'async':
-        return 'sync';
-      case 'es6':
-        return 'code';
-      default:
-        return 'help';
-    }
-  }
-
-  getDifficultyIcon(difficulty: string): string {
-    switch (difficulty) {
-      case 'beginner':
-        return 'school';
-      case 'intermediate':
-        return 'trending_up';
-      case 'advanced':
-        return 'psychology';
-      default:
-        return 'help';
-    }
-  }
-
-  copyCode(): void {
-    navigator.clipboard.writeText(this.currentCode);
-    this.snackBar.open('Code copied to clipboard!', 'Close', {
-      duration: 2000,
-    });
-  }
-
-  resetCode(): void {
-    if (this.content) {
-      this.currentCode = this.content.example;
-      this.checkSyntax();
-    }
   }
 
   checkAnswer(questionIndex: number, selectedAnswer: number): void {
@@ -748,7 +795,7 @@ export class JavascriptConceptComponent implements OnInit {
   }
 
   getAnswerColor(questionIndex: number, optionIndex: number): string | null {
-    if (this.userAnswers[questionIndex] === undefined) {
+    if (!this.quizComplete) {
       return null;
     }
 
@@ -762,4 +809,8 @@ export class JavascriptConceptComponent implements OnInit {
 
     return null;
   }
-} 
+
+  clearConsole(): void {
+    this.consoleMessages = [];
+  }
+}

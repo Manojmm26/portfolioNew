@@ -53,8 +53,9 @@ import { AngularConceptsService, AngularConcept } from '../services/angular-conc
           <mat-label>Category</mat-label>
           <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="filterConcepts()">
             <mat-option value="">All categories</mat-option>
-            <mat-option value="fundamentals">Fundamentals</mat-option>
-            <mat-option value="architecture">Architecture</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{category}}
+            </mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -275,6 +276,7 @@ export class AngularConceptsListComponent implements OnInit {
   selectedDifficulty: string = '';
   selectedCategory: string = '';
   sortBy: 'title' | 'difficulty' | 'category' = 'title';
+  categories: string[] = [];
 
   constructor(
     private conceptsService: AngularConceptsService,
@@ -285,6 +287,7 @@ export class AngularConceptsListComponent implements OnInit {
     this.conceptsService.getConcepts().subscribe(response => {
       this.concepts = response.concepts;
       this.filteredConcepts = response.concepts;
+      this.categories = [...new Set(this.concepts.map(concept => concept.category))];
       this.sortConcepts();
     });
   }

@@ -432,7 +432,7 @@ export class AngularConceptComponent implements OnInit {
     this.themeService.theme$.subscribe(theme => {
       this.themeClass = theme;
     });
-    const conceptId = this.route.snapshot.paramMap.get('id');
+    const conceptId = this.route.snapshot.paramMap.get('conceptId');
     if (conceptId) {
       this.conceptsService.getConcept(conceptId).subscribe({
         next: (concept: AngularConcept) => {

@@ -129,6 +129,7 @@ declare var Prism: any;
                         (ngModelChange)="onCodeChange()"
                         (scroll)="syncScroll($event)"
                         rows="10"
+                        class="code-textarea"
                         spellcheck="false">
                       </textarea>
                     </div>
@@ -362,9 +363,13 @@ declare var Prism: any;
           }
         }
 
-        .editor {
+        .code-editor {
           display: flex;
           background-color: var(--theme-code-background);
+          position: relative;
+          min-height: 300px;
+          border: 1px solid var(--theme-border-color);
+          overflow: hidden;
 
           .line-numbers {
             display: flex;
@@ -383,7 +388,7 @@ declare var Prism: any;
             }
           }
 
-          textarea {
+          .code-textarea {
             flex: 1;
             min-height: 300px;
             background-color: var(--theme-code-background);
@@ -391,13 +396,17 @@ declare var Prism: any;
             border: none;
             font-family: 'Fira Code', monospace;
             font-size: 0.9rem;
-            resize: vertical;
-            padding: 0 0.5rem;
+            resize: none;
+            padding: 0.5rem;
             outline: none;
             line-height: 1.5;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+            tab-size: 2;
 
             &:focus {
-              outline: 1px solid var(--theme-border-color);
+              outline: 1px solid var(--theme-primary-color);
             }
           }
         }
