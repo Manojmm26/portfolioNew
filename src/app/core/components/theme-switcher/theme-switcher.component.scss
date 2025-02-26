@@ -9,12 +9,18 @@
     overflow: hidden;
     border: 1px solid var(--border-color);
     background-color: var(--surface-color);
+    
+    // Make the toggle group responsive
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
   }
 
   mat-button-toggle {
     background-color: var(--surface-color);
     color: var(--text-light);
     transition: all var(--transition-speed) ease;
+    min-width: 40px; // Set a minimum width for buttons
 
     &.mat-button-toggle-checked {
       background-color: var(--primary-color);
@@ -23,6 +29,28 @@
 
     .mat-icon {
       margin: 0;
+    }
+  }
+}
+
+// Add media queries for mobile responsiveness
+@media screen and (max-width: 599px) {
+  .theme-switcher {
+    margin: 0 4px;
+    
+    mat-button-toggle-group {
+      border-radius: 16px;
+    }
+    
+    mat-button-toggle {
+      min-width: 36px;
+      
+      mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        line-height: 18px;
+      }
     }
   }
 }
