@@ -1948,6 +1948,623 @@
               "explanation": "`ngDoCheck` is called very frequently, during every change detection cycle, and is used for implementing custom change detection mechanisms when the default strategy is not sufficient."
           }
       ]
+  },
+  {
+    "id": "rxjs-observables-creation",
+    "title": "Observable Creation",
+    "description": "Understand different ways to create Observables in RxJS, from basic creation functions to more advanced techniques for various data sources.",
+    "difficulty": "beginner",
+    "category": "rxjs",
+    "explanation": "RxJS offers a variety of creation functions to instantiate Observables from different sources. These functions abstract away the complexities of setting up data streams and provide a clean way to start working with reactive data.\n\n*   **`of(...items)`:** Emits arguments as a sequence of values, then completes.\n*   **`from(iterable | Promise | Observable)`:** Creates an Observable from an array, Promise, or another Observable.\n*   **`interval(period)`:** Emits sequential numbers in specified intervals.\n*   **`timer(delay, period?)`:** Emits a single value after a delay, then optionally emits values at intervals.\n*   **`fromEvent(target, eventName)`:** Creates an Observable from DOM events or Node.js event emitters.\n*   **`ajax(url | Request)`:** Creates an Observable for making HTTP requests using AJAX.\n*   **`create(subscriber)`:** Low-level function for manual Observable creation, offering fine-grained control over emission and completion.",
+    "example": "// Observable Creation Examples\nimport { of, from, interval, timer, fromEvent } from 'rxjs';\n\n// of\nof(1, 2, 3).subscribe(val => console.log('of:', val)); // Output: 1, 2, 3\n\n// from (Array)\nfrom([4, 5, 6]).subscribe(val => console.log('from array:', val)); // Output: 4, 5, 6\n\n// from (Promise)\nfrom(Promise.resolve(7)).subscribe(val => console.log('from promise:', val)); // Output: 7\n\n// interval\nconst interval$ = interval(1000); // Emits every 1 second\nconst intervalSubscription = interval$.subscribe(val => console.log('interval:', val));\n// intervalSubscription.unsubscribe(); // Remember to unsubscribe\n\n// timer\ntimer(2000, 1000).subscribe(val => console.log('timer:', val)); // Emit after 2s, then every 1s\n\n// fromEvent (DOM Event)\nconst click$ = fromEvent(document, 'click');\nclick$.subscribe(event => console.log('click event:', event));",
+    "keyPoints": [
+      "`of()`: Emit fixed values.",
+      "`from()`: Convert arrays, Promises, Observables.",
+      "`interval()`: Periodic emissions.",
+      "`timer()`: Delayed or periodic emissions.",
+      "`fromEvent()`: DOM or Node.js events to Observables.",
+      "`create()`: Manual Observable creation for advanced cases."
+    ],
+    "quiz": [
+      {
+        "question": "Which RxJS creation function is best suited for emitting a fixed sequence of values?",
+        "options": ["interval", "timer", "of", "fromEvent"],
+        "correctAnswer": 2,
+        "explanation": "`of()` is designed to take a list of arguments and emit them sequentially as an Observable stream."
+      },
+      {
+        "question": "To create an Observable from a Promise, which creation function should you use?",
+        "options": ["fromPromise", "of", "from", "timer"],
+        "correctAnswer": 2,
+        "explanation": "The `from()` creation function can handle Promises and convert them into Observables, emitting the resolved value of the Promise."
+      },
+      {
+        "question": "What does the `interval(1000)` creation function do?",
+        "options": ["Emits a single value after 1000ms.", "Emits values every 1000ms indefinitely.", "Emits 1000 values immediately.", "Delays the emission of the next value by 1000ms."],
+        "correctAnswer": 1,
+        "explanation": "`interval(1000)` creates an Observable that emits sequential numbers starting from 0, every 1000 milliseconds (1 second)."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-mapping-operators",
+    "title": "Mapping Operators",
+    "description": "Explore RxJS mapping operators like `map`, `pluck`, and `mapTo` to transform data emitted by Observables into new values.",
+    "difficulty": "beginner",
+    "category": "rxjs",
+    "explanation": "Mapping operators in RxJS are used to transform each emitted value from an Observable into a new value before it is passed down the stream. They are essential for data transformation and manipulation within reactive streams.\n\n*   **`map(project: (value: T, index: number) => R)`:** Applies a given function to each emitted value and emits the result. This is the most versatile mapping operator.\n*   **`pluck(...properties: string[])`:** Extracts a nested property from each emitted object. Useful for quickly accessing specific data within objects.\n*   **`mapTo(value: R)`:** Maps each emitted value to a constant value. Often used to signal events or transformations without needing the original value.",
+    "example": "// Mapping Operators Examples\nimport { of } from 'rxjs';\nimport { map, pluck, mapTo } from 'rxjs/operators';\n\n// map\nof(1, 2, 3).pipe(\n  map(value => value * 10)\n).subscribe(val => console.log('map:', val)); // Output: 10, 20, 30\n\n// pluck\nof({ name: 'Alice', age: 30 }, { name: 'Bob', age: 25 }).pipe(\n  pluck('name')\n).subscribe(val => console.log('pluck name:', val)); // Output: Alice, Bob\n\nof({ address: { city: 'London' } }, { address: { city: 'Paris' } }).pipe(\n  pluck('address', 'city')\n).subscribe(val => console.log('pluck nested:', val)); // Output: London, Paris\n\n// mapTo\nof('value1', 'value2').pipe(\n  mapTo('constant value')\n).subscribe(val => console.log('mapTo:', val)); // Output: constant value, constant value",
+    "keyPoints": [
+      "`map()`: Transform each value with a function.",
+      "`pluck()`: Extract nested properties from objects.",
+      "`mapTo()`: Replace each value with a constant value.",
+      "Used in `.pipe()` for Observable transformations."
+    ],
+    "quiz": [
+      {
+        "question": "Which mapping operator is used to apply a function to each emitted value and emit the result?",
+        "options": ["pluck", "mapTo", "filter", "map"],
+        "correctAnswer": 3,
+        "explanation": "The `map` operator transforms each value by applying a projection function that you provide."
+      },
+      {
+        "question": "If you want to extract a specific property from objects emitted by an Observable, which operator should you use?",
+        "options": ["map", "filter", "pluck", "mapTo"],
+        "correctAnswer": 2,
+        "explanation": "The `pluck` operator is designed to extract specified nested properties from objects in the Observable stream."
+      },
+      {
+        "question": "What is the purpose of the `mapTo` operator?",
+        "options": ["To map values to Promises.", "To map values to a specific type.", "To map each emitted value to a constant value.", "To map values based on index."],
+        "correctAnswer": 2,
+        "explanation": "`mapTo` transforms every emitted value into a predefined, constant value, regardless of the original value."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-filtering-operators",
+    "title": "Filtering Operators",
+    "description": "Learn about RxJS filtering operators like `filter`, `take`, `debounceTime`, and `distinctUntilChanged` to selectively process emitted values based on conditions.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "Filtering operators in RxJS allow you to selectively allow or block values emitted by an Observable based on certain criteria. They are crucial for controlling the data flow and processing only relevant values.\n\n*   **`filter(predicate: (value: T, index: number) => boolean)`:** Emits only those values that satisfy a given predicate function (return `true`).\n*   **`take(count: number)`:** Emits only the first `count` values from the source, then completes.\n*   **`debounceTime(duration: number)`:** Delays values emitted by the source for a specified duration. If a new value arrives before the duration, the previous pending value is dropped, and the delay restarts. Useful for handling rapid input events like typing.\n*   **`distinctUntilChanged()`:** Only emits values that are different from the immediately preceding one. Useful for preventing redundant emissions of the same value.",
+    "example": "// Filtering Operators Examples\nimport { fromEvent, interval } from 'rxjs';\nimport { filter, take, debounceTime, distinctUntilChanged } from 'rxjs/operators';\n\n// filter\ninterval(100).pipe(\n  filter(value => value % 2 === 0)\n).subscribe(val => console.log('filter even:', val)); // Output: 0, 2, 4, ...\n\n// take\ninterval(100).pipe(\n  take(5)\n).subscribe(val => console.log('take 5:', val)); // Output: 0, 1, 2, 3, 4, then completes\n\n// debounceTime (typing simulation)\nconst input = document.createElement('input');\ndocument.body.appendChild(input);\nconst input$ = fromEvent(input, 'input').pipe(\n  debounceTime(300),\n  map((event: any) => event.target.value)\n);\ninput$.subscribe(value => console.log('debounced input:', value)); // Logs input value 300ms after typing stops\n\n// distinctUntilChanged\nof(1, 1, 2, 2, 2, 3, 4, 4, 5).pipe(\n  distinctUntilChanged()\n).subscribe(val => console.log('distinct:', val)); // Output: 1, 2, 3, 4, 5",
+    "keyPoints": [
+      "`filter()`: Conditional emission based on predicate.",
+      "`take()`: Emit only the first N values.",
+      "`debounceTime()`: Delay and drop rapid emissions.",
+      "`distinctUntilChanged()`: Emit only when value changes."
+    ],
+    "quiz": [
+      {
+        "question": "Which filtering operator emits only values that pass a provided condition?",
+        "options": ["take", "debounceTime", "filter", "distinctUntilChanged"],
+        "correctAnswer": 2,
+        "explanation": "The `filter` operator uses a predicate function to decide whether to emit each value based on a condition."
+      },
+      {
+        "question": "To emit only the first few values from an Observable and then complete, which operator is appropriate?",
+        "options": ["filter", "debounceTime", "take", "distinctUntilChanged"],
+        "correctAnswer": 2,
+        "explanation": "The `take` operator allows you to specify the number of emissions you want to receive before the Observable completes."
+      },
+      {
+        "question": "Which operator is useful for handling rapid input events and emitting only after a pause?",
+        "options": ["filter", "debounceTime", "take", "distinctUntilChanged"],
+        "correctAnswer": 1,
+        "explanation": "`debounceTime` is designed to handle scenarios like user typing, emitting a value only after a period of inactivity, reducing processing load from rapid events."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-combination-operators",
+    "title": "Combination Operators",
+    "description": "Explore RxJS combination operators like `concat`, `merge`, `forkJoin`, and `combineLatest` to merge and combine multiple Observables into a single stream.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "Combination operators in RxJS are used to merge or combine values from multiple source Observables into a single output Observable. They are crucial for orchestrating complex reactive workflows involving multiple data streams.\n\n*   **`concat(...observables)`:** Concatenates Observables sequentially. It subscribes to the next Observable only after the previous one completes. Emissions from each Observable are preserved in order.\n*   **`merge(...observables)`:** Merges Observables concurrently. It subscribes to all input Observables simultaneously and emits values as they arrive from any source. Order of emissions is not guaranteed.\n*   **`forkJoin(...observables)`:** Joins the last emitted values from multiple Observables, but only after all sources complete. Emits a single array or object with the last values. If any source errors, `forkJoin` errors immediately.\n*   **`combineLatest(...observables)`:** Combines the latest emitted values from multiple Observables whenever any source emits. Emits an array or object with the latest values from each source.",
+    "example": "// Combination Operators Examples\nimport { of, interval, forkJoin, combineLatest, concat, merge } from 'rxjs';\nimport { take } from 'rxjs/operators';\n\nconst obs1$ = of(1, 2, 3);\nconst obs2$ = of('a', 'b', 'c');\nconst interval1$ = interval(1000).pipe(take(3));\nconst interval2$ = interval(1500).pipe(take(2));\n\n// concat\nconcat(obs1$, obs2$).subscribe(val => console.log('concat:', val)); // Output: 1, 2, 3, 'a', 'b', 'c'\n\n// merge\nmerge(interval1$, interval2$).subscribe(val => console.log('merge:', val)); // Output: interleaved emissions from intervals\n\n// forkJoin\nforkJoin([obs1$, obs2$, interval1$]).subscribe(val => console.log('forkJoin:', val)); // Output: [3, 'c', 2] (last values when all complete)\n\n// combineLatest\ncombineLatest([interval1$, interval2$]).subscribe(val => console.log('combineLatest:', val)); // Output: arrays of latest values whenever either interval emits",
+    "keyPoints": [
+      "`concat()`: Sequential Observable concatenation.",
+      "`merge()`: Concurrent Observable merging.",
+      "`forkJoin()`: Last values after all complete.",
+      "`combineLatest()`: Latest values whenever any emits."
+    ],
+    "quiz": [
+      {
+        "question": "Which combination operator concatenates Observables sequentially, waiting for each to complete before subscribing to the next?",
+        "options": ["merge", "forkJoin", "combineLatest", "concat"],
+        "correctAnswer": 3,
+        "explanation": "`concat` ensures that Observables are subscribed to and their values are emitted in a strict sequence, one after the other."
+      },
+      {
+        "question": "If you need to execute multiple Observables concurrently and process emissions as they arrive from any source, which operator is best?",
+        "options": ["concat", "forkJoin", "merge", "combineLatest"],
+        "correctAnswer": 2,
+        "explanation": "`merge` subscribes to all source Observables at once and interweaves their emissions as they occur, without waiting for completion or maintaining order."
+      },
+      {
+        "question": "Which operator is used to collect the last emitted value from each Observable only when all source Observables complete?",
+        "options": ["merge", "combineLatest", "forkJoin", "concat"],
+        "correctAnswer": 2,
+        "explanation": "`forkJoin` waits for all input Observables to complete and then emits an array (or object) containing the last value from each. It's useful for parallel operations where you need the final results of all."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-utility-operators",
+    "title": "Utility Operators",
+    "description": "Explore RxJS utility operators like `tap`, `delay`, and `finalize` for side effects, timing manipulation, and cleanup actions in Observable streams.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "Utility operators in RxJS are designed to perform side effects, control timing, and manage resources within Observable streams without directly transforming the emitted values. They are essential for logging, debugging, and resource management.\n\n*   **`tap(observer | next, error?, complete?)`:** Executes side effects for each emission, error, or completion without altering the values. Useful for logging, debugging, or triggering actions based on events in the stream.\n*   **`delay(delay: number, scheduler?)`:** Delays the emission of values by a specified duration. Used to introduce delays in the stream for animation or throttling purposes.\n*   **`finalize(callback: () => void)`:** Executes a callback function when the Observable completes or errors out, or when the subscription is unsubscribed. Useful for cleanup actions like releasing resources or logging completion status.",
+    "example": "// Utility Operators Examples\nimport { of } from 'rxjs';\nimport { tap, delay, finalize } from 'rxjs/operators';\n\n// tap\nof(1, 2, 3).pipe(\n  tap(value => console.log('tapped value:', value)), // Log each value\n  map(value => value * 2)\n).subscribe(val => console.log('processed value:', val)); // Output: tapped value: 1, processed value: 2, ...\n\n// delay\nof('value').pipe(\n  delay(2000)\n).subscribe(val => console.log('delayed value:', val)); // Output: 'delayed value' after 2 seconds\n\n// finalize\nconst interval$ = interval(1000).pipe(take(3));\ninterval$.pipe(\n  finalize(() => console.log('interval finalized')) // Log when interval completes\n).subscribe(val => console.log('interval value:', val)); // Output: 'interval finalized' after 3 emissions",
+    "keyPoints": [
+      "`tap()`: Perform side effects (logging, debugging).",
+      "`delay()`: Introduce delays in emissions.",
+      "`finalize()`: Cleanup on completion, error, or unsubscribe.",
+      "Non-transforming operators."
+    ],
+    "quiz": [
+      {
+        "question": "Which utility operator is used to perform side effects like logging or debugging without altering the emitted values?",
+        "options": ["delay", "finalize", "map", "tap"],
+        "correctAnswer": 3,
+        "explanation": "The `tap` operator is specifically designed for side effects. It allows you to 'tap into' the stream to observe values, errors, or completion without modifying the data flow."
+      },
+      {
+        "question": "To introduce a delay before emitting values from an Observable, which operator should you use?",
+        "options": ["finalize", "tap", "delay", "map"],
+        "correctAnswer": 2,
+        "explanation": "The `delay` operator delays the emission of each value for a specified duration, useful for timing control in reactive streams."
+      },
+      {
+        "question": "Which operator is executed when an Observable completes, errors out, or is unsubscribed, making it ideal for cleanup actions?",
+        "options": ["tap", "delay", "finalize", "map"],
+        "correctAnswer": 2,
+        "explanation": "`finalize` ensures that a callback function is executed regardless of how the Observable terminates (completion, error, or unsubscription), making it perfect for resource cleanup."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-subjects",
+    "title": "Subjects",
+    "description": "Understand RxJS Subjects, including `Subject`, `BehaviorSubject`, `ReplaySubject`, and `AsyncSubject`, for multicasting values and managing state.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "Subjects in RxJS are special types of Observables that are also Observers. This dual nature allows them to both emit values to multiple subscribers (multicasting) and also receive values to emit. They are essential for event broadcasting and state management.\n\n*   **`Subject`:** Basic Subject. For each subscriber, it does not retain any past emitted values. Only values emitted after subscription will be received.\n*   **`BehaviorSubject(initialValue)`:** Holds the latest emitted value and provides it to new subscribers immediately upon subscription, as well as any subsequent values.\n*   **`ReplaySubject(bufferSize?, windowTime?, scheduler?)`:** Records and replays a specified number of past emissions (or emissions within a time window) to new subscribers.\n*   **`AsyncSubject`:** Emits only the last value to its subscribers, but only when the Subject completes. If the Subject errors, it emits nothing.",
+    "example": "// Subjects Examples\nimport { Subject, BehaviorSubject, ReplaySubject, AsyncSubject } from 'rxjs';\n\n// Subject\nconst subject = new Subject<number>();\nsubject.subscribe(val => console.log('Subject observer A:', val));\nsubject.next(1); // Observer A receives 1\nsubject.subscribe(val => console.log('Subject observer B:', val)); // Observer B subscribes later\nsubject.next(2); // Observer A and B receive 2\n\n// BehaviorSubject\nconst behaviorSubject = new BehaviorSubject<string>('Initial Value');\nbehaviorSubject.subscribe(val => console.log('BehaviorSubject observer A:', val)); // Observer A gets 'Initial Value'\nbehaviorSubject.next('Value 1'); // Observer A receives 'Value 1'\nbehaviorSubject.subscribe(val => console.log('BehaviorSubject observer B:', val)); // Observer B gets 'Value 1' immediately\nbehaviorSubject.next('Value 2'); // Observer A and B receive 'Value 2'\n\n// ReplaySubject\nconst replaySubject = new ReplaySubject<number>(2); // Buffer last 2 values\nreplaySubject.next(1); replaySubject.next(2); replaySubject.next(3);\nreplaySubject.subscribe(val => console.log('ReplaySubject observer A:', val)); // Observer A gets 2, 3\nreplaySubject.next(4); // Observer A receives 4\nreplaySubject.subscribe(val => console.log('ReplaySubject observer B:', val)); // Observer B gets 3, 4\n\n// AsyncSubject\nconst asyncSubject = new AsyncSubject<string>();\nasyncSubject.subscribe(val => console.log('AsyncSubject observer A:', val));\nasyncSubject.next('Value 1'); asyncSubject.next('Value 2');\nasyncSubject.complete(); // Complete to emit last value\nasyncSubject.subscribe(val => console.log('AsyncSubject observer B:', val)); // Observer B gets 'Value 2'",
+    "keyPoints": [
+      "`Subject`: Basic multicast Observable.",
+      "`BehaviorSubject`: Holds and replays last value, needs initial value.",
+      "`ReplaySubject`: Replays buffered values.",
+      "`AsyncSubject`: Emits only last value on completion.",
+      "Both Observable and Observer."
+    ],
+    "quiz": [
+      {
+        "question": "What is a key characteristic of RxJS Subjects that distinguishes them from regular Observables?",
+        "options": ["Subjects are synchronous.", "Subjects are unicast.", "Subjects are both Observable and Observer.", "Subjects cannot emit errors."],
+        "correctAnswer": 2,
+        "explanation": "Subjects are unique because they act as both an Observable (emitting values) and an Observer (receiving values via `next`, `error`, `complete`), enabling multicasting."
+      },
+      {
+        "question": "Which type of Subject is designed to always provide the latest emitted value (or an initial value) to new subscribers?",
+        "options": ["Subject", "ReplaySubject", "AsyncSubject", "BehaviorSubject"],
+        "correctAnswer": 3,
+        "explanation": "`BehaviorSubject` is specifically created to hold and provide the most recent value to any new subscriber, ensuring they always have a current state."
+      },
+      {
+        "question": "If you need to replay a history of emissions to new subscribers, which type of Subject is most suitable?",
+        "options": ["Subject", "BehaviorSubject", "AsyncSubject", "ReplaySubject"],
+        "correctAnswer": 3,
+        "explanation": "`ReplaySubject` is built for replaying a buffer of past emissions to new subscribers, useful when late subscribers need to catch up on recent events."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-error-handling",
+    "title": "Error Handling in RxJS",
+    "description": "Learn how to handle errors in RxJS Observables using operators like `catchError`, `retry`, and `retryWhen` to create resilient reactive streams.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "Error handling is crucial in RxJS to prevent errors from propagating and breaking entire streams. RxJS provides operators to gracefully manage errors, allowing you to recover, retry, or handle errors in a controlled manner.\n\n*   **`catchError(errorHandler: (error: any, caught: Observable<T>) => ObservableInput<R>)`:** Catches errors on the source Observable. It allows you to return a fallback Observable that will be subscribed to in case of an error, effectively replacing the error stream with a new one.\n*   **`retry(count?: number)`:** Retries the source Observable a specified number of times if it errors. If the retries exhaust without success, the error is propagated.\n*   **`retryWhen(notifier: (errors: Observable<any>) => Observable<any>)`:** More advanced retry mechanism. It allows you to define a custom logic for when and how to retry based on the error Observable. You can introduce delays, conditional retries, etc.",
+    "example": "// Error Handling Operators Examples\nimport { of, interval, throwError } from 'rxjs';\nimport { map, catchError, retry, retryWhen, delay, take } from 'rxjs/operators';\n\nconst failingObservable$ = interval(1000).pipe(\n  take(3),\n  map(value => {\n    if (value === 2) {\n      throw new Error('Value is 2, throwing error!');\n    }\n    return value;\n  })\n);\n\n// catchError\nfailingObservable$.pipe(\n  catchError(error => of('Error caught, continuing with fallback value'))\n).subscribe(val => console.log('catchError:', val), null, () => console.log('catchError completed')); // Output: 0, 1, 'Error caught...', complete\n\n// retry\nfailingObservable$.pipe(\n  retry(1) // Retry once on error\n).subscribe(val => console.log('retry:', val), error => console.error('retry error:', error), () => console.log('retry completed')); // Output: 0, 1, 0, 1, retry error: ...\n\n// retryWhen\nfailingObservable$.pipe(\n  retryWhen(errors => errors.pipe(\n    delay(1000),\n    take(2)\n  ))\n).subscribe(val => console.log('retryWhen:', val), error => console.error('retryWhen error:', error), () => console.log('retryWhen completed')); // Output: 0, 1, 0, 1, retryWhen error: ...",
+    "keyPoints": [
+      "`catchError()`: Recover from errors, return fallback Observable.",
+      "`retry()`: Retry Observable a fixed number of times.",
+      "`retryWhen()`: Custom retry logic based on errors.",
+      "Prevent stream breakage from errors."
+    ],
+    "quiz": [
+      {
+        "question": "Which RxJS error handling operator allows you to catch an error and replace the error stream with a fallback Observable?",
+        "options": ["retry", "retryWhen", "finalize", "catchError"],
+        "correctAnswer": 3,
+        "explanation": "`catchError` is used to intercept an error notification from the source Observable and return a new Observable stream, effectively recovering from the error."
+      },
+      {
+        "question": "If you want to automatically retry an Observable a specific number of times upon error, which operator is most suitable?",
+        "options": ["catchError", "retryWhen", "retry", "finalize"],
+        "correctAnswer": 2,
+        "explanation": "The `retry` operator simplifies the process of retrying an Observable a fixed number of times if it encounters an error, without needing to implement custom retry logic."
+      },
+      {
+        "question": "Which error handling operator provides the most flexibility in defining custom retry strategies, including delays and conditional retries?",
+        "options": ["retry", "finalize", "catchError", "retryWhen"],
+        "correctAnswer": 3,
+        "explanation": "`retryWhen` offers advanced retry control by allowing you to define a function that receives an Observable of errors and returns an Observable that dictates when and how retries should occur."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-unsubscribing-memory-management",
+    "title": "Unsubscribing and Memory Management",
+    "description": "Understand the importance of unsubscribing from RxJS Observables in Angular for memory management and preventing leaks, and explore best practices.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "Properly unsubscribing from RxJS Observables, especially long-lived ones or those in components, is crucial for memory management in Angular applications. Failing to unsubscribe can lead to memory leaks, as subscriptions may continue to hold references and process emissions even after components are destroyed.\n\n**Why Unsubscribe?**\n\n*   **Prevent Memory Leaks:** Subscriptions keep Observables alive, and if not unsubscribed, they can prevent garbage collection, leading to memory leaks, especially in SPAs where components are frequently created and destroyed.\n*   **Avoid Unexpected Behavior:** Unwanted side effects or UI updates can occur if subscriptions continue to process emissions after a component or service is no longer active.\n*   **Resource Cleanup:** Unsubscribing releases resources held by subscriptions, such as timers, event listeners, or ongoing HTTP requests.\n\n**Best Practices for Unsubscribing:**\n\n*   **`Subscription.unsubscribe()`:** Manually call `unsubscribe()` on `Subscription` objects when they are no longer needed, typically in the `ngOnDestroy` lifecycle hook of components for component-scoped subscriptions.\n*   **`takeUntil(notifier: Observable)`:** Use `takeUntil` operator to automatically unsubscribe from an Observable when another notifier Observable emits. Often used with a Subject that emits in `ngOnDestroy`.\n*   **`take(count)` or Completion Operators:** For Observables that naturally complete after a finite number of emissions (e.g., HTTP requests), `take(1)` or operators that lead to completion can implicitly handle unsubscription after the intended emissions.\n*   **Async Pipe (`| async`):** In templates, the Async Pipe automatically subscribes to and unsubscribes from Observables, simplifying subscription management in views.",
+    "example": "// Unsubscribing Examples\nimport { Component, OnInit, OnDestroy } from '@angular/core';\nimport { interval, Subject, Subscription } from 'rxjs';\nimport { takeUntil } from 'rxjs/operators';\n\n@Component({\n  selector: 'app-unsubscribe-demo',\n  template: `<p>Unsubscribe Demo</p>`\n})\nexport class UnsubscribeDemoComponent implements OnInit, OnDestroy {\n  private intervalSubscription: Subscription | undefined;\n  private destroy$ = new Subject<void>();\n\n  ngOnInit() {\n    // Manual Unsubscribe\n    this.intervalSubscription = interval(1000).subscribe(val => console.log('Interval value:', val));\n\n    // takeUntil Unsubscribe\n    interval(500).pipe(\n      takeUntil(this.destroy$)\n    ).subscribe(val => console.log('takeUntil interval:', val));\n  }\n\n  ngOnDestroy() {\n    console.log('Component destroyed, unsubscribing');\n    // Manual Unsubscribe\n    this.intervalSubscription?.unsubscribe();\n    // takeUntil Unsubscribe - trigger destroy$ to complete takeUntil\n    this.destroy$.next();\n    this.destroy$.complete();\n  }\n}\n",
+    "keyPoints": [
+      "Unsubscribing prevents memory leaks.",
+      "Manual unsubscribe in `ngOnDestroy`.",
+      "`takeUntil()` for automatic unsubscribe on notifier.",
+      "`take(count)` and completion for finite Observables.",
+      "Async Pipe for template-based unsubscribe."
+    ],
+    "quiz": [
+      {
+        "question": "What is the primary reason for unsubscribing from RxJS Observables in Angular components?",
+        "options": ["To improve component rendering speed.", "To prevent memory leaks and unexpected behavior.", "To simplify component templates.", "Unsubscribing is not necessary in Angular."],
+        "correctAnswer": 1,
+        "explanation": "Unsubscribing is crucial for preventing memory leaks and ensuring that Observables do not continue to emit values and perform operations after they are no longer needed, especially when components are destroyed."
+      },
+      {
+        "question": "Which Angular lifecycle hook is the most appropriate place to unsubscribe from component-scoped Observables?",
+        "options": ["ngOnInit", "ngDoCheck", "ngAfterViewInit", "ngOnDestroy"],
+        "correctAnswer": 3,
+        "explanation": "`ngOnDestroy` is specifically designed for cleanup tasks that need to be performed just before a component is destroyed, making it the ideal place to unsubscribe from Observables."
+      },
+      {
+        "question": "Which RxJS operator can be used to automatically unsubscribe from an Observable when another notifier Observable emits?",
+        "options": ["finalize", "delay", "takeUntil", "retryWhen"],
+        "correctAnswer": 2,
+        "explanation": "`takeUntil` is a powerful operator that allows you to provide a notifier Observable. When the notifier emits, `takeUntil` completes the source Observable and unsubscribes from it, automating the unsubscription process."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-hot-cold-observables",
+    "title": "Hot vs Cold Observables",
+    "description": "Differentiate between Hot and Cold Observables in RxJS, understanding their behavior, data production, and implications for sharing data among subscribers.",
+    "difficulty": "advanced",
+    "category": "rxjs",
+    "explanation": "Understanding the distinction between Hot and Cold Observables is essential for mastering RxJS. The difference lies in where and when data production starts and how data is shared among subscribers.\n\n**Cold Observables:**\n\n*   **Data Production per Subscriber:** Cold Observables start producing data only when a subscriber subscribes. Each subscriber gets its own independent data stream.\n*   **Data Source Inside Observable:** The data source is typically created and managed within the Observable itself. Examples include HTTP requests using `HttpClient`, `interval`, `timer`, `of`, `fromPromise`.\n*   **Unicast Behavior:** Each subscription triggers a new execution of the data production logic, resulting in potentially different or repeated data streams for each subscriber.\n\n**Hot Observables:**\n\n*   **Data Production Outside Observable:** Hot Observables start producing data independently of subscriptions. Data production is external and shared among all subscribers.\n*   **Data Source Outside Observable:** The data source is external to the Observable and is typically a shared event source or stream. Examples include DOM events, Subjects, BehaviorSubjects, ReplaySubjects, AsyncSubjects.\n*   **Multicast Behavior:** All subscribers share the same ongoing data stream. Values emitted are received by all active subscribers simultaneously.\n\n**Implications:**\n\n*   **Sharing Data:** Hot Observables are naturally suited for sharing data among multiple components or services because they multicast the same stream. Cold Observables require operators like `shareReplay` or Subjects to achieve sharing.\n*   **Side Effects:** Cold Observables' side effects are executed per subscription, whereas Hot Observables' side effects are often managed externally or occur only once for all subscribers.",
+    "example": "// Hot vs Cold Observables Examples\nimport { Observable, Subject, interval } from 'rxjs';\nimport { tap, shareReplay } from 'rxjs/operators';\n\n// Cold Observable (Interval)\nconst coldInterval$ = interval(1000).pipe(\n  tap(() => console.log('Cold Observable data source started')) // Side effect per subscription\n);\n\n// Subscriber 1 to Cold Observable\ncoldInterval$.subscribe(val => console.log('Cold Subscriber 1:', val));\n// Subscriber 2 to Cold Observable (starts independent interval)\nsetTimeout(() => coldInterval$.subscribe(val => console.log('Cold Subscriber 2:', val)), 3000);\n\n// Hot Observable (Subject)\nconst hotSubject = new Subject<number>();\nconst hotObservable$ = hotSubject.asObservable().pipe(\n  tap(() => console.log('Hot Observable data source (Subject) action')) // Side effect only when Subject does next()\n);\n\n// Subscriber 1 to Hot Observable\nhotObservable$.subscribe(val => console.log('Hot Subscriber 1:', val));\n// Subscriber 2 to Hot Observable\nhotObservable$.subscribe(val => console.log('Hot Subscriber 2:', val));\n\n// Manually push values into Hot Subject (data production outside)\nsetInterval(() => hotSubject.next(Math.random()), 2000);\n",
+    "keyPoints": [
+      "Cold: Data per subscriber, source inside.",
+      "Hot: Shared data, source outside.",
+      "Cold: Unicast behavior.",
+      "Hot: Multicast behavior.",
+      "Sharing: Hot Observables share by default.",
+      "Side Effects: Cold per subscription, Hot often external."
+    ],
+    "quiz": [
+      {
+        "question": "What is the defining characteristic of a Cold Observable?",
+        "options": ["Data production is shared among all subscribers.", "Data production starts independently of subscriptions.", "Data production begins only when a subscriber subscribes, with each subscriber getting its own data stream.", "Cold Observables always emit errors."],
+        "correctAnswer": 2,
+        "explanation": "Cold Observables are initiated per subscription. Each subscriber triggers a new, independent execution of the data production logic within the Observable."
+      },
+      {
+        "question": "Which type of Observable is suitable for sharing the same data stream among multiple subscribers?",
+        "options": ["Cold Observable", "Unicast Observable", "Hot Observable", "Lazy Observable"],
+        "correctAnswer": 2,
+        "explanation": "Hot Observables are designed for multicasting, meaning they share a single data source among all subscribers, allowing multiple observers to receive the same emissions."
+      },
+      {
+        "question": "Is an HTTP request made using Angular's `HttpClient` typically a Hot or Cold Observable?",
+        "options": ["Hot Observable", "Neither Hot nor Cold", "Both Hot and Cold", "Cold Observable"],
+        "correctAnswer": 3,
+        "explanation": "HTTP requests in `HttpClient` are Cold Observables. Each subscription to an HTTP request Observable triggers a new, separate HTTP request. The data is not shared across subscriptions by default."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-marble-diagrams",
+    "title": "Marble Diagrams",
+    "description": "Learn to read and understand RxJS Marble Diagrams, a visual notation for representing Observables and operators, aiding in understanding reactive streams.",
+    "difficulty": "beginner",
+    "category": "rxjs",
+    "explanation": "Marble Diagrams are a visual tool used in RxJS documentation and learning materials to represent Observables and their operators. They provide a graphical way to understand how data flows through reactive streams and how operators transform those streams over time.\n\n**Components of a Marble Diagram:**\n\n*   **Horizontal Line (-):** Represents time progressing from left to right. Each dash `-` is a unit of time.\n*   **Values (letters or numbers):** Values emitted by an Observable are represented by letters (a, b, c, ...) or numbers placed on the timeline.\n*   **Completion (|):** A vertical bar `|` indicates the completion of an Observable stream.\n*   **Error (#):** A hash symbol `#` represents an error notification in an Observable stream.\n*   **Input Observables:** Typically shown above the operator in a diagram.\n*   **Operator Box:** A box labeled with the operator's name, showing the transformation being applied.\n*   **Output Observable:** Shown below the operator, representing the Observable after the operator has been applied.\n\n**Reading Marble Diagrams:**\n\n1.  **Input Stream:** Follow the timeline of the input Observable to see when values are emitted, and if/when it completes or errors.\n2.  **Operator Transformation:** Understand how the operator transforms the input stream based on its behavior. The operator box describes the operation.\n3.  **Output Stream:** Examine the timeline of the output Observable to see the transformed values and how the operator affects the stream's timing, values, completion, or errors.",
+    "example": "// Marble Diagram Example (Illustrative - Not executable code)\n\n// Example: map operator marble diagram\n\n// Input Observable:  --a--b--c--|\n// map(x => x*10)   -----\n// Output Observable: --A--B--C--|\n\n// Explanation:\n// - Input Observable emits values 'a', 'b', 'c' over time, then completes (|).\n// - The 'map' operator is applied with a function that multiplies each value by 10 (represented conceptually as 'x => x*10').\n// - The Output Observable emits transformed values 'A', 'B', 'C' (where A=a*10, B=b*10, C=c*10) at the same relative times as the input, and also completes (|).\n\n// Example: filter operator marble diagram\n\n// Input Observable:  --a--b--c--d--|\n// filter(x => x!='b')  -----\n// Output Observable: --a-----c--d--|\n\n// Explanation:\n// - Input Observable emits 'a', 'b', 'c', 'd', then completes.\n// - 'filter' operator keeps only values that are not equal to 'b'.\n// - Output Observable emits 'a', 'c', 'd' (skipping 'b'), and completes.",
+    "keyPoints": [
+      "Visual notation for Observables and operators.",
+      "`-`: Time progression.",
+      "Letters/numbers: Emitted values.",
+      "`|`: Completion.",
+      "`#`: Error.",
+      "Input, Operator, Output streams.",
+      "Understand data flow and transformations."
+    ],
+    "quiz": [
+      {
+        "question": "In a Marble Diagram, what does a horizontal dash '-' represent?",
+        "options": ["An emitted value.", "Completion of the Observable.", "Error in the Observable.", "Progression of time."],
+        "correctAnswer": 3,
+        "explanation": "A dash '-' in a Marble Diagram signifies a unit of time passing, moving from left to right across the diagram."
+      },
+      {
+        "question": "What symbol in a Marble Diagram indicates the completion of an Observable stream?",
+        "options": ["#", "|", "-", "( )"],
+        "correctAnswer": 1,
+        "explanation": "A vertical bar '|' is the standard symbol used in Marble Diagrams to denote the successful completion of an Observable stream, after which no more values will be emitted."
+      },
+      {
+        "question": "If a Marble Diagram shows an input Observable as `--a--b--c--|` and an operator `map(x => x.toUpperCase())`, what would be the output Observable?",
+        "options": ["--A--B--C--|", "--a--b--c--|", "--a--b--c--#", "--|"],
+        "correctAnswer": 0,
+        "explanation": "The `map` operator transforms each value. Applying `toUpperCase()` to 'a', 'b', 'c' results in 'A', 'B', 'C'. The structure and completion remain the same, so the output is `--A--B--C--|`."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-schedulers",
+    "title": "Schedulers",
+    "description": "Explore RxJS Schedulers, understanding their role in controlling concurrency and timing of Observable operations, including different types of schedulers.",
+    "difficulty": "advanced",
+    "category": "rxjs",
+    "explanation": "Schedulers in RxJS are sophisticated mechanisms that control the concurrency and timing of operations within Observables. They determine on which execution context (e.g., immediately, asynchronously, in animation frames) and when notifications are delivered. Understanding schedulers is important for fine-tuning performance and managing asynchronous behavior.\n\n**Types of Schedulers:**\n\n*   **`queueScheduler`:** Schedules tasks on a queue, executing them sequentially. Useful for ensuring sequential execution and preventing stack overflows in recursive operations. Default scheduler for most operators.\n*   **`asapScheduler`:** Schedules tasks to execute 'as soon as possible' but still asynchronously, after the current synchronous task completes and before the browser renders. Uses `Promise.resolve()` or `setTimeout(0)` under the hood.\n*   **`asyncScheduler`:** Schedules tasks to execute asynchronously after a delay, using `setTimeout`. Useful for delaying operations or breaking long-running tasks into smaller chunks.\n*   **`animationFrameScheduler`:** Schedules tasks to execute within the browser's animation frame, typically used for smooth animations and rendering updates. Uses `requestAnimationFrame()`.\n*   **`VirtualTimeScheduler`:** For testing purposes. Allows you to control the progression of time in a deterministic manner, making time-based tests predictable and synchronous.\n\n**Using Schedulers:**\n\n*   **Operator Scheduling:** Many RxJS operators accept an optional `scheduler` argument to control their internal timing and concurrency (e.g., `observeOn(scheduler)`, `subscribeOn(scheduler)`, `delay(delay, scheduler)`).\n*   **Creation Function Scheduling:** Some creation functions also accept schedulers (e.g., `interval(period, scheduler)`, `timer(delay, period, scheduler)`).\n*   **`subscribeOn(scheduler)` vs `observeOn(scheduler)`:**\n    *   `subscribeOn(scheduler)`: Affects where the subscription and initial emission happen.\n    *   `observeOn(scheduler)`: Affects where subsequent notifications are delivered to the subscriber.",
+    "example": "// Schedulers Examples\nimport { of, asapScheduler, asyncScheduler, animationFrameScheduler, queueScheduler } from 'rxjs';\nimport { observeOn, subscribeOn } from 'rxjs/operators';\n\n// queueScheduler\nconsole.log('Queue Scheduler:');\nof(1, 2, 3, queueScheduler).subscribe(val => console.log('Queue:', val));\nconsole.log('Synchronous log after queueScheduler'); // Log after of() emissions\n\n// asapScheduler\nconsole.log('\\nAsap Scheduler:');\nof(1, 2, 3, asapScheduler).subscribe(val => console.log('Asap:', val));\nconsole.log('Synchronous log after asapScheduler'); // Log before of() emissions but after current sync task\n\n// asyncScheduler\nconsole.log('\\nAsync Scheduler:');\nof(1, 2, 3, asyncScheduler).subscribe(val => console.log('Async:', val));\nconsole.log('Synchronous log after asyncScheduler'); // Log before of() emissions, async\n\n// animationFrameScheduler\nconsole.log('\\nAnimationFrame Scheduler:');\nof(1, 2, 3, animationFrameScheduler).subscribe(val => console.log('AnimationFrame:', val));\nconsole.log('Synchronous log after animationFrameScheduler'); // Log before of() emissions, animation frame",
+    "keyPoints": [
+      "Control concurrency and timing.",
+      "`queueScheduler`: Sequential queue execution.",
+      "`asapScheduler`: As soon as possible, async.",
+      "`asyncScheduler`: Asynchronous with delay.",
+      "`animationFrameScheduler`: Animation frame-based.",
+      "`VirtualTimeScheduler`: For testing time.",
+      "`observeOn()` and `subscribeOn()` operators."
+    ],
+    "quiz": [
+      {
+        "question": "What is the role of Schedulers in RxJS?",
+        "options": ["To manage component lifecycle.", "To control the concurrency and timing of Observable operations.", "To handle errors in Observables.", "To define data transformation logic."],
+        "correctAnswer": 1,
+        "explanation": "RxJS Schedulers are designed to control how and when notifications are delivered in an Observable stream, influencing concurrency and timing."
+      },
+      {
+        "question": "Which Scheduler schedules tasks to be executed sequentially on a queue?",
+        "options": ["asyncScheduler", "asapScheduler", "animationFrameScheduler", "queueScheduler"],
+        "correctAnswer": 3,
+        "explanation": "`queueScheduler` uses a queue to execute tasks one after another, ensuring sequential processing, which is useful in scenarios where order is critical and stack overflows need to be avoided."
+      },
+      {
+        "question": "For smooth animations in the browser, which RxJS Scheduler is most appropriate?",
+        "options": ["asyncScheduler", "asapScheduler", "animationFrameScheduler", "queueScheduler"],
+        "correctAnswer": 2,
+        "explanation": "`animationFrameScheduler` is specifically designed to schedule tasks within the browser's animation frame, aligning operations with the browser's rendering cycle for optimized animations and visual updates."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-higher-order-observables-flattening",
+    "title": "Higher-Order Observables and Flattening Operators",
+    "description": "Understand Higher-Order Observables and RxJS flattening operators like `mergeMap`, `switchMap`, `concatMap`, and `exhaustMap` for managing nested Observables.",
+    "difficulty": "advanced",
+    "category": "rxjs",
+    "explanation": "Higher-Order Observables are Observables that emit other Observables. They arise commonly in scenarios where you need to perform asynchronous operations based on values emitted by another Observable (e.g., HTTP requests based on user input). Flattening operators are essential for managing these nested Observables and converting them into a single, flat Observable stream.\n\n**Flattening Operators:**\n\n*   **`mergeMap(project: (value: T, index: number) => ObservableInput<R>, concurrency?: number)` (aka `flatMap`):** Maps each source value to an inner Observable and merges all inner Observables concurrently into the output Observable. Concurrency limit can be set to control parallel subscriptions.\n*   **`switchMap(project: (value: T, index: number) => ObservableInput<R>)`:** Maps each source value to an inner Observable, but cancels the previous inner Observable if a new source value arrives before the current inner one completes. Emits values only from the latest inner Observable. Useful for type-ahead search and canceling outdated requests.\n*   **`concatMap(project: (value: T, index: number) => ObservableInput<R>)`:** Maps each source value to an inner Observable and concatenates inner Observables sequentially. It subscribes to the next inner Observable only after the previous one completes. Preserves order of operations.\n*   **`exhaustMap(project: (value: T, index: number) => ObservableInput<R>)`:** Maps each source value to an inner Observable, but ignores any new source values while the current inner Observable is active. Once the inner Observable completes, it starts processing new source values again. Useful for preventing rapid button clicks from triggering multiple requests.",
+    "example": "// Higher-Order Observables and Flattening Operators Examples\nimport { fromEvent, interval, of } from 'rxjs';\nimport { mergeMap, switchMap, concatMap, exhaustMap, take } from 'rxjs/operators';\n\n// Example: Simulate clicks\nconst click$ = fromEvent(document, 'click').pipe(take(5));\n\n// mergeMap\nclick$.pipe(\n  mergeMap(() => interval(1000).pipe(take(3)))\n).subscribe(val => console.log('mergeMap:', val)); // Interleaved intervals for each click\n\n// switchMap\nclick$.pipe(\n  switchMap(() => interval(1000).pipe(take(3)))\n).subscribe(val => console.log('switchMap:', val)); // Interval restarts on each click, last click's interval dominates\n\n// concatMap\nclick$.pipe(\n  concatMap(() => interval(1000).pipe(take(3)))\n).subscribe(val => console.log('concatMap:', val)); // Intervals run sequentially for each click, in order\n\n// exhaustMap\nclick$.pipe(\n  exhaustMap(() => interval(1000).pipe(take(3)))\n).subscribe(val => console.log('exhaustMap:', val)); // First click starts interval, subsequent clicks during interval are ignored",
+    "keyPoints": [
+      "Higher-Order Observables: Observables emitting Observables.",
+      "Flattening: Convert nested Observables to flat stream.",
+      "`mergeMap`: Concurrent merging, interleaved emissions.",
+      "`switchMap`: Switch to latest, cancel previous.",
+      "`concatMap`: Sequential concatenation, ordered emissions.",
+      "`exhaustMap`: Ignore new source values during inner.",
+      "Choose based on concurrency, order, and cancellation needs."
+    ],
+    "quiz": [
+      {
+        "question": "What is the primary purpose of flattening operators in RxJS when dealing with Higher-Order Observables?",
+        "options": ["To filter values from Observables.", "To transform values emitted by Observables.", "To convert a Higher-Order Observable into a single, flat Observable.", "To handle errors in nested Observables."],
+        "correctAnswer": 2,
+        "explanation": "Flattening operators are specifically designed to take a stream of Observables (Higher-Order Observable) and merge or transform them into a single Observable stream of values, simplifying the management of nested asynchrony."
+      },
+      {
+        "question": "Which flattening operator is known for canceling the previous inner Observable when a new value arrives from the source Observable?",
+        "options": ["mergeMap", "concatMap", "exhaustMap", "switchMap"],
+        "correctAnswer": 3,
+        "explanation": "`switchMap` is unique in its cancellation behavior. When a new value arrives from the source, it cancels the currently active inner Observable and starts a new one, ensuring that only the latest operation's results are processed."
+      },
+      {
+        "question": "If you need to process inner Observables sequentially, ensuring that each completes before the next one starts, which flattening operator should you use?",
+        "options": ["switchMap", "mergeMap", "exhaustMap", "concatMap"],
+        "correctAnswer": 3,
+        "explanation": "`concatMap` maintains strict sequential processing. It subscribes to and processes the next inner Observable only after the current one has completed, preserving the order of operations and emissions."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-reactive-forms",
+    "title": "RxJS and Reactive Forms",
+    "description": "Explore how RxJS Observables are used extensively within Angular Reactive Forms for handling form value changes, validation, and asynchronous operations.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "RxJS plays a fundamental role in Angular Reactive Forms, providing the reactive backbone for handling form value changes, validation, and asynchronous operations. Reactive Forms leverage Observables to represent form control values and status, enabling reactive programming patterns for form logic.\n\n**RxJS in Reactive Forms:**\n\n*   **`FormControl.valueChanges`:** An Observable that emits the current value of the form control whenever its value changes. Used to react to user input and trigger actions based on form value modifications.\n*   **`FormControl.statusChanges`:** An Observable that emits the validation status of the form control whenever its validity changes (`VALID`, `INVALID`, `PENDING`, `DISABLED`). Used to react to validation status changes and update UI or component behavior.\n*   **Asynchronous Validators:** Reactive Forms support asynchronous validators that return Observables or Promises. Angular uses RxJS to manage these asynchronous validations and integrate their results into the form's validation state.\n*   **Form Value Streams:** Observables derived from form controls and groups can be combined and transformed using RxJS operators to create complex reactive form logic, such as conditional validation, dynamic form updates, and debounced input handling.\n*   **`FormGroup.valueChanges` and `FormArray.valueChanges`:** Similar to `FormControl.valueChanges`, these Observables emit whenever the value of the entire form group or form array changes, allowing for reactive programming at the form level.",
+    "example": "// RxJS in Reactive Forms Examples\nimport { Component, OnInit } from '@angular/core';\nimport { FormBuilder, FormGroup, Validators } from '@angular/forms';\nimport { debounceTime, distinctUntilChanged } from 'rxjs/operators';\n\n@Component({\n  selector: 'app-reactive-forms-rxjs-demo',\n  templateUrl: './reactive-forms-rxjs-demo.component.html'\n})\nexport class ReactiveFormsRxjsDemoComponent implements OnInit {\n  searchForm: FormGroup;\n\n  constructor(private fb: FormBuilder) { }\n\n  ngOnInit() {\n    this.searchForm = this.fb.group({\n      query: ['', Validators.required]\n    });\n\n    // Value Changes Observable\n    this.searchForm.get('query')?.valueChanges.pipe(\n      debounceTime(300),\n      distinctUntilChanged()\n    ).subscribe(query => {\n      console.log('Search query changed:', query);\n      // Perform search operation here based on query\n    });\n\n    // Status Changes Observable\n    this.searchForm.get('query')?.statusChanges.subscribe(status => {\n      console.log('Query control status changed:', status);\n    });\n  }\n}\n",
+    "keyPoints": [
+      "`FormControl.valueChanges`: React to value changes.",
+      "`FormControl.statusChanges`: React to validation changes.",
+      "Asynchronous validators managed with RxJS.",
+      "Combine form Observables for complex logic.",
+      "`FormGroup.valueChanges` and `FormArray.valueChanges` for form-level reactivity."
+    ],
+    "quiz": [
+      {
+        "question": "Which Observable in Angular Reactive Forms emits the current value of a form control whenever it changes?",
+        "options": ["statusChanges", "errors", "valueChanges", "valid"],
+        "correctAnswer": 2,
+        "explanation": "`FormControl.valueChanges` is the Observable that emits the latest value of the form control each time the value is updated by user input or programmatic changes."
+      },
+      {
+        "question": "To react to changes in the validation status of a form control (e.g., from VALID to INVALID), which Observable should you subscribe to?",
+        "options": ["valueChanges", "errors", "statusChanges", "valid"],
+        "correctAnswer": 2,
+        "explanation": "`FormControl.statusChanges` emits whenever the validation status of the control changes, allowing you to trigger actions based on form validity."
+      },
+      {
+        "question": "How does Angular Reactive Forms handle asynchronous validation?",
+        "options": ["Using Promises only.", "Using callbacks.", "Using RxJS Observables or Promises for asynchronous validators.", "Asynchronous validation is not supported."],
+        "correctAnswer": 2,
+        "explanation": "Reactive Forms leverage RxJS Observables (or Promises) to manage asynchronous validators, allowing validation logic to perform operations like API calls and integrate the results into the form's validation state reactively."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-http-client",
+    "title": "RxJS and HTTP Client",
+    "description": "Understand how Angular's HTTP Client module uses RxJS Observables to handle HTTP requests and responses, enabling reactive data fetching.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "Angular's HTTP Client module is built upon RxJS Observables, making it inherently reactive. HTTP Client methods like `get`, `post`, `put`, `delete` return Cold Observables, which emit the HTTP response once the request completes. This reactive nature allows for powerful manipulation of HTTP streams using RxJS operators.\n\n**RxJS with HTTP Client:**\n\n*   **HTTP Methods as Observables:** `HttpClient` methods (`get`, `post`, etc.) return Cold Observables that emit the HTTP response body when the server responds.\n*   **Observable Pipelines:** RxJS operators can be used to pipe and transform HTTP response streams, enabling tasks like:\n    *   Mapping response data.\n    *   Filtering responses.\n    *   Error handling with `catchError`.\n    *   Retrying failed requests with `retry` or `retryWhen`.\n    *   Canceling in-flight requests (using `switchMap` in routing or component logic).\n*   **Asynchronous Operations:** HTTP requests are inherently asynchronous, and Observables provide a natural way to handle asynchronous responses and data streams from backend APIs.\n*   **Request Interceptors:** HTTP Interceptors, while not directly RxJS operators, work within the RxJS-based HTTP pipeline to modify requests or responses globally using Observables.",
+    "example": "// RxJS and HTTP Client Examples\nimport { Component, OnInit } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\nimport { map, catchError, retry } from 'rxjs/operators';\n\ninterface Post {\n  userId: number;\n  id: number;\n  title: string;\n  body: string;\n}\n\n@Component({\n  selector: 'app-http-rxjs-demo',\n  templateUrl: './http-rxjs-demo.component.html'\n})\nexport class HttpRxjsDemoComponent implements OnInit {\n  post$: Observable<Post> | undefined;\n\n  constructor(private http: HttpClient) { }\n\n  ngOnInit() {\n    this.post$ = this.http.get<Post>('https://jsonplaceholder.typicode.com/posts/1').pipe(\n      map(post => ({ ...post, title: post.title.toUpperCase() })), // Map response\n      retry(3), // Retry on error\n      catchError(error => {\n        console.error('HTTP Error:', error);\n        return of({ userId: 0, id: 0, title: 'Error Loading Post', body: 'Failed to load data.' }); // Fallback\n      })\n    );\n  }\n}\n",
+    "keyPoints": [
+      "`HttpClient` methods return Cold Observables.",
+      "Use RxJS operators to pipe HTTP streams.",
+      "Mapping, filtering, error handling, retrying.",
+      "Reactive handling of asynchronous HTTP operations.",
+      "Interceptors work within RxJS pipeline."
+    ],
+    "quiz": [
+      {
+        "question": "What type of RxJS Observable do Angular's `HttpClient` methods (like `get`, `post`) typically return?",
+        "options": ["Hot Observable", "Subject", "BehaviorSubject", "Cold Observable"],
+        "correctAnswer": 3,
+        "explanation": "HTTP requests made with `HttpClient` are Cold Observables. Each subscription initiates a new HTTP request, and data is not shared across subscriptions by default."
+      },
+      {
+        "question": "How can you transform the data received in an HTTP response using RxJS operators with Angular's HTTP Client?",
+        "options": ["Using component properties.", "Using Angular pipes in templates.", "By piping the HTTP Observable and using operators like `map`.", "Transformation is not possible."],
+        "correctAnswer": 2,
+        "explanation": "RxJS operators, especially within the `.pipe()` method, are the primary way to transform HTTP response streams, allowing for data manipulation directly within the reactive pipeline."
+      },
+      {
+        "question": "To handle errors gracefully when making HTTP requests with Angular's `HttpClient` and RxJS, which operator is commonly used?",
+        "options": ["map", "filter", "retry", "catchError"],
+        "correctAnswer": 3,
+        "explanation": "The `catchError` operator is essential for error handling in HTTP request Observables. It allows you to intercept errors and provide fallback values or alternative Observable streams, preventing errors from propagating and breaking the application flow."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-state-management",
+    "title": "State Management with RxJS",
+    "description": "Explore using RxJS Observables and Subjects for basic state management in Angular applications, especially for smaller applications or feature-specific state.",
+    "difficulty": "intermediate",
+    "category": "rxjs",
+    "explanation": "RxJS provides powerful tools for managing state in Angular applications, particularly for simpler scenarios or feature-specific state management. By leveraging Observables and Subjects, you can create reactive state containers that components can subscribe to for state updates.\n\n**RxJS for State Management Patterns:**\n\n*   **Services as State Stores:** Services can act as central state stores, holding application state as `BehaviorSubject` or `ReplaySubject`. Components can inject these services to access and subscribe to state changes.\n*   **BehaviorSubject for State:** `BehaviorSubject` is particularly useful as a state container because it holds the current state value and emits it to new subscribers immediately. It also allows for updating the state using `next()`.\n*   **Observable State Streams:** Services expose state as Observables (using `.asObservable()` on Subjects) to components. Components subscribe to these Observables to react to state changes and update their views or behavior.\n*   **State Updates via Service Methods:** Components interact with state by calling methods on the state service, which in turn update the Subject, triggering state changes and notifying subscribers.\n*   **Simple and Localized State:** This approach is well-suited for managing state that is localized to a specific feature or for smaller applications where a full-fledged state management library might be overkill.",
+    "example": "// RxJS State Management Example (Service and BehaviorSubject)\nimport { Injectable } from '@angular/core';\nimport { BehaviorSubject } from 'rxjs';\n\ninterface UserState {\n  userName: string | null;\n  isLoggedIn: boolean;\n}\n\nconst initialState: UserState = {\n  userName: null,\n  isLoggedIn: false\n};\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class UserStateService {\n  private userStateSubject = new BehaviorSubject<UserState>(initialState);\n  userState$ = this.userStateSubject.asObservable(); // Observable state stream\n\n  constructor() { }\n\n  login(username: string) {\n    this.userStateSubject.next({ userName: username, isLoggedIn: true });\n  }\n\n  logout() {\n    this.userStateSubject.next({ userName: null, isLoggedIn: false });\n  }\n\n  get currentState(): UserState {\n    return this.userStateSubject.value;\n  }\n}\n\n// Component consuming state\nimport { Component, OnInit } from '@angular/core';\nimport { UserStateService } from './user-state.service';\n\n@Component({\n  selector: 'app-user-status',\n  template: `<p>User: {{ (userStateService.userState$ | async)?.userName || 'Guest' }} - Logged In: {{ (userStateService.userState$ | async)?.isLoggedIn ? 'Yes' : 'No' }}</p>`\n})\nexport class UserStatusComponent implements OnInit {\n\n  constructor(public userStateService: UserStateService) { } // Inject state service\n\n  ngOnInit() { }\n}\n",
+    "keyPoints": [
+      "Services as state stores.",
+      "`BehaviorSubject` for state container.",
+      "Observable state streams (`.asObservable()`).",
+      "State updates via service methods.",
+      "Simple, localized state management."
+    ],
+    "quiz": [
+      {
+        "question": "Which RxJS construct is most commonly used as a state container in basic RxJS-based state management?",
+        "options": ["Subject", "AsyncSubject", "ReplaySubject", "BehaviorSubject"],
+        "correctAnswer": 3,
+        "explanation": "`BehaviorSubject` is well-suited for state management because it holds the current state value, provides it to new subscribers, and allows state updates via `next()`."
+      },
+      {
+        "question": "In RxJS state management patterns, how do components typically access and react to state changes?",
+        "options": ["By directly modifying the Subject in the service.", "By subscribing to Observables exposed by the state service.", "By using Angular's Change Detection without subscriptions.", "Components do not directly access state."],
+        "correctAnswer": 1,
+        "explanation": "Components access state reactively by subscribing to Observables (often derived from Subjects using `.asObservable()`) provided by the state management service, allowing them to react to state updates."
+      },
+      {
+        "question": "What is a typical approach for updating the state in an RxJS-based state management service?",
+        "options": ["Directly modifying the state object.", "By calling methods on the state service that update the Subject's value.", "Using two-way data binding.", "State updates are automatically detected by RxJS."],
+        "correctAnswer": 1,
+        "explanation": "State updates are usually managed by providing methods in the state service that call `next()` on the Subject, triggering state changes and notifying all subscribers about the updated state."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-custom-operators",
+    "title": "Creating Custom RxJS Operators",
+    "description": "Learn how to create custom RxJS operators to encapsulate reusable stream transformations and extend RxJS functionality for specific application needs.",
+    "difficulty": "advanced",
+    "category": "rxjs",
+    "explanation": "Creating custom RxJS operators allows you to encapsulate reusable stream transformation logic into functions that can be used within `.pipe()`. Custom operators promote code reuse, readability, and maintainability by abstracting away complex or repeated operator combinations.\n\n**Creating Custom Operators:**\n\n*   **Operator Function:** A custom operator is a function that returns another function. This inner function is what gets applied to the Observable in `.pipe()`. The inner function takes an Observable as input (`source: Observable<T>`) and must return a new Observable (`Observable<R>`).\n*   **Using `pipe` and Existing Operators:** Inside a custom operator, you typically use `pipe` and existing RxJS operators to define the transformation logic. This allows you to compose complex operations from simpler building blocks.\n*   **Type Safety:** Ensure type safety by properly defining input and output types for your custom operator function and its inner Observable.\n*   **Pure Functions:** Custom operators should ideally be pure functions, meaning they should not have side effects and should always produce the same output for the same input, making them more predictable and testable.\n*   **Factory Functions:** Custom operators are often implemented as factory functions that can accept configuration parameters to customize their behavior, making them more versatile.",
+    "example": "// Custom RxJS Operator Examples\nimport { Observable, OperatorFunction } from 'rxjs';\nimport { filter, map } from 'rxjs/operators';\n\n// Custom Operator: filterOddMapEven\nexport function filterOddMapEven<T>(): OperatorFunction<number, string> {\n  return (source: Observable<number>): Observable<string> => {\n    return source.pipe(\n      filter(value => value % 2 !== 0), // Filter odd numbers\n      map(value => `Even: ${value * 2}`) // Map to even string\n    );\n  };\n}\n\n// Custom Operator: delayLog\nexport function delayLog<T>(delayTime: number, logMessage: string): OperatorFunction<T, T> {\n  return (source: Observable<T>): Observable<T> => {\n    return source.pipe(\n      delay(delayTime),\n      tap(value => console.log(`${logMessage}:`, value))\n    );\n  };\n}\n\n// Using Custom Operators\nimport { of } from 'rxjs';\n\nof(1, 2, 3, 4, 5).pipe(\n  filterOddMapEven(),\n  delayLog(500, 'Processed Value')\n).subscribe(val => console.log('Final Value:', val)); // Output: Processed Value: Even: 2, Final Value: Even: 2, ...",
+    "keyPoints": [
+      "Encapsulate reusable stream transformations.",
+      "Operator function returns inner function.",
+      "Use `pipe` and existing operators inside.",
+      "Ensure type safety.",
+      "Prefer pure functions.",
+      "Factory functions for configuration."
+    ],
+    "quiz": [
+      {
+        "question": "What is the primary benefit of creating custom RxJS operators?",
+        "options": ["To improve application styling.", "To optimize Observable performance.", "To encapsulate reusable stream transformation logic and promote code reuse.", "To simplify component templates."],
+        "correctAnswer": 2,
+        "explanation": "Custom operators are created to abstract and reuse common or complex RxJS operator combinations, making code more modular, readable, and maintainable."
+      },
+      {
+        "question": "What is the basic structure of a custom RxJS operator function?",
+        "options": ["It's a class that extends Observable.", "It's a function that takes an Observable and returns a transformed Observable.", "It's a configuration object for Observables.", "Custom operators are not functions."],
+        "correctAnswer": 1,
+        "explanation": "A custom RxJS operator is essentially a function that acts as a factory. It returns another function that is applied within `.pipe()` and takes a source Observable as input, returning a new, transformed Observable."
+      },
+      {
+        "question": "Inside a custom RxJS operator, what is the typical approach for defining the transformation logic?",
+        "options": ["Using plain JavaScript functions.", "By directly manipulating Observable values.", "By using the `pipe` function and composing existing RxJS operators.", "Custom logic is defined outside the operator function."],
+        "correctAnswer": 2,
+        "explanation": "Custom operators are typically built by composing existing RxJS operators using the `pipe` function. This allows you to leverage the rich set of RxJS operators to define complex transformations in a declarative and composable way."
+      }
+    ]
+  },
+  {
+    "id": "rxjs-testing",
+    "title": "Testing RxJS Code",
+    "description": "Learn strategies and tools for testing RxJS code effectively, including marble testing, testing operators, and testing components and services that use Observables.",
+    "difficulty": "advanced",
+    "category": "rxjs",
+    "explanation": "Testing RxJS code requires specific techniques to handle asynchronous streams and time-based operations. RxJS provides tools and patterns to make testing Observables, operators, and components/services that use RxJS streams predictable and reliable.\n\n**Strategies for Testing RxJS Code:**\n\n*   **Marble Testing:** Using `TestScheduler` from RxJS's testing utilities to test Observables and operators in a deterministic, synchronous manner. Marble testing allows you to simulate time and events in a controlled environment, making tests predictable and easier to write.\n*   **Testing Operators:** Focus on testing the transformation logic of custom operators and how they behave with different input streams. Marble testing is particularly effective for operator tests.\n*   **Testing Components and Services:** When testing Angular components or services that use RxJS, focus on verifying how they react to Observable emissions, handle subscriptions, and manage asynchronous operations. Mocking services and using `async` and `fakeAsync`/`tick` in Angular testing utilities are common practices.\n*   **`TestScheduler` for Time Control:** `TestScheduler` is crucial for testing time-dependent operators (e.g., `debounceTime`, `delay`, `interval`, `timer`). It allows you to control virtual time and assert the timing and values of emissions.\n*   **`cold()` and `hot()` Marble Factories:** `TestScheduler` provides `cold()` and `hot()` factories to create cold and hot Observables respectively, using marble string notation to define their emissions, completion, and errors in tests.\n*   **Assertion Functions:** Use assertion functions (e.g., `expectObservable().toBeMarble()`, `expectSubscriptions().toBe()`) provided by `TestScheduler` to verify the output and subscription patterns of Observables against expected marble diagrams.",
+    "example": "// RxJS Testing Example (Marble Testing with TestScheduler)\nimport { cold, hot } from 'jasmine-marbles';\nimport { TestScheduler } from 'rxjs/testing';\nimport { map } from 'rxjs/operators';\n\ndescribe('RxJS Marble Testing', () => {\n  let testScheduler: TestScheduler;\n\n  beforeEach(() => {\n    testScheduler = new TestScheduler((actual, expected) => {\n      expect(actual).toEqual(expected); // Custom assertion for marble tests\n    });\n  });\n\n  it('should test map operator with marble diagrams', () => {\n    testScheduler.run(helpers => {\n      const inputMarble = '--a--b--c--|';\n      const outputMarble = '--A--B--C--|';\n      const values = { a: 1, b: 2, c: 3, A: 10, B: 20, C: 30 };\n\n      const input$ = helpers.cold(inputMarble, values);\n      const expected$ = helpers.cold(outputMarble, values);\n      const actual$ = input$.pipe(map(x => x * 10));\n\n      helpers.expectObservable(actual$).toBeMarble(outputMarble, values);\n    });\n  });\n\n  it('should test subscriptions with marble diagrams', () => {\n    testScheduler.run(helpers => {\n      const inputMarble = '--a--b--c--|';\n      const subsMarble = '^------!'; // Subscription and unsubscription points\n      const input$ = helpers.cold(inputMarble);\n      const expectedSubs = subsMarble;\n\n      input$.subscribe(); // Subscribe to input$\n\n      helpers.expectSubscriptions(input$.subscriptions).toBe(expectedSubs);\n    });\n  });\n});\n",
+    "keyPoints": [
+      "Marble testing for deterministic Observable tests.",
+      "`TestScheduler` for time control.",
+      "`cold()` and `hot()` for test Observables.",
+      "Test operators and component/service interactions.",
+      "Assertion functions for marble and subscription checks.",
+      "Isolate RxJS logic for focused tests."
+    ],
+    "quiz": [
+      {
+        "question": "What is Marble Testing in RxJS, and what is its primary benefit?",
+        "options": ["A visual testing method for UI components.", "A technique for testing asynchronous Observables in a synchronous and deterministic way.", "A method for performance testing RxJS streams.", "Marble testing is not related to RxJS."],
+        "correctAnswer": 1,
+        "explanation": "Marble testing uses `TestScheduler` to simulate time and events in a controlled, synchronous manner, making tests for asynchronous RxJS code predictable and easier to manage."
+      },
+      {
+        "question": "Which RxJS utility is essential for controlling virtual time in marble tests, especially for time-dependent operators?",
+        "options": ["AsyncScheduler", "QueueScheduler", "TestScheduler", "AnimationFrameScheduler"],
+        "correctAnswer": 2,
+        "explanation": "`TestScheduler` is specifically designed for controlling virtual time in RxJS tests, allowing you to advance time programmatically and test time-sensitive scenarios effectively."
+      },
+      {
+        "question": "What are `cold()` and `hot()` in the context of RxJS marble testing?",
+        "options": ["Types of test assertions.", "Functions to create test Observables with marble string notation.", "Keywords for defining test descriptions.", "They are not related to marble testing."],
+        "correctAnswer": 1,
+        "explanation": "`cold()` and `hot()` are factories provided by `TestScheduler` that enable you to create test Observables using marble string notation, making it easy to define the expected emission patterns for both cold and hot Observables in tests."
+      }
+    ]
   }
   ]
 }
