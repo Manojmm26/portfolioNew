@@ -26,6 +26,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/programming-questions/programming-questions.module').then(m => m.ProgrammingQuestionsModule)
   },
   {
+    path: 'typescript-concepts',
+    loadChildren: () => import('./features/typescript-concepts/typescript-concepts.module')
+      .then(m => m.TypescriptConceptsModule)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

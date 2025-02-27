@@ -42,6 +42,11 @@ export class HomeComponent {
       path: '/angular-concepts',
       description: 'Explore Angular components, services, and best practices'
     },
+    {
+      title: 'TypeScript',
+      path: '/typescript-concepts',
+      description: 'Master TypeScript concepts and best practices'
+    }
   ];
 
   constructor(private router: Router) {}
