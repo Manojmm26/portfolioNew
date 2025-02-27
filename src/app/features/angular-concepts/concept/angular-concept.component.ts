@@ -15,6 +15,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AngularConceptsService, AngularConcept } from '../services/angular-concepts.service';
 import { highlight, highlightAll } from '../../../shared/utils/prism-config';
 import { ThemeService } from '../../../core/theme/theme.service';
+import { marked } from 'marked';
 
 @Component({
   selector: 'app-angular-concept',
@@ -59,7 +60,7 @@ import { ThemeService } from '../../../core/theme/theme.service';
             <mat-card>
               <mat-card-content>
                 <div class="explanation-content">
-                  <div [innerHTML]="sanitizedExplanation"></div>
+                  <div class="markdown-content" [innerHTML]="sanitizedExplanation"></div>
                   
                   <div class="key-points" *ngIf="content.keyPoints">
                     <h3>
@@ -197,6 +198,77 @@ import { ThemeService } from '../../../core/theme/theme.service';
       }
 
       .explanation-content {
+        .markdown-content {
+          line-height: 1.6;
+          margin-bottom: 2rem;
+          
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+          }
+          
+          p {
+            margin-bottom: 1em;
+          }
+          
+          ul, ol {
+            margin-left: 1.5em;
+            margin-bottom: 1em;
+          }
+          
+          li {
+            margin-bottom: 0.5em;
+          }
+          
+          code {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: monospace;
+          }
+          
+          pre {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 1em;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1em;
+          }
+          
+          strong {
+            font-weight: 600;
+          }
+          
+          blockquote {
+            border-left: 4px solid #ccc;
+            padding-left: 1em;
+            margin-left: 0;
+            margin-right: 0;
+            font-style: italic;
+          }
+          
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1em;
+            
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            
+            th {
+              background-color: rgba(0, 0, 0, 0.05);
+              text-align: left;
+            }
+            
+            tr:nth-child(even) {
+              background-color: rgba(0, 0, 0, 0.025);
+            }
+          }
+        }
+        
         .key-points {
           margin-top: 2rem;
           padding: 1rem;
@@ -437,9 +509,10 @@ export class AngularConceptComponent implements OnInit {
       this.conceptsService.getConcept(conceptId).subscribe({
         next: (concept: AngularConcept) => {
           this.content = concept;
-          this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
-            concept.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-          );
+          // Convert markdown to HTML and then sanitize
+          // Use marked.parse synchronously to avoid Promise
+          const htmlContent = marked.parse(concept.explanation, { async: false }) as string;
+          this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(htmlContent);
           this.currentCode = concept.example;
           this.updatePreview();
           setTimeout(() => {

@@ -18,6 +18,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import loader from '@monaco-editor/loader';
 import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
 import { highlight, highlightAll } from '../../../shared/utils/prism-config';
+import { marked } from 'marked';
 
 // Configure Monaco loader to use CDN
 loader.config({ 
@@ -75,7 +76,7 @@ declare var Prism: any;
             <mat-card>
               <mat-card-content>
                 <div class="explanation-content">
-                  <div [innerHTML]="sanitizedExplanation"></div>
+                <div class="markdown-content" [innerHTML]="sanitizedExplanation"></div>
                   
                   <mat-accordion class="interactive-examples" *ngIf="content.interactiveExamples">
                     <mat-expansion-panel *ngFor="let example of content.interactiveExamples; let i = index">
@@ -278,6 +279,79 @@ declare var Prism: any;
         color: var(--theme-advanced-text-color) !important;
       }
     }
+
+    .explanation-content {
+        .markdown-content {
+          line-height: 1.6;
+          margin-bottom: 2rem;
+          
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+          }
+          
+          p {
+            margin-bottom: 1em;
+          }
+          
+          ul, ol {
+            margin-left: 1.5em;
+            margin-bottom: 1em;
+          }
+          
+          li {
+            margin-bottom: 0.5em;
+          }
+          
+          code {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: monospace;
+          }
+          
+          pre {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 1em;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1em;
+          }
+          
+          strong {
+            font-weight: 600;
+          }
+          
+          blockquote {
+            border-left: 4px solid #ccc;
+            padding-left: 1em;
+            margin-left: 0;
+            margin-right: 0;
+            font-style: italic;
+          }
+          
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1em;
+            
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            
+            th {
+              background-color: rgba(0, 0, 0, 0.05);
+              text-align: left;
+            }
+            
+            tr:nth-child(even) {
+              background-color: rgba(0, 0, 0, 0.025);
+            }
+          }
+        }
+      }
 
     .tab-content {
       margin-top: 1rem;
@@ -595,10 +669,11 @@ export class JavascriptConceptComponent implements OnInit, AfterViewInit {
       this.conceptService.getConcept(conceptId).subscribe(concept => {
         if (concept) {
           this.content = concept;
-          if (concept.explanation) {
-            this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
-              concept.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-            );
+          if (concept.explanation) {            
+          // Convert markdown to HTML and then sanitize
+          // Use marked.parse synchronously to avoid Promise
+          const htmlContent = marked.parse(concept.explanation, { async: false }) as string;
+          this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(htmlContent);
           }
           this.currentCode = concept.example || '';
           this.originalCode = this.currentCode;

@@ -16,6 +16,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import 'prismjs';
 import 'prismjs/components/prism-markup';
 import 'prismjs/themes/prism-okaidia.css';
+import { marked } from 'marked';
 
 declare var Prism: any;
 
@@ -44,7 +45,8 @@ declare var Prism: any;
             <mat-card>
               <mat-card-content>
                 <div class="explanation-content">
-                  <div [innerHTML]="sanitizedExplanation"></div>
+                <div class="markdown-content" [innerHTML]="sanitizedExplanation"></div>
+
                   
                   <mat-accordion class="interactive-examples" *ngIf="content.interactiveExamples">
                     <mat-expansion-panel *ngFor="let example of content.interactiveExamples; let i = index">
@@ -466,6 +468,79 @@ declare var Prism: any;
       }
     }
 
+    .explanation-content {
+        .markdown-content {
+          line-height: 1.6;
+          margin-bottom: 2rem;
+          
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+          }
+          
+          p {
+            margin-bottom: 1em;
+          }
+          
+          ul, ol {
+            margin-left: 1.5em;
+            margin-bottom: 1em;
+          }
+          
+          li {
+            margin-bottom: 0.5em;
+          }
+          
+          code {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: monospace;
+          }
+          
+          pre {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 1em;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1em;
+          }
+          
+          strong {
+            font-weight: 600;
+          }
+          
+          blockquote {
+            border-left: 4px solid #ccc;
+            padding-left: 1em;
+            margin-left: 0;
+            margin-right: 0;
+            font-style: italic;
+          }
+          
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1em;
+            
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            
+            th {
+              background-color: rgba(0, 0, 0, 0.05);
+              text-align: left;
+            }
+            
+            tr:nth-child(even) {
+              background-color: rgba(0, 0, 0, 0.025);
+            }
+          }
+        }
+      }
+
     .quiz-card {
       margin-bottom: 1rem;
       background-color: var(--theme-card-background);
@@ -540,9 +615,12 @@ export class HtmlConceptComponent implements OnInit {
           this.content = content;
           this.currentCode = content.example;
           this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(content.example);
-          this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
-            content.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-          );
+          if (content.explanation) {            
+            // Convert markdown to HTML and then sanitize
+            // Use marked.parse synchronously to avoid Promise
+            const htmlContent = marked.parse(content.explanation, { async: false }) as string;
+            this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(htmlContent);
+            }
           this.checkSyntax();
         }
       });
