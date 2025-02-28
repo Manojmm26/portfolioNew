@@ -519,6 +519,598 @@
           "explanation": "Given the conditional type `type Example<T> = T extends string ? string : number;`, when you use `Example<\"hello\">`, TypeScript checks if the literal type `\"hello\"` (which is a subtype of `string`) extends `string`. Since it does, the 'true' branch is taken, and the resulting type is `string`. Therefore, `Example<\"hello\">` resolves to `string`."
         }
       ]
+    },
+    {
+      "id": "modules-namespaces",
+      "title": "Modules and Namespaces",
+      "description": "Modules and namespaces in TypeScript are used to organize code and avoid naming collisions. Modules (using `export` and `import`) are the modern standard for code organization, while namespaces (using `namespace`) are an older approach for creating logical groupings within your code.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "Modules and namespaces help in structuring TypeScript applications by encapsulating code and preventing pollution of the global scope. Modules are based on file-based modularity, where each file is treated as a module and variables, functions, classes, etc., are scoped to that module unless explicitly exported. Namespaces, on the other hand, are declared within a single file or across multiple files to group related code under a common name. Modules are generally preferred for modern TypeScript development as they align with ECMAScript module standards and offer better tooling support and clearer separation of concerns. Namespaces can still be useful for organizing code within smaller projects or for migrating legacy JavaScript code.",
+      "example": "// --- Module Example (module.ts) ---\nexport function greet(name: string) {\n  return `Hello, ${name}!`;\n}\n\nexport const message = \"Welcome to modules!\";\n\n// --- Another Module Example (app.ts) ---\nimport { greet, message } from './module';\n\nconsole.log(greet(\"Alice\"));\nconsole.log(message);\n\n// --- Namespace Example (namespace.ts) ---\nnamespace StringUtils {\n  export function toUpper(str: string): string {\n    return str.toUpperCase();\n  }\n  export function toLower(str: string): string {\n    return str.toLowerCase();\n  }\n}\n\nconsole.log(StringUtils.toUpper(\"hello\"));\nconsole.log(StringUtils.toLower(\"WORLD\"));",
+      "keyPoints": [
+        "Modules (`export`/`import`) are file-based and the standard for code organization in TypeScript.",
+        "Namespaces (`namespace`) provide a way to group code logically within a global scope, but are less preferred for new projects.",
+        "Modules promote better encapsulation and avoid global scope pollution.",
+        "Modules align with ECMAScript module standards.",
+        "Namespaces can be used to organize code or for legacy JavaScript migration.",
+        "Use modules for modern, scalable TypeScript applications."
+      ],
+      "quiz": [
+        {
+          "question": "Which keyword is used to make a variable or function accessible outside of a TypeScript module?",
+          "options": ["public", "namespace", "export", "module"],
+          "correctAnswer": 2,
+          "explanation": "The `export` keyword in TypeScript is used to make variables, functions, classes, interfaces, etc., accessible from outside the module where they are defined. This is fundamental for creating reusable and modular code."
+        },
+        {
+          "question": "What is the primary advantage of using modules over namespaces in TypeScript for modern projects?",
+          "options": ["Modules are simpler to declare.", "Modules prevent naming collisions and offer better encapsulation.", "Namespaces are more compatible with JavaScript.", "Namespaces offer better performance."],
+          "correctAnswer": 1,
+          "explanation": "Modules provide better encapsulation by creating file-level scopes, which naturally prevent naming collisions and help in organizing code into independent units. This leads to more maintainable and scalable applications compared to namespaces, which operate within the global scope (or a named scope within it)."
+        },
+        {
+          "question": "How do you import members from a module in TypeScript?",
+          "options": ["Using the `include` keyword.", "Using the `require` keyword.", "Using the `import` keyword.", "Using the `namespace` keyword."],
+          "correctAnswer": 2,
+          "explanation": "The `import` keyword is used in TypeScript to bring in members (variables, functions, classes, interfaces, etc.) that have been exported from another module. This allows you to reuse code from different parts of your application in a modular and organized way."
+        }
+      ]
+    },
+    {
+      "id": "declaration-files",
+      "title": "Declaration Files (.d.ts)",
+      "description": "Declaration files in TypeScript (`.d.ts`) are used to provide type information about existing JavaScript code, such as libraries or modules, without rewriting the JavaScript code itself. They describe the shape of JavaScript APIs for TypeScript's type checker.",
+      "difficulty": "intermediate",
+      "category": "fundamentals",
+      "explanation": "Declaration files are essential for using JavaScript libraries in TypeScript projects. They allow TypeScript to understand the types and structure of JavaScript code, enabling type checking and autocompletion even for libraries written in plain JavaScript. A `.d.ts` file typically contains interface, type alias, class, function, and variable declarations, but no implementation. TypeScript uses these files to provide type safety when you import and use JavaScript modules. They bridge the gap between dynamically typed JavaScript and statically typed TypeScript, making it possible to integrate existing JavaScript ecosystems into TypeScript projects seamlessly. Declaration files can be created manually or often are provided by the library authors themselves (e.g., DefinitelyTyped repository for community-maintained declarations).",
+      "example": "// --- Example Declaration File (mylibrary.d.ts) ---\ndeclare module 'mylibrary' {\n  export function libraryFunction(name: string): string;\n  export interface LibraryOptions {\n    optionA: boolean;\n    optionB?: number;\n  }\n  export const libraryVersion: string;\n}\n\n// --- Example JavaScript Library (mylibrary.js) ---\n// This is just plain JavaScript, no types here\nexport function libraryFunction(name) {\n  return \"Library says hello to \" + name;\n}\n\nexport const libraryVersion = \"1.0.0\";\n\n// --- Example TypeScript Usage (app.ts) ---\nimport { libraryFunction, libraryVersion, LibraryOptions } from 'mylibrary';\n\nconsole.log(libraryFunction(\"TypeScript User\"));\nconsole.log(\"Library version:\", libraryVersion);\n\nlet options: LibraryOptions = { optionA: true }; // Type-safe usage thanks to .d.ts",
+      "keyPoints": [
+        "Declaration files (`.d.ts`) describe the types of JavaScript code for TypeScript.",
+        "They enable type checking and autocompletion for JavaScript libraries in TypeScript projects.",
+        "`.d.ts` files contain only type declarations (interfaces, types, function signatures) without implementation.",
+        "They bridge the gap between JavaScript and TypeScript, allowing integration of JavaScript libraries.",
+        "Declaration files can be manually created or obtained from sources like DefinitelyTyped.",
+        "Essential for type safety when using JavaScript libraries in TypeScript."
+      ],
+      "quiz": [
+        {
+          "question": "What is the file extension for TypeScript declaration files?",
+          "options": [".ts", ".js", ".d.ts", ".tsx"],
+          "correctAnswer": 2,
+          "explanation": "TypeScript declaration files use the `.d.ts` file extension. This extension signals to the TypeScript compiler that the file contains type declarations rather than executable code, and is used to describe the types of JavaScript libraries or modules."
+        },
+        {
+          "question": "What is the main purpose of declaration files?",
+          "options": ["To convert TypeScript code to JavaScript.", "To provide type information for existing JavaScript code.", "To improve the runtime performance of TypeScript applications.", "To create executable JavaScript code."],
+          "correctAnswer": 1,
+          "explanation": "The primary purpose of declaration files is to provide type information for existing JavaScript code. This allows TypeScript projects to use JavaScript libraries and modules with type safety, enabling compile-time checks and better tooling support."
+        },
+        {
+          "question": "Do declaration files contain the implementation of functions and classes?",
+          "options": ["Yes, they contain both type declarations and implementation.", "No, they only contain type declarations, not implementation.", "Only for external JavaScript libraries.", "Only for internal modules within a TypeScript project."],
+          "correctAnswer": 1,
+          "explanation": "Declaration files (`.d.ts`) do not contain the implementation of functions or classes. They solely consist of type declarations, such as interfaces, type aliases, and function signatures. The actual implementation resides in the corresponding JavaScript files (`.js`)."
+        }
+      ]
+    },
+    {
+      "id": "decorators",
+      "title": "Decorators",
+      "description": "Decorators in TypeScript provide a way to add annotations and meta-programming syntax for class declarations and members. They are functions that can modify classes, methods, properties, or parameters at design time.",
+      "difficulty": "advanced",
+      "category": "advanced-types",
+      "explanation": "Decorators are a powerful feature in TypeScript, inspired by patterns in languages like Python and Java. They use the `@expression` syntax to attach metadata or modify the behavior of classes, methods, accessors, properties, and parameters. Decorators are essentially functions that are called with information about the decorated declaration. They can be used for various purposes, such as logging, validation, dependency injection, and aspect-oriented programming. Decorators enhance code readability and maintainability by separating cross-cutting concerns from the core logic of classes and their members. They are a stage 2 ECMAScript proposal and are a significant feature for framework and library development in TypeScript.",
+      "example": "// Class Decorator\nfunction sealed(constructor: Function) {\n  Object.seal(constructor);\n  Object.seal(constructor.prototype);\n}\n\n@sealed\nclass Greeter {\n  greeting: string;\n  constructor(message: string) {\n    this.greeting = message;\n  }\n  greet() {\n    return \"Hello, \" + this.greeting;\n  }\n}\n\n// Method Decorator\nfunction logMethod(target: any, propertyKey: string, descriptor: PropertyDescriptor) {\n  const originalMethod = descriptor.value;\n  descriptor.value = function (...args: any[]) {\n    console.log(`Calling method: ${propertyKey} with arguments:`, args);\n    const result = originalMethod.apply(this, args);\n    console.log(`Method ${propertyKey} returned:`, result);\n    return result;\n  };\n  return descriptor;\n}\n\nclass Calculator {\n  @logMethod\n  add(a: number, b: number): number {\n    return a + b;\n  }\n}\n\nlet calc = new Calculator();\ncalc.add(5, 3);",
+      "keyPoints": [
+        "Decorators use `@expression` syntax to annotate and modify class declarations and members.",
+        "They are functions that can alter the behavior of classes, methods, properties, and parameters.",
+        "Decorators can be used for logging, validation, dependency injection, and AOP.",
+        "Class decorators are applied to class constructors.",
+        "Method decorators are applied to method descriptors.",
+        "TypeScript decorators are a stage 2 ECMAScript proposal."
+      ],
+      "quiz": [
+        {
+          "question": "What is the syntax for applying a decorator in TypeScript?",
+          "options": ["`#decoratorName`", "`$decoratorName`", "`@decoratorName`", "`^decoratorName`"],
+          "correctAnswer": 2,
+          "explanation": "Decorators in TypeScript are applied using the `@decoratorName` syntax, placed immediately before the declaration of a class, method, property, parameter, or accessor that you want to decorate."
+        },
+        {
+          "question": "What can class decorators be used for?",
+          "options": ["To modify instances of a class at runtime.", "To add metadata to class properties.", "To seal a class to prevent further modifications.", "To define the inheritance hierarchy of classes."],
+          "correctAnswer": 2,
+          "explanation": "Class decorators can be used to modify the class constructor. For example, they can be used to seal the constructor and its prototype using `Object.seal()`, preventing further additions or removals of properties. They operate on the class level, not instances directly."
+        },
+        {
+          "question": "What type of declaration can method decorators be applied to?",
+          "options": ["Class declarations", "Function declarations", "Method definitions within classes", "Interface declarations"],
+          "correctAnswer": 2,
+          "explanation": "Method decorators in TypeScript are applied to method definitions within classes. They can intercept and modify the method descriptor, allowing you to alter the method's behavior, such as logging arguments and return values, as demonstrated in the example."
+        }
+      ]
+    },
+    {
+      "id": "mixins",
+      "title": "Mixins",
+      "description": "Mixins in TypeScript (and JavaScript) are a pattern for code reuse where functionalities are composed into a class by mixing in traits or behaviors from multiple sources, without relying on traditional class inheritance.",
+      "difficulty": "advanced",
+      "category": "advanced-types",
+      "explanation": "Mixins offer a flexible way to build up classes by combining functionalities from reusable components. Unlike classical inheritance, which creates a rigid hierarchy, mixins allow you to 'mix in' properties and methods from multiple 'mixin classes' or objects into a target class. This is particularly useful in JavaScript and TypeScript, where single inheritance is the norm. Mixins help in avoiding the 'diamond problem' and enable more composable and reusable code. In TypeScript, mixins are typically implemented using class factories or composition patterns, often involving intersection types and generics to ensure type safety and flexibility.",
+      "example": "// Mixin classes\nclass Disposable {\n  isDisposed: boolean = false;\n  dispose() {\n    this.isDisposed = true;\n  }\n}\n\nclass Activatable {\n  isActive: boolean = false;\n  activate() {\n    this.isActive = true;\n  }\n  deactivate() {\n    this.isActive = false;\n  }\n}\n\n// Function to apply mixins\nfunction applyMixins(derivedCtor: any, baseCtors: any[]) {\n  baseCtors.forEach(baseCtor => {\n    Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {\n      Object.defineProperty(derivedCtor.prototype, name, Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||\n        Object.create(null));\n    });\n  });\n}\n\n// Class to apply mixins to\nclass MyComponent implements Disposable, Activatable {\n  // Disposable properties and methods will be here after mixin\n  isDisposed!: boolean;\n  dispose!: () => void;\n  // Activatable properties and methods will be here after mixin\n  isActive!: boolean;\n  activate!: () => void;\n  deactivate!: () => void;\n\n  constructor() {\n    // Apply mixins\n    applyMixins(MyComponent, [Disposable, Activatable]);\n  }\n  render() {\n    console.log(\"Component rendered, isDisposed:\", this.isDisposed, \", isActive:\", this.isActive);\n  }\n}\n\nconst component = new MyComponent();\ncomponent.activate();\ncomponent.render();\ncomponent.dispose();\ncomponent.render();",
+      "keyPoints": [
+        "Mixins are a pattern for code reuse by composing functionalities from multiple sources.",
+        "They provide an alternative to classical inheritance, offering more flexibility.",
+        "Mixins help avoid the 'diamond problem' and promote code composability.",
+        "Implemented using class factories or composition, often with intersection types.",
+        "Enable combining behaviors from different 'mixin classes' into a single class.",
+        "Useful in JavaScript and TypeScript for single inheritance environments."
+      ],
+      "quiz": [
+        {
+          "question": "What problem do mixins primarily solve in object-oriented programming?",
+          "options": ["Memory leaks in inheritance hierarchies.", "The 'diamond problem' and rigidness of classical inheritance.", "Complexity of constructor chaining in subclasses.", "Lack of support for interfaces in JavaScript."],
+          "correctAnswer": 1,
+          "explanation": "Mixins primarily address the limitations and complexities of classical inheritance, especially the 'diamond problem' (ambiguity in multiple inheritance) and the rigidity of deep inheritance hierarchies. They offer a more flexible and composable way to reuse code."
+        },
+        {
+          "question": "How do mixins differ from traditional class inheritance?",
+          "options": ["Mixins establish a strict 'is-a' relationship, while inheritance is more about 'has-a'.", "Mixins compose functionalities horizontally, while inheritance creates a vertical hierarchy.", "Mixins are only applicable to functional programming, while inheritance is for object-oriented.", "Mixins are a runtime feature, while inheritance is a compile-time feature."],
+          "correctAnswer": 1,
+          "explanation": "Mixins allow for horizontal composition of functionalities, meaning you can combine features from different sources into a class without creating a deep, rigid hierarchy. Inheritance, on the other hand, establishes a vertical 'is-a' relationship, which can sometimes lead to inflexibility and the diamond problem in multiple inheritance scenarios."
+        },
+        {
+          "question": "What are common implementation techniques for mixins in TypeScript?",
+          "options": ["Using interfaces and abstract classes.", "Using class factories, composition patterns, and intersection types.", "Using decorators exclusively.", "Using enums and type aliases."],
+          "correctAnswer": 1,
+          "explanation": "In TypeScript, mixins are commonly implemented using class factories, composition patterns, and intersection types. These techniques allow you to dynamically combine properties and methods from mixin classes into a target class while maintaining type safety and flexibility. Decorators can sometimes be used in conjunction with mixins but are not the primary implementation technique for mixins themselves."
+        }
+      ]
+    },
+    {
+      "id": "type-parameters-in-classes",
+      "title": "Type Parameters in Classes (Generic Classes)",
+      "description": "Generic classes in TypeScript use type parameters to create classes that can work with a variety of types while maintaining type safety. They allow you to define classes that are parameterized by types, similar to generic functions and interfaces.",
+      "difficulty": "intermediate",
+      "category": "advanced-types",
+      "explanation": "Generic classes extend the concept of generics to class definitions. They enable you to create classes where the type of certain properties or method parameters is not specified until an instance of the class is created. This is achieved through type parameters, typically denoted by `<T>`, `<U>`, etc., which act as placeholders for actual types. Generic classes enhance code reusability and type safety by allowing you to write classes that can operate on different data types without losing type information. They are commonly used in data structures, collections, and utility classes where the specific type of data being handled is not predetermined.",
+      "example": "// Generic class definition\nclass GenericContainer<T> {\n  private items: T[] = [];\n\n  addItem(item: T): void {\n    this.items.push(item);\n  }\n\n  getItems(): T[] {\n    return this.items;\n  }\n}\n\n// Using GenericContainer with number\nlet numberContainer = new GenericContainer<number>();\nnumberContainer.addItem(10);\nnumberContainer.addItem(20);\n// numberContainer.addItem(\"string\"); // Error: Argument of type 'string' is not assignable to parameter of type 'number'.\nconsole.log(\"Number container items:\", numberContainer.getItems());\n\n// Using GenericContainer with string\nlet stringContainer = new GenericContainer<string>();\nstringContainer.addItem(\"apple\");\nstringContainer.addItem(\"banana\");\nconsole.log(\"String container items:\", stringContainer.getItems());\n\n// Generic class with multiple type parameters\nclass KeyValueStore<K, V> {\n  private keys: K[] = [];\n  private values: V[] = [];\n\n  add(key: K, value: V): void {\n    this.keys.push(key);\n    this.values.push(value);\n  }\n\n  getKeys(): K[] {\n    return this.keys;\n  }\n\n  getValues(): V[] {\n    return this.values;\n  }\n}\n\nlet store = new KeyValueStore<string, number>();\nstore.add(\"age\", 30);\nstore.add(\"count\", 100);\nconsole.log(\"Store keys:\", store.getKeys());\nconsole.log(\"Store values:\", store.getValues());",
+      "keyPoints": [
+        "Generic classes use type parameters (e.g., `<T>`) to define classes parameterized by types.",
+        "Type parameters act as placeholders for actual types specified when creating class instances.",
+        "Generic classes enhance code reusability and type safety for classes.",
+        "They are useful for data structures, collections, and utility classes.",
+        "Multiple type parameters can be used in a single class definition (e.g., `<K, V>`).",
+        "Type constraints can be applied to type parameters in generic classes."
+      ],
+      "quiz": [
+        {
+          "question": "What is the purpose of type parameters in generic classes?",
+          "options": ["To define static properties of a class.", "To specify the access modifiers of class members.", "To create classes that can work with multiple types while maintaining type safety.", "To enable runtime type checking in classes."],
+          "correctAnswer": 2,
+          "explanation": "Type parameters in generic classes allow you to create classes that are flexible enough to work with various types of data without sacrificing type safety. They act as placeholders for types that will be specified when an instance of the generic class is created."
+        },
+        {
+          "question": "How are type parameters typically denoted in TypeScript generic classes?",
+          "options": ["Using curly braces `{}`.", "Using square brackets `[]`.", "Using angle brackets `<>`.", "Using parentheses `()`."],
+          "correctAnswer": 2,
+          "explanation": "Type parameters in TypeScript, including in generic classes, are denoted using angle brackets `<>`. For example, `class GenericClass<T> { ... }` declares a generic class named `GenericClass` with a type parameter `T`."
+        },
+        {
+          "question": "Can you use multiple type parameters in a generic class?",
+          "options": ["No, generic classes can only have one type parameter.", "Yes, you can define multiple type parameters separated by commas (e.g., `<K, V>`).", "Only if the class extends another generic class.", "Only for classes that implement generic interfaces."],
+          "correctAnswer": 1,
+          "explanation": "Yes, TypeScript allows you to define generic classes with multiple type parameters. These are specified within the angle brackets, separated by commas, such as `<K, V>` in `class KeyValueStore<K, V> { ... }`. This enables classes to be generic over multiple types, enhancing their flexibility and reusability."
+        }
+      ]
+    },
+    {
+      "id": "type-predicates",
+      "title": "Type Predicates",
+      "description": "Type predicates in TypeScript are function return types that narrow down the type of a variable based on the function's return value. They are used in custom type guard functions to inform the TypeScript compiler about type narrowing within conditional blocks.",
+      "difficulty": "intermediate",
+      "category": "advanced-types",
+      "explanation": "Type predicates are a specific form of type annotation for function return types that tell TypeScript the type of a value within a certain scope after the function returns true. A type predicate has the form `parameterName is Type`, where `parameterName` must be the name of a parameter of the function. When a function with a type predicate return type returns true, TypeScript understands that the parameter passed to the function is of the specified `Type` within the `if` block or similar conditional context. Type predicates are crucial for creating custom type guard functions, enabling more sophisticated type narrowing than built-in type guards like `typeof` and `instanceof`.",
+      "example": "// Interface definitions\ninterface Bird {\n  fly(): void;\n  layEggs(): void;\n}\n\ninterface Fish {\n  swim(): void;\n  layEggs(): void;\n}\n\n// Custom type guard function with type predicate\nfunction isBird(pet: Bird | Fish): pet is Bird {\n  return (pet as Bird).fly !== undefined; // Heuristic to identify a Bird\n}\n\nfunction petAction(pet: Bird | Fish) {\n  pet.layEggs(); // Safe, common to both Bird and Fish\n  if (isBird(pet)) { // Type guard with type predicate\n    pet.fly();     // Safe to call fly(), TypeScript knows 'pet' is Bird here\n  } else {         // TypeScript infers 'pet' must be Fish here\n    pet.swim();    // Safe to call swim(), TypeScript knows 'pet' is Fish here\n  }\n}\n\n// Example usage\nconst myBird = { fly: () => console.log(\"Flying\"), layEggs: () => console.log(\"Bird eggs\") };\nconst myFish = { swim: () => console.log(\"Swimming\"), layEggs: () => console.log(\"Fish eggs\") };\n\npetAction(myBird);\npetAction(myFish);\n\n// Type predicate example with class\nclass Circle {\n  radius: number;\n  constructor(radius: number) { this.radius = radius; }\n  getArea() { return Math.PI * this.radius * this.radius; }\n}\n\nclass Square {\n  sideLength: number;\n  constructor(sideLength: number) { this.sideLength = sideLength; }\n  getArea() { return this.sideLength * this.sideLength; }\n}\n\ntype Shape = Circle | Square;\n\nfunction isCircle(shape: Shape): shape is Circle {\n  return (shape as Circle).radius !== undefined;\n}\n\nfunction printShapeArea(shape: Shape) {\n  if (isCircle(shape)) {\n    console.log(\"Circle area:\", shape.getArea()); // 'shape' is Circle here\n  } else {\n    console.log(\"Square area:\", shape.getArea()); // 'shape' is Square here\n  }\n}",
+      "keyPoints": [
+        "Type predicates are function return types of the form `parameterName is Type`.",
+        "They are used in custom type guard functions to narrow down types.",
+        "When a function with a type predicate returns true, TypeScript narrows the type of the parameter.",
+        "Type predicates enable more sophisticated type narrowing beyond `typeof` and `instanceof`.",
+        "They are essential for creating custom type guards for complex type conditions.",
+        "Enhance type safety and code readability when working with union types."
+      ],
+      "quiz": [
+        {
+          "question": "What is the syntax for a type predicate return type in TypeScript?",
+          "options": ["`: Type`", "`: boolean`", "`: parameterName of Type`", "`: parameterName is Type`"],
+          "correctAnswer": 3,
+          "explanation": "The syntax for a type predicate return type is `: parameterName is Type`, where `parameterName` is the name of a parameter of the function and `Type` is the type to which you are narrowing down the parameter within a conditional block if the function returns `true`."
+        },
+        {
+          "question": "What does a function with a type predicate return type achieve?",
+          "options": ["It converts a value to the specified type at runtime.", "It performs runtime type checking.", "It informs the TypeScript compiler about type narrowing based on the function's return value.", "It throws an error if the type is not as predicated."],
+          "correctAnswer": 2,
+          "explanation": "A function with a type predicate return type informs the TypeScript compiler about type narrowing. When such a function returns `true`, TypeScript understands that within the scope where the function is called and returns `true`, the specified parameter is of the asserted type. This is purely a compile-time construct for type safety."
+        },
+        {
+          "question": "In `function isStringArray(value: any): value is string[]`, what is `value is string[]`?",
+          "options": ["A type assertion.", "A type predicate.", "A type alias.", "A generic type constraint."],
+          "correctAnswer": 1,
+          "explanation": "`value is string[]` in the function signature `function isStringArray(value: any): value is string[]` is a type predicate. It indicates that if `isStringArray(value)` returns `true`, then TypeScript should treat `value` as being of type `string[]` within the relevant conditional scope. This is the defining characteristic of a type predicate."
+        }
+      ]
+    },
+    {
+      "id": "index-signatures",
+      "title": "Index Signatures",
+      "description": "Index signatures in TypeScript allow you to define the type of properties in an object when you don't know the property names in advance. They are useful for working with dynamic data structures like dictionaries or maps where keys are not known at compile time.",
+      "difficulty": "intermediate",
+      "category": "advanced-types",
+      "explanation": "Index signatures are a feature in TypeScript that enables you to describe the shape of objects where property names are not fixed but are dynamically determined. They are particularly useful for representing data structures like dictionaries, maps, or records where you want to enforce a consistent type for all properties, regardless of their names. An index signature is defined within an interface or type alias using the syntax `[indexName: indexType]: valueType;`. Here, `indexName` is a name for the index (like a parameter name), `indexType` must be either `string`, `number`, or `symbol`, and `valueType` is the type of the properties accessed via that index.",
+      "example": "// Index signature for string keys and number values (dictionary-like)\ninterface NumberDictionary {\n  [index: string]: number; // Index signature: string index, number value\n}\n\nlet ages: NumberDictionary = {\n  \"Alice\": 30,\n  \"Bob\": 25,\n  \"Charlie\": 35\n};\n\nages[\"David\"] = 40; // OK\n// ages[\"Eve\"] = \"forty\"; // Error: Type 'string' is not assignable to type 'number'.\n\nfunction getAge(dict: NumberDictionary, name: string): number {\n  return dict[name]; // Accessing property via index signature\n}\n\nconsole.log(\"Alice's age:\", getAge(ages, \"Alice\"));\n\n// Index signature for number keys and string values (array-like, but keys are strings)\ninterface StringArrayLike {\n  [index: number]: string; // Index signature: number index, string value\n}\n\nlet namesArrayLike: StringArrayLike = {\n  0: \"First\",\n  1: \"Second\",\n  2: \"Third\"\n};\n\nconsole.log(\"Element at index 1:\", namesArrayLike[1]);\n\n// Combining index signature with known properties\ninterface Config {\n  apiUrl: string;\n  [key: string]: string; // Index signature: any string key, string value\n}\n\nlet appConfig: Config = {\n  apiUrl: \"https://api.example.com\",\n  theme: \"dark\",\n  language: \"en\"\n};\n\nconsole.log(\"API URL:\", appConfig.apiUrl);\nconsole.log(\"Theme:\", appConfig.theme);",
+      "keyPoints": [
+        "Index signatures define the type of properties in objects with dynamic keys.",
+        "Syntax: `[indexName: indexType]: valueType;` within interfaces or type aliases.",
+        "`indexType` must be `string`, `number`, or `symbol`. `valueType` can be any type.",
+        "Useful for dictionaries, maps, and dynamic data structures.",
+        "Allows type checking for dynamically accessed properties.",
+        "Can be combined with known properties in the same type definition."
+      ],
+      "quiz": [
+        {
+          "question": "What is the purpose of index signatures in TypeScript interfaces?",
+          "options": ["To define the order of properties in an object.", "To specify the type of properties when property names are not known in advance.", "To create index-based arrays.", "To define static properties of an interface."],
+          "correctAnswer": 1,
+          "explanation": "Index signatures are used to define the type of properties in objects where the property names are not fixed or known at compile time. They are essential for describing the shape of dynamic objects like dictionaries or maps, ensuring type safety for dynamically accessed properties."
+        },
+        {
+          "question": "Which types are allowed for the `indexType` in an index signature?",
+          "options": ["`string` and `number` only.", "`string`, `number`, and `boolean`.", "`string`, `number`, and `symbol`.", "Any primitive type."],
+          "correctAnswer": 2,
+          "explanation": "The `indexType` in an index signature is restricted to `string`, `number`, or `symbol`. These are the types that can be used as keys in JavaScript objects. `boolean` or other primitive types are not valid for `indexType`."
+        },
+        {
+          "question": "Consider `interface Dictionary { [key: string]: number; }`. What does this index signature indicate?",
+          "options": ["The interface `Dictionary` can only have string properties.", "Properties of `Dictionary` can be accessed using string indices.", "All properties of `Dictionary` must have keys of type string and values of type number.", "`Dictionary` is an array-like interface with string indices and number values."],
+          "correctAnswer": 2,
+          "explanation": "The index signature `[key: string]: number;` in the interface `Dictionary` indicates that for any string key (`key`) in an object of type `Dictionary`, the corresponding value must be of type `number`. It defines a dictionary-like structure where keys are strings and values are numbers, and allows for any string to be used as a property name."
+        }
+      ]
+    },
+    {
+      "id": "utility-types-omit-required-record",
+      "title": "Utility Types: Omit, Required, Record",
+      "description": "TypeScript utility types are built-in type transformations that make common type manipulations easier and more declarative. `Omit<T, K>`, `Required<T>`, and `Record<K, T>` are examples that provide powerful ways to create new types based on existing ones.",
+      "difficulty": "advanced",
+      "category": "advanced-types",
+      "explanation": "Utility types in TypeScript are pre-defined type operations that are very helpful in type manipulation and code reuse. `Omit<T, K>` constructs a type by picking all properties from `T` and then removing `K` (which can be a string literal or union of string literals). `Required<T>` makes all properties in `T` required (removes `?` optional modifier). `Record<K, T>` constructs an object type whose property keys are `K` and property values are `T`. These utility types, built using mapped types and conditional types, significantly enhance type system expressiveness and reduce boilerplate in type definitions, making TypeScript type system more powerful and developer-friendly.",
+      "example": "// Omit<T, K>: Exclude keys K from type T\ninterface Product {\n  id: number;\n  name: string;\n  description?: string;\n  price: number;\n}\n\ntype ProductPreview = Omit<Product, 'description' | 'price'>; // Removes 'description' and 'price'\n\nlet previewProduct: ProductPreview = {\n  id: 123,\n  name: \"Laptop\"\n  // description and price are omitted\n};\n\n// Required<T>: Make all properties in T required\ntype ProductDetailsRequired = Required<Product>; // Makes 'description' required\n\nlet detailedProduct: ProductDetailsRequired = {\n  id: 456,\n  name: \"Tablet\",\n  description: \"High-resolution display\", // Now required\n  price: 299\n};\n\n// Record<K, T>: Construct a type with keys K and values T\ntype StatusMap = Record<string, 'pending' | 'success' | 'error'>;\n\nlet taskStatuses: StatusMap = {\n  taskA: 'pending',\n  taskB: 'success',\n  taskC: 'error'\n};\n\ntaskStatuses['taskD'] = 'pending'; // OK, any string key with Status value\n// taskStatuses['taskE'] = 123;     // Error: Type '123' is not assignable to type '\"pending\" | \"success\" | \"error\"'.",
+      "keyPoints": [
+        "Utility types are built-in type transformations in TypeScript.",
+        "`Omit<T, K>` creates a type by excluding properties `K` from `T`.",
+        "`Required<T>` makes all properties of `T` required.",
+        "`Record<K, T>` creates an object type with keys `K` and values `T`.",
+        "These utility types are built using mapped and conditional types.",
+        "Enhance type system expressiveness and reduce type definition boilerplate."
+      ],
+      "quiz": [
+        {
+          "question": "What does the utility type `Omit<T, K>` do?",
+          "options": ["It makes properties of type `T` optional.", "It selects only properties `K` from type `T`.", "It removes properties `K` from type `T`.", "It renames properties `K` in type `T`."],
+          "correctAnswer": 2,
+          "explanation": "The `Omit<T, K>` utility type constructs a new type by taking all properties from type `T` and then removing the properties whose keys are listed in `K`. `K` is typically a union of string literal types representing property names to be omitted."
+        },
+        {
+          "question": "What is the effect of applying the `Required<T>` utility type to an interface with optional properties?",
+          "options": ["It makes all properties of the interface optional.", "It makes all properties of the interface required.", "It removes all optional properties from the interface.", "It does not change the interface; `Required<T>` is for classes only."],
+          "correctAnswer": 1,
+          "explanation": "The `Required<T>` utility type makes all properties of type `T` required. If `T` is an interface or type with some optional properties (marked with `?`), `Required<T>` will transform it into a type where all those properties are mandatory, effectively removing the optional modifier."
+        },
+        {
+          "question": "For `Record<K, T>`, what do `K` and `T` represent?",
+          "options": ["`K` is the type of values, and `T` is the type of keys.", "`K` is the type of keys, and `T` is the type of values.", "`K` and `T` both represent keys, but from different interfaces.", "`K` and `T` both represent values, but for different properties."],
+          "correctAnswer": 1,
+          "explanation": "In `Record<K, T>`, `K` represents the type of the keys of the object, and `T` represents the type of the values of the object. `Record<K, T>` constructs a type that is an object where all property keys are of type `K` and all property values are of type `T`."
+        }
+      ]
+    },
+    {
+      "id": "tuple-types",
+      "title": "Tuple Types",
+      "description": "Tuple types in TypeScript are a specific kind of array type that allows you to define arrays with a fixed number of elements, where the type of each element at a specific position is known. Tuples are useful for representing ordered lists with heterogeneous types.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "Tuple types are a powerful feature in TypeScript that allows you to define array-like structures with a predefined number of elements and specific types at each index. Unlike regular arrays where all elements are typically of the same type, tuples can contain elements of different types. The order of types is important in tuples. Tuple types are declared using array-like syntax `[type1, type2, type3, ...]`. They are beneficial when you need to represent a fixed sequence of values where each value has a specific meaning and type, such as coordinates, RGB color values, or function return values that need to return multiple, differently typed values.",
+      "example": "// Define a tuple type for RGB color\ntype RGBColor = [number, number, number]; // Red, Green, Blue values\n\nlet color: RGBColor = [255, 0, 0]; // Red color\n// let invalidColor: RGBColor = [255, 0, 0, 0]; // Error: Tuple type '[number, number, number]' of length '3' has no element at index '3'.\n// let wrongTypeColor: RGBColor = [\"red\", \"green\", \"blue\"]; // Error: Type 'string' is not assignable to type 'number'.\n\nconsole.log(\"Red component:\", color[0]);\nconsole.log(\"Green component:\", color[1]);\nconsole.log(\"Blue component:\", color[2]);\n\n// Tuple type with mixed types\ntype UserDetails = [number, string, boolean?]; // ID, name, isActive (optional)\n\nlet user1: UserDetails = [1, \"Alice\", true];\nlet user2: UserDetails = [2, \"Bob\"]; // Optional boolean is not required\n\nconsole.log(\"User ID:\", user1[0], \"Name:\", user1[1], \"Active:\", user1[2]);\nconsole.log(\"User ID:\", user2[0], \"Name:\", user2[1], \"Active:\", user2[2]); // Accessing optional element may be undefined\n\n// Tuple destructuring\nlet point: [number, number] = [10, 20];\nlet [x, y] = point; // Destructuring tuple into x and y\nconsole.log(\"x:\", x, \"y:\", y);",
+      "keyPoints": [
+        "Tuple types define arrays with a fixed number of elements and specific types at each position.",
+        "Declared using array-like syntax: `[type1, type2, ...]`. Order of types matters.",
+        "Can contain elements of different types (heterogeneous types).",
+        "Useful for representing ordered lists with specific element meanings.",
+        "Tuple destructuring allows easy access to tuple elements.",
+        "Optional elements in tuples are indicated with `?` after the type (e.g., `[number, string, boolean?]`)."
+      ],
+      "quiz": [
+        {
+          "question": "How do tuple types differ from regular arrays in TypeScript?",
+          "options": ["Tuples are mutable, while arrays are immutable.", "Tuples have a fixed length and element types, while arrays typically have elements of the same type and variable length.", "Tuples are used for objects, while arrays are for lists.", "There is no difference; 'tuple' and 'array' are interchangeable terms."],
+          "correctAnswer": 1,
+          "explanation": "Tuple types are distinct from regular arrays because tuples are defined with a fixed number of elements, and the type of each element at a specific position is known and specified. Regular arrays, on the other hand, usually contain elements of the same type and can have a variable number of elements."
+        },
+        {
+          "question": "Which syntax is used to define a tuple type in TypeScript?",
+          "options": ["`{type1, type2, ...}`", "`<type1, type2, ...>`", "`[type1, type2, ...]`", "`type(type1, type2, ...)`"],
+          "correctAnswer": 2,
+          "explanation": "Tuple types in TypeScript are defined using array-like syntax with square brackets `[]`, listing the types of elements in order: `[type1, type2, type3, ...]`. For example, `[number, string]` defines a tuple with two elements, the first being a number and the second a string."
+        },
+        {
+          "question": "Can a tuple contain elements of different types?",
+          "options": ["No, tuple elements must all be of the same type.", "Yes, tuples can contain elements of heterogeneous types.", "Only if the tuple is declared as 'any[]'.", "Only for tuples of length 2 or less."],
+          "correctAnswer": 1,
+          "explanation": "Yes, one of the key features of tuple types is that they can contain elements of different types at different positions. This is in contrast to typical arrays where elements are usually expected to be of the same type. Tuples are designed for situations where you need to represent a fixed sequence of values with varying types, such as coordinates (number, number) or user details (number, string, boolean)."
+        }
+      ]
+    },
+    {
+      "id": "rest-parameters-spread-syntax-types",
+      "title": "Rest Parameters and Spread Syntax in Types",
+      "description": "Rest parameters and spread syntax in TypeScript, when combined with types, allow for flexible function argument handling and array/object manipulations while maintaining type safety. Rest parameters collect multiple arguments into an array, and spread syntax expands arrays or objects.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "Rest parameters and spread syntax are powerful features in JavaScript and TypeScript for working with function arguments and iterable data structures. Rest parameters, denoted by `...parameterName` in function parameter lists, allow a function to accept a variable number of arguments, which are collected into an array. Spread syntax (`...iterable`) has multiple uses: in function calls, it expands an iterable (like an array) into individual arguments; in array literals, it expands an iterable into array elements; and in object literals (in newer ECMAScript versions), it can spread properties from one object into another. When used in TypeScript, these features are type-safe, meaning you can specify the types of rest parameters and the types of elements being spread, ensuring that operations are type-correct.",
+      "example": "// Rest parameters with type annotation (number[])\nfunction sumAllNumbers(...numbers: number[]): number {\n  return numbers.reduce((sum, num) => sum + num, 0);\n}\n\nconsole.log(\"Sum:\", sumAllNumbers(1, 2, 3, 4, 5));\n// console.log(\"Sum:\", sumAllNumbers(1, 2, \"3\")); // Error: Argument of type 'string' is not assignable to parameter of type 'number'.\n\n// Spread syntax in function calls\nfunction greetPeople(greeting: string, ...names: string[]): void {\n  names.forEach(name => console.log(`${greeting}, ${name}!`));\n}\n\nlet people = [\"Alice\", \"Bob\", \"Charlie\"];\ngreetPeople(\"Hello\", ...people); // Spreading array elements as arguments\n\n// Spread syntax in array literals\nlet parts = [\"shoulders\", \"knees\"];\nlet lyrics = [\"head\", ...parts, \"and\", \"toes\"]; // Spreading array into another array\nconsole.log(\"Lyrics:\", lyrics);\n\n// Spread syntax in object literals (property spreading)\nlet defaults = { color: \"red\", fontSize: 12 };\nlet userSettings = { ...defaults, fontSize: 16, fontWeight: \"bold\" }; // Overriding and adding properties\nconsole.log(\"User settings:\", userSettings);",
+      "keyPoints": [
+        "Rest parameters (`...parameterName`) allow functions to accept a variable number of arguments as an array.",
+        "Spread syntax (`...iterable`) expands iterables into individual elements in function calls, array literals, and object literals.",
+        "TypeScript provides type safety for rest parameters and spread syntax.",
+        "Type annotations can be used to specify the types of rest parameters (e.g., `...numbers: number[]`).",
+        "Spread syntax is versatile for manipulating arrays and objects in a type-safe manner.",
+        "Rest parameters and spread syntax enhance function flexibility and code conciseness."
+      ],
+      "quiz": [
+        {
+          "question": "What is the purpose of rest parameters in TypeScript function definitions?",
+          "options": ["To define default values for function parameters.", "To restrict the number of arguments a function can accept.", "To allow a function to accept a variable number of arguments, collected into an array.", "To specify that a parameter is optional."],
+          "correctAnswer": 2,
+          "explanation": "Rest parameters in TypeScript function definitions, indicated by `...parameterName`, enable a function to accept any number of arguments. These arguments are then gathered into an array, allowing the function to process a variable list of inputs."
+        },
+        {
+          "question": "In TypeScript, what does the spread syntax (`...`) do when used in a function call with an array?",
+          "options": ["It creates a copy of the array.", "It passes the array as a single argument.", "It expands the array elements into individual arguments.", "It reverses the order of elements in the array."],
+          "correctAnswer": 2,
+          "explanation": "When spread syntax (`...`) is used in a function call with an array, it expands the elements of the array and passes them as individual arguments to the function. This is useful when you have an array of values that you want to pass as separate arguments to a function that expects individual parameters."
+        },
+        {
+          "question": "How can you specify the type of rest parameters in a TypeScript function?",
+          "options": ["Using a type alias.", "Using a generic type.", "By annotating the rest parameter with an array type (e.g., `...args: string[]`).", "Rest parameters cannot be explicitly typed."],
+          "correctAnswer": 2,
+          "explanation": "You can specify the type of rest parameters in a TypeScript function by annotating the rest parameter with an array type. For example, `...args: string[]` indicates that the rest parameter `args` will be an array of strings. This ensures type safety for the arguments collected by the rest parameter."
+        }
+      ]
+    },
+    {
+      "id": "type-compatibility",
+      "title": "Type Compatibility",
+      "description": "Type compatibility in TypeScript is based on structural typing (also known as duck typing). Two types are compatible if their members are compatible, regardless of their names or declarations. This contrasts with nominal typing found in languages like Java or C#.",
+      "difficulty": "intermediate",
+      "category": "advanced-types",
+      "explanation": "TypeScript's type system is structurally typed, which means that type compatibility is determined by the shape or structure of types, rather than their names or explicit declarations. If two types have the same set of members (properties and methods) with compatible types, they are considered compatible, even if they are declared differently or have different names. This is different from nominal typing, where types are considered compatible only if they have the same name or are explicitly related through inheritance. Structural typing provides greater flexibility and is more aligned with JavaScript's dynamic nature. It allows for more intuitive type relationships and facilitates code reuse based on object shapes rather than class hierarchies. However, it can sometimes lead to unexpected type compatibility if you are not familiar with structural typing principles.",
+      "example": "// Structural typing example\ninterface Point2D {\n  x: number;\n  y: number;\n}\n\ninterface Point3D {\n  x: number;\n  y: number;\n  z: number;\n}\n\nlet p2d: Point2D = { x: 10, y: 20 };\nlet p3d: Point3D = { x: 10, y: 20, z: 30 };\n\n// Point3D is structurally compatible with Point2D because it has at least all members of Point2D\np2d = p3d; // OK, Point3D can be assigned to Point2D\n// p3d = p2d; // Error: Property 'z' is missing in type 'Point2D' but required in type 'Point3D'.\n\nfunction printPoint(point: Point2D) {\n  console.log(`Point at (${point.x}, ${point.y})`);\n}\n\nprintPoint(p2d); // OK\nprintPoint(p3d); // OK, Point3D is compatible with Point2D for function parameter\n\n// Class compatibility (also structural)\nclass Animal {\n  feet: number;\n  constructor(feet: number) { this.feet = feet; }\n}\n\nclass Dog extends Animal {\n  bark() { console.log(\"Woof!\"); }\n}\n\nclass Cat {\n  feet: number;\n  meow() { console.log(\"Meow!\"); }\n}\n\nfunction petAnimal(animal: Animal) {\n  console.log(`Animal has ${animal.feet} feet.`);\n}\n\npetAnimal(new Dog(4)); // OK, Dog is structurally compatible with Animal\npetAnimal(new Cat(4)); // OK, Cat is structurally compatible with Animal (same 'feet' property)",
+      "keyPoints": [
+        "TypeScript uses structural typing for type compatibility (duck typing).",
+        "Type compatibility is based on the structure (members) of types, not names.",
+        "Two types are compatible if they have compatible members, regardless of declaration names.",
+        "Structural typing is more flexible than nominal typing (e.g., Java, C#).",
+        "Allows for more intuitive type relationships and code reuse.",
+        "Can sometimes lead to unexpected compatibility if structural rules are not well understood."
+      ],
+      "quiz": [
+        {
+          "question": "What is the basis of type compatibility in TypeScript?",
+          "options": ["Nominal typing.", "Structural typing.", "Inheritance hierarchy.", "Explicit type casting."],
+          "correctAnswer": 1,
+          "explanation": "TypeScript uses structural typing for determining type compatibility. This means that two types are considered compatible if they have the same shape or structure, i.e., if they have compatible members (properties and methods), regardless of their names or how they are declared."
+        },
+        {
+          "question": "If type `A` and type `B` have the same structure (same properties and methods with compatible types), are they considered compatible in TypeScript?",
+          "options": ["No, they are compatible only if they have the same name.", "Yes, they are considered compatible due to structural typing.", "Only if they are both classes.", "Only if they are both interfaces."],
+          "correctAnswer": 1,
+          "explanation": "Yes, in TypeScript, if type `A` and type `B` have the same structure (meaning they have the same set of properties and methods, and the types of corresponding members are compatible), they are considered structurally compatible. This is a core principle of TypeScript's structural type system."
+        },
+        {
+          "question": "How does structural typing differ from nominal typing in terms of type compatibility?",
+          "options": ["Structural typing relies on names, while nominal typing relies on structure.", "Nominal typing relies on names, while structural typing relies on structure.", "Structural typing is stricter than nominal typing.", "Nominal typing is used in JavaScript, while structural typing is used in TypeScript."],
+          "correctAnswer": 1,
+          "explanation": "Nominal typing (used in languages like Java and C#) determines type compatibility based on type names and explicit relationships (like inheritance). Structural typing (used in TypeScript) determines type compatibility based on the structure of types. In nominal typing, types are compatible if they have the same name or are in an inheritance hierarchy. In structural typing, types are compatible if they have compatible structures, regardless of their names or declarations."
+        }
+      ]
+    },
+    {
+      "id": "ambient-declarations",
+      "title": "Ambient Declarations",
+      "description": "Ambient declarations in TypeScript are used to describe the shape of existing JavaScript environments or libraries that are not written in TypeScript. They inform the TypeScript compiler about global variables, modules, or external JavaScript code without providing implementation.",
+      "difficulty": "intermediate",
+      "category": "advanced-types",
+      "explanation": "Ambient declarations are a way to tell the TypeScript compiler about JavaScript code that exists outside of your TypeScript project, such as browser APIs, Node.js globals, or external JavaScript libraries for which you might not have `.d.ts` files. They are declared using the `declare` keyword and do not include any implementation, only type signatures. Ambient declarations can describe global variables, functions, classes, modules, namespaces, and interfaces that are available in your runtime environment. They are essential for integrating TypeScript with existing JavaScript ecosystems and ensuring type safety when interacting with non-TypeScript code. Ambient declarations can be placed directly in your `.ts` files or, more commonly, in `.d.ts` declaration files.",
+      "example": "// Ambient declaration for a global variable (e.g., from a JavaScript library)\ndeclare var LIBRARY_VERSION: string;\n\nconsole.log(\"Library version:\", LIBRARY_VERSION); // TypeScript now knows about LIBRARY_VERSION\n\n// Ambient declaration for a global function\ndeclare function externalFunction(param: string): void;\n\nexternalFunction(\"Hello from external function\"); // TypeScript knows externalFunction exists and its type\n\n// Ambient module declaration for a JavaScript module without .d.ts\ndeclare module 'legacy-js-module' {\n  export function doSomething(): string;\n  export const MODULE_CONSTANT: number;\n}\n\nimport { doSomething, MODULE_CONSTANT } from 'legacy-js-module';\nconsole.log(doSomething());\nconsole.log(\"Module constant:\", MODULE_CONSTANT);\n\n// Ambient interface declaration\ndeclare interface GlobalSettings {\n  theme: string;\n  language: string;\n}\n\ndeclare var appSettings: GlobalSettings;\nconsole.log(\"App theme:\", appSettings.theme);\nconsole.log(\"App language:\", appSettings.language);",
+      "keyPoints": [
+        "Ambient declarations use `declare` keyword to describe external JavaScript environments or libraries.",
+        "They provide type information without implementation.",
+        "Used for global variables, functions, modules, namespaces, and interfaces from JavaScript.",
+        "Essential for integrating TypeScript with existing JavaScript codebases.",
+        "Can be placed in `.ts` files or `.d.ts` declaration files.",
+        "Enable type safety when interacting with non-TypeScript code."
+      ],
+      "quiz": [
+        {
+          "question": "What is the primary purpose of ambient declarations in TypeScript?",
+          "options": ["To define the implementation of JavaScript functions.", "To convert JavaScript code to TypeScript.", "To describe the types of existing JavaScript environments or libraries to the TypeScript compiler.", "To improve the runtime performance of JavaScript code."],
+          "correctAnswer": 2,
+          "explanation": "The primary purpose of ambient declarations is to provide type information to the TypeScript compiler about JavaScript code that exists outside of the TypeScript project, such as global variables, browser APIs, or external JavaScript libraries. They allow TypeScript to understand the types of these external entities without needing to rewrite the JavaScript code in TypeScript."
+        },
+        {
+          "question": "Which keyword is used to create an ambient declaration in TypeScript?",
+          "options": ["`export`", "`import`", "`declare`", "`ambient`"],
+          "correctAnswer": 2,
+          "explanation": "The `declare` keyword is used in TypeScript to create ambient declarations. It signals to the compiler that you are declaring the existence of a variable, function, class, module, etc., that is assumed to exist in the runtime environment or in external JavaScript code, without providing an implementation in the TypeScript file itself."
+        },
+        {
+          "question": "Do ambient declarations include implementation details?",
+          "options": ["Yes, they must include both type declarations and implementation.", "No, they only include type declarations and no implementation.", "Only for global variables, not for functions or classes.", "Only for external modules, not for global variables."],
+          "correctAnswer": 1,
+          "explanation": "No, ambient declarations in TypeScript do not include implementation details. They are purely for type declarations. An ambient declaration only tells the TypeScript compiler about the existence and type signature of something (like a variable, function, or module) that is implemented elsewhere (typically in JavaScript code or the runtime environment). They are used to inform TypeScript about the shape of external code so that TypeScript can type-check code that interacts with it."
+        }
+      ]
+    },
+    {
+      "id": "tsconfig-json",
+      "title": "Project Configuration (tsconfig.json)",
+      "description": "`tsconfig.json` is the configuration file for TypeScript projects. It specifies compiler options, project settings, and includes/excludes files from the TypeScript compilation process. It's essential for managing and customizing how TypeScript compiles your code.",
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "explanation": "`tsconfig.json` is the heart of any TypeScript project. It serves as a configuration file that directs the TypeScript compiler (`tsc`) on how to compile your TypeScript code. It allows you to specify a wide range of compiler options, such as target ECMAScript version (`target`), module system (`module`), output directory (`outDir`), strict type checking options (`strict`), and many more. `tsconfig.json` also controls which files are included in your project (using `include` and `exclude` arrays or `files` array), defining the compilation scope. By customizing `tsconfig.json`, you can tailor the TypeScript compilation process to meet the specific needs of your project, ensuring consistent build behavior and enabling various TypeScript features and optimizations. It simplifies project setup and management, making TypeScript development more efficient and organized.",
+      "example": "// --- Example tsconfig.json ---\n{\n  \"compilerOptions\": {\n    \"target\": \"es5\",         // Target ECMAScript version\n    \"module\": \"commonjs\",     // Module system\n    \"outDir\": \"./dist\",      // Output directory for compiled JavaScript files\n    \"strict\": true,          // Enable strict type checking options\n    \"esModuleInterop\": true,  // Enable interoperability between CommonJS and ES modules\n    \"skipLibCheck\": true,     // Skip type checking of declaration files (*.d.ts)\n    \"forceConsistentCasingInFileNames\": true // Enforce consistent casing in file names\n  },\n  \"include\": [\n    \"src/**/*.ts\"           // Include all TypeScript files in 'src' directory and subdirectories\n  ],\n  \"exclude\": [\n    \"node_modules\",          // Exclude 'node_modules' directory\n    \"**/*.spec.ts\"          // Exclude all test files ending with '.spec.ts'\n  ]\n}",
+      "keyPoints": [
+        "`tsconfig.json` is the configuration file for TypeScript projects.",
+        "Specifies compiler options (e.g., `target`, `module`, `strict`).",
+        "Controls project settings and compilation behavior.",
+        "Defines files to include and exclude from compilation using `include`, `exclude`, or `files`.",
+        "Customizes TypeScript compilation process for specific project needs.",
+        "Essential for project setup, management, and consistent builds."
+      ],
+      "quiz": [
+        {
+          "question": "What is the primary purpose of the `tsconfig.json` file in a TypeScript project?",
+          "options": ["To define the project's dependencies.", "To configure the TypeScript compiler and project settings.", "To manage version control for TypeScript files.", "To specify the runtime environment for TypeScript code."],
+          "correctAnswer": 1,
+          "explanation": "The primary purpose of `tsconfig.json` is to configure the TypeScript compiler and project settings. It allows developers to specify compiler options like target ECMAScript version, module system, output directory, and strict type checking options, as well as to control which files are included in the compilation process."
+        },
+        {
+          "question": "Which `tsconfig.json` option specifies the target ECMAScript version for the compiled JavaScript code?",
+          "options": ["`module`", "`target`", "`outDir`", "`strict`"],
+          "correctAnswer": 1,
+          "explanation": "The `target` option in `tsconfig.json` specifies the ECMAScript target version for the compiled JavaScript code. Common values include 'es5', 'es6', 'es2017', 'es2020', 'esnext', etc. This option determines the JavaScript syntax features that the TypeScript compiler will output."
+        },
+        {
+          "question": "What do the `include` and `exclude` arrays in `tsconfig.json` control?",
+          "options": ["They define the runtime dependencies of the project.", "They specify which files are included and excluded from the TypeScript compilation process.", "They configure the code formatting rules for the project.", "They determine the order of compilation for TypeScript files."],
+          "correctAnswer": 1,
+          "explanation": "The `include` and `exclude` arrays in `tsconfig.json` are used to control which files are part of the TypeScript compilation process. The `include` array specifies patterns for files to include, while the `exclude` array specifies patterns for files and directories to exclude. This allows you to define the scope of your TypeScript project's compilation."
+        }
+      ]
+    },
+    {
+      "id": "jsx-support",
+      "title": "JSX Support in TypeScript",
+      "description": "TypeScript provides excellent support for JSX (JavaScript XML), a syntax extension commonly used with React. TypeScript can type-check JSX syntax, validate props, and provide autocompletion, making it a robust choice for React development.",
+      "difficulty": "intermediate",
+      "category": "frameworks",
+      "explanation": "JSX is a syntax extension that allows you to write HTML-like syntax within your JavaScript or TypeScript code, primarily used with UI libraries like React. TypeScript has built-in support for JSX, enabling you to write JSX code with full type safety. TypeScript can understand JSX syntax, validate the types of props passed to components, check for correct component usage, and provide autocompletion and error checking within JSX. To use JSX in TypeScript, you typically need to configure the `jsx` compiler option in `tsconfig.json` (e.g., to 'react' or 'react-jsx' for modern React). TypeScript's JSX support enhances the developer experience for React and other JSX-based libraries by bringing the benefits of static typing to component development, reducing runtime errors and improving code maintainability.",
+      "example": "// --- Example React component in TypeScript (MyComponent.tsx) ---\ninterface MyComponentProps {\n  name: string;\n  age?: number;\n}\n\nconst MyComponent: React.FC<MyComponentProps> = ({ name, age }) => {\n  return (\n    <div>\n      <h1>Hello, {name}!</h1>\n      {age && <p>You are {age} years old.</p>}\n    </div>\n  );\n};\n\n// --- Example usage in another component or app ---\nimport React from 'react';\nimport ReactDOM from 'react-dom';\nimport MyComponent from './MyComponent';\n\nconst App = () => {\n  return (\n    <div>\n      <MyComponent name=\"Alice\" age={30} /> {/* Type-checked props */}\n      <MyComponent name=\"Bob\" /> {/* Optional 'age' prop is OK */}\n      {/* <MyComponent age={25} /> */} {/* Error: Missing 'name' prop (required) */}\n    </div>\n  );\n};\n\nReactDOM.render(<App />, document.getElementById('root'));",
+      "keyPoints": [
+        "TypeScript has built-in support for JSX syntax (commonly used with React).",
+        "TypeScript type-checks JSX code, validating props and component usage.",
+        "Configuration via `jsx` compiler option in `tsconfig.json` (e.g., 'react', 'react-jsx').",
+        "Provides autocompletion and error checking within JSX.",
+        "Enhances type safety and developer experience for React and JSX-based libraries.",
+        "Reduces runtime errors and improves maintainability of React components in TypeScript."
+      ],
+      "quiz": [
+        {
+          "question": "What is JSX?",
+          "options": ["A superset of JavaScript.", "A syntax extension that allows writing HTML-like syntax in JavaScript/TypeScript.", "A JavaScript runtime environment.", "A TypeScript-specific file extension."],
+          "correctAnswer": 1,
+          "explanation": "JSX (JavaScript XML) is a syntax extension for JavaScript and TypeScript that looks similar to HTML. It's primarily used with UI libraries like React to describe the structure of user interfaces in a declarative way within JavaScript code. JSX is not valid JavaScript itself and needs to be transformed into standard JavaScript by tools like Babel or the TypeScript compiler."
+        },
+        {
+          "question": "Does TypeScript provide type checking for JSX syntax?",
+          "options": ["No, JSX is dynamically typed even in TypeScript.", "Yes, TypeScript fully supports type checking for JSX code.", "Only basic syntax checking, not type checking of props.", "JSX is only supported in JavaScript, not in TypeScript."],
+          "correctAnswer": 1,
+          "explanation": "Yes, TypeScript provides robust type checking for JSX syntax. When you use JSX in TypeScript, the compiler can validate the types of props passed to components, ensure correct component usage, and provide compile-time errors if there are type mismatches or missing required props. This makes TypeScript a strong choice for developing React applications with type safety."
+        },
+        {
+          "question": "Which `tsconfig.json` compiler option is typically used to enable JSX support in TypeScript?",
+          "options": ["`jsxSupport`", "`enableJSX`", "`jsx`", "`reactJSX`"],
+          "correctAnswer": 2,
+          "explanation": "The `jsx` compiler option in `tsconfig.json` is used to enable JSX support in TypeScript projects. Common values for this option include 'react' (for classic React JSX transform) and 'react-jsx' or 'react-jsxdev' (for the new JSX transform introduced in React 17 and later). Setting this option tells the TypeScript compiler how to handle JSX syntax and transform it into standard JavaScript."
+        }
+      ]
+    },
+    {
+      "id": "type-narrowing-techniques",
+      "title": "Type Narrowing Techniques (More Examples)",
+      "description": "Type narrowing in TypeScript is the process of refining a variable's type to a more specific type within a certain code block. Beyond `typeof` and `instanceof`, techniques like truthiness/falsiness checks and discriminant properties are also effective for type narrowing.",
+      "difficulty": "intermediate",
+      "category": "advanced-types",
+      "explanation": "Type narrowing is crucial for working with union types and `unknown` types in TypeScript, allowing you to safely operate on values by ensuring TypeScript understands their specific type in different parts of your code. While `typeof` and `instanceof` are common type guards, other techniques are equally important. Truthiness and falsiness checks (e.g., `if (value) { ... }`) can narrow down types when dealing with nullable or optional values. Discriminant properties (or tagged unions) involve using a common property in union types to distinguish between them, enabling type narrowing based on the value of this property. These techniques, combined with type predicates and other type guards, provide a comprehensive toolkit for handling type uncertainty and writing robust, type-safe TypeScript code.",
+      "example": "// Truthiness/Falsiness checks for type narrowing\nfunction processValue(value: string | null | undefined) {\n  if (value) { // Truthiness check: null and undefined are falsy\n    console.log(\"Value is likely a string:\", value.toUpperCase()); // 'value' narrowed to string | null | undefined, but falsy values are excluded in 'if'\n  } else {\n    console.log(\"Value is null or undefined:\", value); // 'value' narrowed to null | undefined\n  }\n}\n\nprocessValue(\"hello\");\nprocessValue(null);\nprocessValue(undefined);\n\n// Discriminant properties (Tagged Unions) for type narrowing\ninterface Circle {\n  kind: \"circle\"; // Discriminant property\n  radius: number;\n}\n\ninterface Square {\n  kind: \"square\"; // Discriminant property\n  sideLength: number;\n}\n\ntype Shape = Circle | Square;\n\nfunction getShapeArea(shape: Shape) {\n  switch (shape.kind) { // Narrowing based on discriminant property 'kind'\n    case \"circle\":\n      return Math.PI * shape.radius * shape.radius; // 'shape' narrowed to Circle\n    case \"square\":\n      return shape.sideLength * shape.sideLength;   // 'shape' narrowed to Square\n    default:\n      // Exhaustiveness check (optional, for safety)\n      const _exhaustiveCheck: never = shape; // Error if not all cases are handled\n      return _exhaustiveCheck;\n  }\n}\n\nconst circle: Circle = { kind: \"circle\", radius: 5 };\nconst square: Square = { kind: \"square\", sideLength: 10 };\n\nconsole.log(\"Circle area:\", getShapeArea(circle));\nconsole.log(\"Square area:\", getShapeArea(square));",
+      "keyPoints": [
+        "Type narrowing refines a variable's type to a more specific one.",
+        "Truthiness/falsiness checks (e.g., `if (value)`) narrow types for nullable/optional values.",
+        "Discriminant properties (tagged unions) use a common property to distinguish union types.",
+        "`switch` statements and discriminant properties enable precise type narrowing.",
+        "Exhaustiveness checks (`const _exhaustiveCheck: never = shape;`) can ensure all union cases are handled.",
+        "Type narrowing techniques are essential for robust and type-safe TypeScript code with union and unknown types."
+      ],
+      "quiz": [
+        {
+          "question": "How can truthiness/falsiness checks be used for type narrowing in TypeScript?",
+          "options": ["To convert a value to boolean type.", "To check if a value is strictly true or false.", "To narrow down types for nullable or optional values by checking if they are truthy or falsy.", "Truthiness checks cannot be used for type narrowing."],
+          "correctAnswer": 2,
+          "explanation": "Truthiness/falsiness checks (e.g., `if (value) { ... }`) can be used for type narrowing in TypeScript, especially for nullable or optional types like `string | null | undefined`. In an `if (value)` block, TypeScript understands that `value` cannot be `null` or `undefined` if the condition is truthy, thus narrowing down its type to exclude falsy values."
+        },
+        {
+          "question": "What are discriminant properties (tagged unions) used for in type narrowing?",
+          "options": ["To create union types of primitive types only.", "To narrow down types based on the value of a specific property common to all union members.", "To define the order of properties in object types.", "Discriminant properties are not related to type narrowing."],
+          "correctAnswer": 1,
+          "explanation": "Discriminant properties (also known as tagged unions) are used in type narrowing to distinguish between different members of a union type. By adding a common property (the discriminant) with different literal values to each member of the union, you can use a `switch` statement or `if/else if` chain to check the value of this property and narrow down the type to the specific union member within each case or condition."
+        },
+        {
+          "question": "What is an exhaustiveness check in the context of type narrowing with discriminant properties?",
+          "options": ["A runtime check to ensure all cases are handled.", "A compile-time check to ensure all cases of a union type are handled in a `switch` statement.", "A performance optimization technique for type guards.", "A method to bypass type narrowing when needed."],
+          "correctAnswer": 1,
+          "explanation": "An exhaustiveness check is a compile-time technique used in conjunction with discriminant properties and `switch` statements to ensure that all possible members of a union type are handled in the `switch` cases. Typically, this is done by assigning the narrowed variable to a variable of type `never` in the `default` case. If all cases are correctly handled, the `default` case should never be reached, and the assignment to `never` will not cause a type error. If a case is missing, the assignment will cause a type error, signaling a non-exhaustive switch."
+        }
+      ]
+    },
+    {
+      "id": "overload-signatures",
+      "title": "Overload Signatures (Function Overloads)",
+      "description": "Overload signatures in TypeScript allow you to define multiple call signatures for a single function. This enables you to provide type-safe function calls with different argument types and return types based on the input.",
+      "difficulty": "intermediate",
+      "category": "advanced-types",
+      "explanation": "Function overloads in TypeScript allow you to declare multiple function signatures for the same function name. Each signature specifies different parameter types and potentially different return types. When calling an overloaded function, TypeScript uses overload resolution to determine which signature matches the provided arguments and applies the corresponding type checking. Overload signatures are useful when a function can be called in multiple ways with different argument types or when the return type depends on the input types. They enhance type safety by providing specific type contracts for different function call patterns, making your APIs more flexible and easier to use correctly. The implementation signature (the last one without a function body) must be compatible with all overload signatures.",
+      "example": "// Overload signatures for a function that can handle string or number input\nfunction convertToString(value: number): string;\nfunction convertToString(value: boolean): string;\nfunction convertToString(value: null): string;\nfunction convertToString(value: undefined): string;\nfunction convertToString(value: any): string; // Implementation signature (must be compatible with all overloads)\nfunction convertToString(value: any): string {\n  if (value === null) return 'null';\n  if (value === undefined) return 'undefined';\n  return String(value);\n}\n\nconsole.log(convertToString(123));     // Calls number overload\nconsole.log(convertToString(true));    // Calls boolean overload\nconsole.log(convertToString(null));    // Calls null overload\nconsole.log(convertToString(undefined)); // Calls undefined overload\nconsole.log(convertToString({}));      // Calls implementation signature (any overload)\n// console.log(convertToString(Symbol())); // Error: No overload matches this call.\n\n// Overload signatures for getLength function\nfunction getLength(s: string): number;\nfunction getLength<T>(arr: T[]): number;\nfunction getLength(arg: string | any[]): number { // Implementation signature\n  return arg.length;\n}\n\nconsole.log(\"String length:\", getLength(\"hello\")); // Calls string overload\nconsole.log(\"Array length:\", getLength([1, 2, 3])); // Calls generic array overload",
+      "keyPoints": [
+        "Overload signatures define multiple call signatures for a single function name.",
+        "Each signature specifies different parameter and return types.",
+        "TypeScript uses overload resolution to match function calls to signatures.",
+        "Useful when functions can be called with different argument types or return different types based on input.",
+        "Enhance type safety by providing specific type contracts for different call patterns.",
+        "Implementation signature must be compatible with all overload signatures."
+      ],
+      "quiz": [
+        {
+          "question": "What is the purpose of function overload signatures in TypeScript?",
+          "options": ["To improve runtime performance of functions.", "To define multiple implementations for a single function.", "To allow a function to be called with different sets of arguments and return types in a type-safe way.", "To create generic functions that can work with any type."],
+          "correctAnswer": 2,
+          "explanation": "Function overload signatures in TypeScript are used to define multiple ways a function can be called, each with potentially different argument types and return types. This allows TypeScript to provide type safety for various call patterns of the same function, ensuring that calls are made with correct arguments and that the return type is appropriately typed based on the call signature."
+        },
+        {
+          "question": "How does TypeScript determine which overload signature to use when a function is called?",
+          "options": ["Based on the order of overload signatures defined.", "Based on the function name only.", "Using overload resolution, which matches the call to the most appropriate signature based on argument types.", "TypeScript does not choose between overload signatures; it uses the implementation signature directly."],
+          "correctAnswer": 2,
+          "explanation": "TypeScript uses overload resolution to determine which overload signature to use when a function is called. It examines the types of the arguments provided in the function call and attempts to match them against the defined overload signatures. The overload signature that best matches the argument types is chosen, and the type checking and return type are based on that signature."
+        },
+        {
+          "question": "What is the role of the implementation signature in function overloads?",
+          "options": ["It is the only signature that is actually executed at runtime.", "It provides a fallback signature if no overload signatures match the function call.", "It must be compatible with all overload signatures and provides the actual function body.", "It is used only for documentation and has no impact on type checking."],
+          "correctAnswer": 2,
+          "explanation": "The implementation signature in function overloads is the one that contains the actual function body. It must be compatible with all the overload signatures defined for that function. TypeScript uses the overload signatures for type checking function calls, and the implementation signature provides the runtime behavior. It's a single implementation that must handle all cases described by the overload signatures."
+        }
+      ]
     }
   ]
 }
