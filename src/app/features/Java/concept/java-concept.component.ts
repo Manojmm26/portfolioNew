@@ -1,26 +1,54 @@
-import { Component, OnInit, ViewEncapsulation, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, AfterViewInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CommonModule } from '@angular/common';
-import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
-import 'prismjs';
-import 'prismjs/components/prism-css';
-import 'prismjs/themes/prism-okaidia.css';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import loader from '@monaco-editor/loader';
+import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
+import { highlight, highlightAll } from '../../../shared/utils/prism-config';
 import { marked } from 'marked';
+
+// Configure Monaco loader to use CDN
+loader.config({ 
+  paths: { 
+    vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs'
+  } 
+});
+
 declare var Prism: any;
 
 @Component({
-  selector: 'app-css-concept',
+  selector: 'app-java-concept',
+  standalone: true,
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatExpansionModule,
+    MatTabsModule,
+    MatRadioModule,
+    MatSnackBarModule,
+    MatTooltipModule,
+    MatBadgeModule,
+    MatProgressSpinnerModule,
+    MonacoEditorModule
+  ],
   template: `
     <div class="concept-container" *ngIf="content">
       <header class="concept-header">
@@ -31,6 +59,10 @@ declare var Prism: any;
               <mat-chip [class]="content.difficulty">
                 <mat-icon>{{ getDifficultyIcon(content.difficulty) }}</mat-icon>
                 {{ content.difficulty | titlecase }}
+              </mat-chip>
+              <mat-chip>
+                <mat-icon>{{ getCategoryIcon(content.category) }}</mat-icon>
+                {{ content.category | titlecase }}
               </mat-chip>
             </mat-chip-set>
           </div>
@@ -53,7 +85,7 @@ declare var Prism: any;
                           <mat-icon>code</mat-icon>
                           Interactive Example {{ i + 1 }}
                         </mat-panel-title>
-                        <mat-panel-description class="example-description">
+                        <mat-panel-description>
                           Try it yourself!
                         </mat-panel-description>
                       </mat-expansion-panel-header>
@@ -65,7 +97,7 @@ declare var Prism: any;
                             <mat-icon>play_arrow</mat-icon>
                           </button>
                         </div>
-                        <pre class="code-block"><code [innerHTML]="highlightCode(example.code)"></code></pre>
+                        <pre><code [innerHTML]="highlightCode(example.code)"></code></pre>
                         <div class="example-result" *ngIf="example.result">
                           <strong>Result:</strong>
                           <div [innerHTML]="sanitizeHtml(example.result)"></div>
@@ -82,7 +114,7 @@ declare var Prism: any;
                     <ul>
                       <li *ngFor="let point of content.keyPoints">
                         <mat-icon>check_circle</mat-icon>
-                        <span class="key-point-text">{{ point }}</span>
+                        {{ point }}
                       </li>
                     </ul>
                   </div>
@@ -99,46 +131,62 @@ declare var Prism: any;
                 <div class="example-container">
                   <div class="code-section">
                     <div class="code-header">
-                      <h3>CSS Code</h3>
+                      <h3>Java Code</h3>
                       <div class="code-actions">
-                        <button mat-icon-button (click)="copyCode()" matTooltip="Copy code">
+                        <button mat-icon-button (click)="copyCode()" matTooltip="Copy to clipboard">
                           <mat-icon>content_copy</mat-icon>
                         </button>
                         <button mat-icon-button (click)="resetCode()" matTooltip="Reset code">
-                          <mat-icon>refresh</mat-icon>
+                          <mat-icon>restart_alt</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="runCode()" matTooltip="Run code">
+                          <mat-icon>play_arrow</mat-icon>
+                        </button>
+                        <button mat-icon-button 
+                          [matBadge]="syntaxErrors.length" 
+                          [matBadgeHidden]="!syntaxErrors.length"
+                          matBadgeColor="warn"
+                          [matTooltip]="syntaxErrors.length ? 'Syntax errors found' : 'No syntax errors'"
+                        >
+                          <mat-icon [color]="syntaxErrors.length ? 'warn' : 'primary'">
+                            {{ syntaxErrors.length ? 'error' : 'check_circle' }}
+                          </mat-icon>
                         </button>
                       </div>
                     </div>
-                    <div class="code-editor">
-                      <div class="line-numbers">
-                        <div class="line-number" *ngFor="let num of getLineNumbers()">{{ num }}</div>
-                      </div>
-                      <textarea
+                    <div class="editor-container">
+                      <ngx-monaco-editor
+                        *ngIf="isEditorReady"
+                        class="code-editor"
                         [(ngModel)]="currentCode"
-                        (input)="onCodeChange()"
-                        (scroll)="syncScroll($event)"
-                        spellcheck="false"
-                        rows="20"
-                        wrap="off"
-                        class="code-textarea"
-                        #codeTextarea
-                      ></textarea>
+                        [options]="editorOptions"
+                        (onInit)="onEditorInit($event)"
+                        (ngModelChange)="onCodeChange()">
+                      </ngx-monaco-editor>
+                      <div *ngIf="!isEditorReady" class="editor-loading">
+                        <mat-icon>hourglass_empty</mat-icon>
+                        <span>Loading editor...</span>
+                      </div>
                     </div>
-                    <div class="syntax-errors" *ngIf="syntaxErrors.length > 0">
+                    <div class="syntax-errors" *ngIf="syntaxErrors.length">
                       <div class="error" *ngFor="let error of syntaxErrors">
-                        <mat-icon>error</mat-icon>
-                        Line {{ error.line }}: {{ error.message }}
+                        <mat-icon color="warn">error</mat-icon>
+                        <span>Line {{ error }}: {{ error }}</span>
                       </div>
                     </div>
                   </div>
-                  <div class="preview-section">
-                    <div class="preview-header">
-                      <h3>Preview</h3>
-                      <button mat-icon-button (click)="togglePreviewMode()" [matTooltip]="previewMode === 'desktop' ? 'Switch to mobile view' : 'Switch to desktop view'">
-                        <mat-icon>{{ previewMode === 'desktop' ? 'smartphone' : 'desktop_windows' }}</mat-icon>
+                  <div class="output-section">
+                    <div class="output-header">
+                      <h3>Console Output</h3>
+                      <button mat-icon-button (click)="clearConsole()" matTooltip="Clear console">
+                        <mat-icon>clear_all</mat-icon>
                       </button>
                     </div>
-                    <div class="preview-container" [class.mobile]="previewMode === 'mobile'" [innerHTML]="sanitizedPreview">
+                    <div class="console-output" #consoleOutput>
+                      <div *ngFor="let log of consoleMessages" class="log-entry">
+                        <mat-icon>terminal</mat-icon>
+                        <pre>{{ log }}</pre>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -231,7 +279,7 @@ declare var Prism: any;
         color: var(--theme-advanced-text-color) !important;
       }
     }
-    
+
     .explanation-content {
         .markdown-content {
           line-height: 1.6;
@@ -396,7 +444,7 @@ declare var Prism: any;
 
     .example-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 1rem;
       margin-top: 1rem;
 
@@ -405,10 +453,9 @@ declare var Prism: any;
       }
 
       .code-section {
-        background-color: var(--theme-card-background);
+        border: 1px solid var(--theme-border-color);
         border-radius: 4px;
         overflow: hidden;
-        border: 1px solid var(--theme-border-color);
         
         .code-header {
           display: flex;
@@ -429,64 +476,56 @@ declare var Prism: any;
           }
         }
 
-        .code-editor {
-          display: flex;
-          background-color: var(--theme-code-background);
-          position: relative;
-          min-height: 300px;
+        .editor-container {
           border: 1px solid var(--theme-border-color);
+          border-radius: 4px;
           overflow: hidden;
+          height: 300px;
+          background-color: #1e1e1e;
+        }
 
-          .line-numbers {
-            display: flex;
-            flex-direction: column;
-            min-width: 40px;
-            user-select: none;
-            text-align: right;
-            color: var(--theme-code-comment-color);
-            padding: 0.5rem 0.5rem 0.5rem 0;
-            border-right: 1px solid var(--theme-border-color);
-            background-color: var(--theme-code-background);
-            z-index: 1;
+        .code-editor {
+          height: 100%;
+          width: 100%;
+        }
 
-            .line-number {
-              font-family: 'Fira Code', monospace;
-              font-size: 0.9rem;
-              line-height: 1.5;
-              padding: 0 0.3rem;
-              color: #858585;
-            }
+        .editor-loading {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: #ffffff;
+          font-size: 16px;
+          background: linear-gradient(45deg, #1e1e1e, #2d2d2d);
+          gap: 1rem;
+          
+          mat-icon {
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+            animation: spin 1.5s linear infinite;
           }
+        }
 
-          .code-textarea {
-            flex: 1;
-            min-height: 300px;
-            background-color: var(--theme-code-background);
-            color: var(--theme-code-text-color);
-            border: none;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            resize: none;
-            padding: 0.5rem;
-            outline: none;
-            line-height: 1.5;
-            white-space: pre;
-            overflow-wrap: normal;
-            overflow-x: auto;
-            tab-size: 2;
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
 
-            &:focus {
-              outline: 1px solid var(--theme-primary-color);
+        ::ng-deep {
+          .monaco-editor {
+            padding: 8px 0;
+            .monaco-editor-background {
+              background-color: #1e1e1e !important;
             }
           }
         }
 
         .syntax-errors {
-          padding: 0.75rem;
+          padding: 1rem;
           background-color: var(--theme-code-background);
           border-top: 1px solid var(--theme-border-color);
-          max-height: 100px;
-          overflow-y: auto;
 
           .error {
             display: flex;
@@ -499,22 +538,15 @@ declare var Prism: any;
             &:last-child {
               margin-bottom: 0;
             }
-
-            mat-icon {
-              font-size: 18px;
-              height: 18px;
-              width: 18px;
-              line-height: 18px;
-            }
           }
         }
       }
 
-      .preview-section {
+      .output-section {
         border: 1px solid var(--theme-border-color);
         border-radius: 4px;
 
-        .preview-header {
+        .output-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -528,18 +560,36 @@ declare var Prism: any;
           }
         }
 
-        .preview-container {
-          min-height: 300px;
+        .console-output {
           padding: 1rem;
-          background-color: var(--theme-card-background);
+          background-color: var(--theme-code-background);
           overflow: auto;
-
-          &.mobile {
-            max-width: 375px;
-            margin: 0 auto;
-            border: 10px solid var(--theme-border-color);
-            border-radius: 20px;
-            min-height: 600px;
+          max-height: 300px;
+          font-family: 'Fira Code', monospace;
+          font-size: 0.9rem;
+          line-height: 1.5;
+          color: var(--theme-code-text-color);
+          
+          .log-entry {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            
+            mat-icon {
+              margin-right: 0.5rem;
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+            }
+            
+            pre {
+              margin: 0;
+              white-space: pre-wrap;
+              word-break: break-word;
+              flex: 1;
+              background: transparent;
+              padding: 0;
+            }
           }
         }
       }
@@ -576,251 +626,105 @@ declare var Prism: any;
       text-align: center;
       margin-bottom: 2rem;
     }
-
-    .quiz-header {
-      text-align: center;
-      margin-bottom: 2rem;
-      
-      h3 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      p {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-      }
-    }
-    
-    .correct {
-      color: var(--theme-success-color);
-      font-weight: bold;
-    }
-    
-    .incorrect {
-      color: var(--theme-error-color);
-      font-weight: bold;
-    }
-    
-    .explanation {
-      margin-top: 0.5rem;
-      font-style: italic;
-    }
-  `],
-    encapsulation: ViewEncapsulation.None,
-    standalone: true,
-    imports: [
-      CommonModule,
-      FormsModule,
-      MatCardModule,
-      MatButtonModule,
-      MatIconModule,
-      MatTabsModule,
-      MatChipsModule,
-      MatSnackBarModule,
-      MatTooltipModule,
-      MatExpansionModule,
-      MatBadgeModule
-    ]
+  `]
 })
-export class CssConceptComponent implements OnInit, AfterViewInit {
+export class JavaConceptComponent implements OnInit, AfterViewInit {
+  @ViewChild('consoleOutput') consoleOutput!: ElementRef;
+
   content: ConceptContent | null = null;
-  userAnswers: number[] = [];
-  currentCode: string = '';
-  previewHtml: SafeHtml = '';
+  currentCode: string = ''; 
+  originalCode: string = '';
+  consoleMessages: string[] = [];
+  isRunning: boolean = false;
+  syntaxErrors: string[] = [];
+  isEditorReady: boolean = false;
+  editor: any;
   sanitizedExplanation: SafeHtml = '';
-  sanitizedPreview: SafeHtml = '';
-  previewMode: 'desktop' | 'mobile' = 'desktop';
+  userAnswers: number[] = [];
   quizComplete: boolean = false;
   quizScore: number = 0;
-  syntaxErrors: Array<{ line: number; message: string }> = [];
-
-  @ViewChild('codeTextarea') codeTextarea!: ElementRef<HTMLTextAreaElement>;
+  
+  editorOptions = {
+    theme: 'vs-dark',
+    language: 'java',
+    fontSize: 14,
+    minimap: { enabled: true },
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    formatOnPaste: true,
+    formatOnType: true,
+    readOnly: false
+  };
 
   constructor(
     private route: ActivatedRoute,
     private conceptService: ConceptService,
     private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar,
-    private elementRef: ElementRef
+    private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     const conceptId = this.route.snapshot.paramMap.get('conceptId');
     if (conceptId) {
-      this.conceptService.getConcept(conceptId).subscribe(content => {
-        if (content) {
-          this.content = content;
-          this.currentCode = content.example;
-          
+      this.conceptService.getConcept(conceptId).subscribe(concept => {
+        if (concept) {
+          this.content = concept;
+          if (concept.explanation) {            
           // Convert markdown to HTML and then sanitize
           // Use marked.parse synchronously to avoid Promise
-          
-          const htmlContent = marked.parse(content.explanation, { async: false }) as string;
+          const htmlContent = marked.parse(concept.explanation, { async: false }) as string;
           this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(htmlContent);
-          
-          this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(
-            content.previewHtml || ''
-          );
-          
-          // Initial sanitization without CSS
-          this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(
-            content.previewHtml || ''
-          );
-          
-          this.checkSyntax();
-          
-          // Apply CSS to the preview
-          this.updatePreviewStyles();
+          }
+          this.currentCode = concept.example || '';
+          this.originalCode = this.currentCode;
+          setTimeout(() => {
+            highlightAll();
+          });
+        } else {
+          console.error('Concept not found');
         }
       });
     }
-  }
 
-  ngAfterViewInit() {
-    this.updatePreviewStyles();
-    
-    // Set initial focus and adjust textarea height if needed
-    setTimeout(() => {
-      if (this.codeTextarea && this.codeTextarea.nativeElement) {
-        // Adjust the height of the textarea to match content
-        this.adjustTextareaHeight();
-      }
+    // Initialize Monaco Editor
+    loader.init().then(monaco => {
+      this.isEditorReady = true;
+      monaco.languages.register({ id: 'java' });
+      // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      //   noSemanticValidation: true,
+      //   noSyntaxValidation: false
+      // });
+
+      // monaco.languages.javaDefaults.setCompilerOptions({
+      //   target: monaco.languages.typescript.ScriptTarget.ES2015,
+      //   allowNonTsExtensions: true
+      // });
+    }).catch(error => {
+      console.error('Failed to initialize Monaco editor:', error);
     });
   }
-  
-  // Helper method to adjust textarea height based on content
-  private adjustTextareaHeight(): void {
-    if (this.codeTextarea && this.codeTextarea.nativeElement) {
-      const textarea = this.codeTextarea.nativeElement;
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.max(300, textarea.scrollHeight) + 'px';
-    }
+
+  ngAfterViewInit(): void {
+    // Any post-view initialization if needed
   }
 
-  private updatePreviewStyles() {
-    // Create a combined HTML with the CSS applied
-    if (this.currentCode) {
-      // Create HTML with embedded style
-      const htmlWithStyle = `
-        <style>
-          ${this.currentCode}
-        </style>
-        ${this.content?.previewHtml || ''}
-      `;
-      
-      // Update the sanitized preview with the new HTML that includes the CSS
-      this.sanitizedPreview = this.sanitizer.bypassSecurityTrustHtml(htmlWithStyle);
-    }
+  onEditorInit(editor: any): void {
+    this.editor = editor;
+    console.log('Monaco editor initialized');
+    
+    // Make sure the editor is visible
+    setTimeout(() => {
+      if (editor) {
+        editor.layout();
+        editor.focus();
+      }
+    }, 100);
   }
 
-  onCodeChange(): void {
-    this.checkSyntax();
-    this.updatePreviewStyles();
-  }
-
-  private getBaseStyles(): string {
-    return ` 
-      .preview-content {
-        padding: 1rem;
-      }
-      .preview-target {
-        font-family: Arial, sans-serif;
-      }
-      .preview-target h2 {
-        margin-bottom: 1rem;
-        font-size: 1.5rem;
-      }
-      .preview-target p {
-        margin-bottom: 1rem;
-        line-height: 1.5;
-      }
-      .preview-target button {
-        padding: 0.5rem 1rem;
-        margin-bottom: 1rem;
-        font-size: 1rem;
-        border: 1px solid #ccc;
-        background: #fff;
-        cursor: pointer;
-      }
-      .preview-target .box {
-        width: 100px;
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f0f0f0;
-        margin: 1rem 0;
-      }
-      ${this.currentCode}
-    `;
-  }
-
-  getLineNumbers(): number[] {
-    const lines = this.currentCode.split('\n').length;
-    const minLines = 25; // Ensure we have at least 25 line numbers
-    const numLines = Math.max(lines, minLines);
-    return Array.from({ length: numLines }, (_, i) => i + 1);
-  }
-
-  syncScroll(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    const lineNumbers = textarea.previousElementSibling as HTMLElement;
-    if (lineNumbers) {
-      lineNumbers.scrollTop = textarea.scrollTop;
-    }
-  }
-
-  private checkSyntax(): void {
+  resetCode(): void {
+    this.currentCode = this.originalCode;
     this.syntaxErrors = [];
-    try {
-      const styleElement = document.createElement('style');
-      styleElement.textContent = this.currentCode;
-      
-      document.head.appendChild(styleElement);
-      document.head.removeChild(styleElement);
-    } catch (error: any) {
-      this.syntaxErrors.push({
-        line: 1,
-        message: error.toString()
-      });
-    }
-  }
-
-  highlightCode(code: string | undefined): SafeHtml {
-    if (!code) return this.sanitizer.bypassSecurityTrustHtml('');
-    return this.sanitizer.bypassSecurityTrustHtml(
-      Prism.highlight(code, Prism.languages.css, 'css')
-    );
-  }
-
-  sanitizeHtml(html: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(html);
-  }
-
-  tryExample(index: number): void {
-    if (this.content?.interactiveExamples) {
-      const example = this.content.interactiveExamples[index];
-      this.currentCode = example.code || '';
-      this.checkSyntax();
-    }
-  }
-
-  getDifficultyIcon(difficulty: string): string {
-    switch (difficulty) {
-      case 'beginner':
-        return 'school';
-      case 'intermediate':
-        return 'trending_up';
-      case 'advanced':
-        return 'psychology';
-      default:
-        return 'help';
-    }
-  }
-
-  togglePreviewMode(): void {
-    this.previewMode = this.previewMode === 'desktop' ? 'mobile' : 'desktop';
+    this.consoleMessages = [];
   }
 
   copyCode(): void {
@@ -830,11 +734,104 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
     });
   }
 
-  resetCode(): void {
-    if (this.content) {
-      this.currentCode = this.content.example;
-      this.checkSyntax();
+  runCode(): void {
+    this.isRunning = true;
+    this.consoleMessages = [];
+    this.syntaxErrors = [];
+
+    try {
+      // Capture console.log output
+      const originalConsole = window.console.log;
+      const logs: string[] = [];
+      
+      window.console.log = (...args) => {
+        const output = args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+        ).join(' ');
+        logs.push(output);
+        this.consoleMessages.push(output);
+        
+        // Update view and scroll to bottom
+        setTimeout(() => {
+          if (this.consoleOutput) {
+            const element = this.consoleOutput.nativeElement;
+            element.scrollTop = element.scrollHeight;
+          }
+        });
+        
+        // Also call the original console.log
+        originalConsole.apply(console, args);
+      };
+
+      // Execute the code
+      const executeCode = new Function(this.currentCode);
+      executeCode();
+
+      // Restore original console.log
+      window.console.log = originalConsole;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.syntaxErrors.push(error.message);
+      }
+    } finally {
+      this.isRunning = false;
     }
+  }
+
+  onCodeChange(): void {
+    // Check for syntax errors
+    try {
+      new Function(this.currentCode);
+      this.syntaxErrors = [];
+    } catch (error) {
+      if (error instanceof Error) {
+        this.syntaxErrors = [error.message];
+      }
+    }
+  }
+
+  tryExample(index: number): void {
+    if (this.content?.interactiveExamples) {
+      const example = this.content.interactiveExamples[index];
+      this.currentCode = example.code || '';
+    }
+  }
+
+  getDifficultyIcon(difficulty: string): string {
+    switch (difficulty.toLowerCase()) {
+      case 'beginner':
+        return 'emoji_events';
+      case 'intermediate':
+        return 'fitness_center';
+      case 'advanced':
+        return 'psychology';
+      default:
+        return 'school';
+    }
+  }
+
+  getCategoryIcon(category: string): string {
+    switch (category.toLowerCase()) {
+      case 'syntax':
+        return 'code';
+      case 'functions':
+        return 'functions';
+      case 'objects':
+        return 'category';
+      default:
+        return 'subject';
+    }
+  }
+
+  highlightCode(code: string | undefined): SafeHtml {
+    if (!code) return this.sanitizer.bypassSecurityTrustHtml('');
+    return this.sanitizer.bypassSecurityTrustHtml(
+      highlight(code, 'java')
+    );
+  }
+
+  sanitizeHtml(html: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   checkAnswer(questionIndex: number, selectedAnswer: number): void {
@@ -849,12 +846,7 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
   }
 
   get allQuestionsAnswered(): boolean {
-    if (!this.content || !this.content.quiz || this.content.quiz.length === 0) {
-      return false;
-    }
-    
-    // Check if we have an answer for each question
-    return this.content.quiz.every((_, index) => this.userAnswers[index] !== undefined);
+    return this.content ? this.userAnswers.length === this.content.quiz.length : false;
   }
 
   completeQuiz(): void {
@@ -879,12 +871,11 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
   }
 
   getAnswerColor(questionIndex: number, optionIndex: number): string | null {
-    if (this.userAnswers[questionIndex] === undefined) {
+    if (!this.quizComplete) {
       return null;
     }
 
-    if (!this.content) return null;
-    if (this.content.quiz[questionIndex].correctAnswer === optionIndex) {
+    if (this.content && this.content.quiz[questionIndex].correctAnswer === optionIndex) {
       return 'primary';
     }
 
@@ -894,20 +885,8 @@ export class CssConceptComponent implements OnInit, AfterViewInit {
 
     return null;
   }
-}
 
-class CSSParser {
-  parse(css: string): void {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = css;
-    
-    try {
-      document.head.appendChild(styleElement);
-      // If we get here, the CSS is valid
-      document.head.removeChild(styleElement);
-    } catch (error) {
-      document.head.removeChild(styleElement);
-      throw error;
-    }
+  clearConsole(): void {
+    this.consoleMessages = [];
   }
-} 
+}

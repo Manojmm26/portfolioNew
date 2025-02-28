@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, map, catchError, concat, first, defaultIfEmpty } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { CandlestickData } from 'lightweight-charts';
 
 export interface QuizOption {
   text: string;
@@ -14,8 +15,22 @@ export interface QuizQuestion {
 }
 
 export interface InteractiveExample {
-  code: string;
+  title?: string;
+  code?: string;
   result?: string;
+  chartData?: CandlestickData[];
+}
+
+export interface IndicatorData {
+  time: string;
+  value: number;
+}
+
+export interface ChartIndicator {
+  type: 'sma' | 'ema' | 'volume' | string;
+  data: IndicatorData[];
+  color?: string;
+  lineWidth?: number;
 }
 
 export interface ConceptContent {
@@ -32,6 +47,8 @@ export interface ConceptContent {
   quiz: QuizQuestion[];
   interactiveExamples: InteractiveExample[];
   keyPoints: string[];
+  chartData?: CandlestickData[];
+  indicators?: ChartIndicator[];
 }
 
 interface ConceptsData {
@@ -44,6 +61,7 @@ interface ConceptsData {
 export class ConceptService {
   private predefinedConcepts: ConceptContent[] = [];
   private userConcepts: ConceptContent[] = [];
+  private technicalAnalysisConceptsUrl = 'assets/data/technical-analysis-concepts.json';
 
   constructor(private http: HttpClient) {
     // Load user-created concepts from localStorage
@@ -73,6 +91,26 @@ export class ConceptService {
     );
   }
 
+  getTechnicalAnalysisConcepts(): Observable<ConceptContent[]> {
+    return this.http.get<ConceptsData>(this.technicalAnalysisConceptsUrl).pipe(
+      map(data => data.concepts),
+      catchError(error => {
+        console.error('Error fetching technical analysis concepts:', error);
+        return of([]);
+      })
+    );
+  }
+
+  getTechnicalAnalysisConceptById(id: string): Observable<ConceptContent | undefined> {
+    return this.http.get<ConceptsData>(this.technicalAnalysisConceptsUrl).pipe(
+      map(data => data.concepts.find(concept => concept.id === id)),
+      catchError(error => {
+        console.error(`Error fetching technical analysis concept with id ${id}:`, error);
+        return of(undefined);
+      })
+    );
+  }
+
   getConcept(id: string): Observable<ConceptContent | undefined> {
     // First try to find in user concepts
     const userConcept = this.userConcepts.find(c => c.id === id);
@@ -81,7 +119,7 @@ export class ConceptService {
     }
 
     // If not found in user concepts, try all technology files
-    const technologies = ['html', 'css', 'javascript', 'angular'];
+    const technologies = ['html', 'css', 'javascript', 'angular','java'];
     
     return concat(...technologies.map(tech => 
       this.http.get<ConceptsData>(this.getConceptsJsonPath(tech)).pipe(

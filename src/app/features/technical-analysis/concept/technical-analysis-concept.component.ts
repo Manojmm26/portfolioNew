@@ -14,8 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { createChart, IChartApi, ISeriesApi, CandlestickData } from 'lightweight-charts';
-import { ConceptService, ConceptContent } from '../../../shared/services/concept.service';
+import { createChart, IChartApi, ISeriesApi, CandlestickData, LineWidth, CrosshairMode, LineStyle } from 'lightweight-charts';
+import { ConceptService, ConceptContent, ChartIndicator, IndicatorData } from '../../../shared/services/concept.service';
 import { highlight, highlightAll } from '../../../shared/utils/prism-config';
 
 @Component({
@@ -97,13 +97,21 @@ import { highlight, highlightAll } from '../../../shared/utils/prism-config';
                       </mat-expansion-panel-header>
                       
                       <div class="mini-editor">
-                        <div class="code-header">
-                          <span>Code:</span>
+                        <div *ngIf="example.code" class="code-section">
+                          <div class="code-header">
+                            <span>Code:</span>
+                          </div>
+                          <pre><code [innerHTML]="highlightCode(example.code)"></code></pre>
                         </div>
-                        <pre><code [innerHTML]="highlightCode(example.code)"></code></pre>
+                        
+                        <div *ngIf="example.chartData" class="chart-section">
+                          <h4>Chart Visualization:</h4>
+                          <div class="mini-chart" [id]="'example-chart-' + i"></div>
+                        </div>
+                        
                         <div class="example-result" *ngIf="example.result">
                           <strong>Result:</strong>
-                          <div [innerHTML]="sanitizeHtml(example.result)"></div>
+                          <div [innerHTML]="example.result"></div>
                         </div>
                       </div>
                     </mat-expansion-panel>
@@ -156,7 +164,7 @@ import { highlight, highlightAll } from '../../../shared/utils/prism-config';
                 </div>
               </mat-card-content>
             </mat-card>
-            <div class="quiz-actions" *ngIf="!quizComplete && allQuestionsAnswered">
+            <div class="quiz-actions" *ngIf="!quizComplete && allQuestionsAnswered()">
               <button mat-raised-button color="primary" (click)="completeQuiz()">
                 Submit Quiz
               </button>
@@ -278,30 +286,55 @@ import { highlight, highlightAll } from '../../../shared/utils/prism-config';
       border-radius: 4px;
       padding: 1rem;
       margin: 1rem 0;
-    }
+      
+      .code-section {
+        margin-bottom: 1.5rem;
+      }
+      
+      .chart-section {
+        margin: 1.5rem 0;
+        
+        h4 {
+          margin-bottom: 0.5rem;
+          color: #333;
+        }
+        
+        .mini-chart {
+          width: 100%;
+          height: 300px;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+      }
+      
+      .example-result {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        
+        strong {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #333;
+        }
+      }
+      
+      .code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
 
-    .code-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-
-    pre {
-      background: var(--theme-code-background);
-      border-radius: 4px;
-      padding: 1rem;
-      margin: 0;
-      overflow-x: auto;
-      color: var(--theme-code-text-color);
-    }
-
-    .example-result {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: var(--theme-card-background);
-      border-radius: 4px;
-      border: 1px solid var(--theme-border-color);
+      pre {
+        background: #1E222D;
+        border-radius: 4px;
+        padding: 1rem;
+        margin: 0;
+        overflow-x: auto;
+        color: #D9D9D9;
+      }
     }
 
     .key-points {
@@ -407,30 +440,39 @@ export class TechnicalAnalysisConceptComponent implements OnInit, AfterViewInit,
   ) {}
 
   ngOnInit(): void {
-    const conceptId = this.route.snapshot.paramMap.get('conceptId');
-    if (conceptId) {
-      this.conceptService.getConcept(conceptId).subscribe(concept => {
-        if (concept) {
-          this.content = concept;
-          if (concept.explanation) {
-            this.sanitizedExplanation = this.sanitizer.bypassSecurityTrustHtml(
-              concept.explanation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-            );
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.conceptService.getTechnicalAnalysisConceptById(id).subscribe(concept => {
+          if (concept) {
+            this.content = concept;
+        
+            this.userAnswers = new Array(this.content.quiz?.length || 0).fill(undefined);
+            
+            // Initialize chart if chartData is available
+            if (this.content.chartData && this.content.chartData.length > 0) {
+              setTimeout(() => {
+                this.initChart();
+              }, 0);
+            }
           }
-          
-          // Initialize user answers array
-          if (concept.quiz) {
-            this.userAnswers = new Array(concept.quiz.length).fill(undefined);
-          }
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   ngAfterViewInit(): void {
+    // If there's chart data available, initialize the chart after view init
+    if (this.content?.chartData && this.content.chartData.length > 0 && this.chartContainer) {
+      setTimeout(() => {
+        this.initChart();
+      }, 0);
+    }
+    
+    // Initialize mini-charts for interactive examples
     setTimeout(() => {
-      this.initChart();
-    }, 500);
+      this.initInteractiveExampleCharts();
+    }, 100);
   }
 
   ngOnDestroy(): void {
@@ -456,6 +498,22 @@ export class TechnicalAnalysisConceptComponent implements OnInit, AfterViewInit,
           timeVisible: true,
           secondsVisible: false,
         },
+        crosshair: {
+          mode: CrosshairMode.Normal,
+          vertLine: {
+            width: 1 as LineWidth,
+            color: 'rgba(224, 227, 235, 0.1)',
+            style: LineStyle.Solid,
+          },
+          horzLine: {
+            width: 1 as LineWidth,
+            color: 'rgba(224, 227, 235, 0.1)',
+            style: LineStyle.Solid,
+          },
+        },
+        localization: {
+          priceFormatter: (price: number) => price.toFixed(2),
+        },
       };
 
       this.chart = createChart(this.chartContainer.nativeElement, chartOptions);
@@ -470,6 +528,11 @@ export class TechnicalAnalysisConceptComponent implements OnInit, AfterViewInit,
       
       this.candlestickSeries.setData(this.content.chartData);
       
+      // Add technical indicators if available
+      if (this.content.indicators) {
+        this.addIndicators(this.content.indicators);
+      }
+      
       // Handle window resize
       const resizeObserver = new ResizeObserver(() => {
         if (this.chart) {
@@ -478,9 +541,129 @@ export class TechnicalAnalysisConceptComponent implements OnInit, AfterViewInit,
           });
         }
       });
+
+
+
+  
+      this.chart.timeScale().setVisibleLogicalRange({ from: -5, to: 10 });  
       
+      // this.chart.timeScale().fitContent();
+ 
+  
       resizeObserver.observe(this.chartContainer.nativeElement);
     }
+  }
+
+  private addIndicators(indicators: ChartIndicator[] | undefined): void {
+    if (!this.chart || !indicators || indicators.length === 0) return;
+    
+    indicators.forEach(indicator => {
+      if (!indicator || !indicator.type || !indicator.data) return;
+      
+      switch (indicator.type) {
+        case 'sma':
+          this.addMovingAverage(indicator.data, indicator.color || '#2196F3', indicator.lineWidth || 2);
+          break;
+        case 'ema':
+          this.addMovingAverage(indicator.data, indicator.color || '#FF9800', indicator.lineWidth || 2);
+          break;
+        case 'volume':
+          this.addVolumeIndicator(indicator.data);
+          break;
+        // Add more indicator types as needed
+      }
+    });
+  }
+
+  private addMovingAverage(data: IndicatorData[], color: string, lineWidth: number): void {
+    if (!this.chart) return;
+    
+    const lineSeries = this.chart.addLineSeries({
+      color: color,
+      lineWidth: lineWidth as LineWidth,
+      priceLineVisible: false,
+      lastValueVisible: true,
+      crosshairMarkerVisible: true,
+    });
+    
+    lineSeries.setData(data);
+  }
+
+  private addVolumeIndicator(data: IndicatorData[]): void {
+    if (!this.chart) return;
+    
+    const volumeSeries = this.chart.addHistogramSeries({
+      color: '#26a69a',
+      priceFormat: {
+        type: 'volume',
+      },
+      priceScaleId: 'volume',
+    });
+    
+    this.chart.priceScale('volume').applyOptions({
+      scaleMargins: {
+        top: 0.8,
+        bottom: 0,
+      },
+    });
+    
+    volumeSeries.setData(data);
+  }
+
+  private initInteractiveExampleCharts(): void {
+    
+    if (!this.content?.interactiveExamples) return;
+
+    this.content.interactiveExamples.forEach((example, index) => {
+      if (example.chartData && example.chartData.length > 0) {
+        const chartElement = document.getElementById(`example-chart-${index}`);
+     
+        if (!chartElement) return;
+        
+        const miniChart = createChart(chartElement, {
+          layout: {
+            background: { color: '#1E222D' },
+            textColor: '#D9D9D9',
+          },
+          grid: {
+            vertLines: { color: '#2B2B43' },
+            horzLines: { color: '#2B2B43' },
+          },
+          width: chartElement.clientWidth,
+          height: 300,
+          timeScale: {
+            timeVisible: true,
+            secondsVisible: false,
+          },
+          crosshair: {
+            mode: CrosshairMode.Normal,
+            vertLine: {
+              width: 1 as LineWidth,
+              color: 'rgba(224, 227, 235, 0.1)',
+              style: LineStyle.Solid,
+            },
+            horzLine: {
+              width: 1 as LineWidth,
+              color: 'rgba(224, 227, 235, 0.1)',
+              style: LineStyle.Solid,
+            },
+          },
+        });
+        
+        miniChart.timeScale().setVisibleLogicalRange({ from: -9, to: 9 });  
+
+
+        const candlestickSeries = miniChart.addCandlestickSeries({
+          upColor: '#26a69a',
+          downColor: '#ef5350',
+          borderVisible: false,
+          wickUpColor: '#26a69a',
+          wickDownColor: '#ef5350',
+        });
+        
+        candlestickSeries.setData(example.chartData);
+      }
+    });
   }
 
   getDifficultyIcon(difficulty: string): string {
@@ -505,13 +688,14 @@ export class TechnicalAnalysisConceptComponent implements OnInit, AfterViewInit,
     return iconMap[category.toLowerCase()] || 'subject';
   }
 
-  highlightCode(code: string): string {
+  highlightCode(code: string | undefined): string {
+    if (!code) return '';
     return highlight(code, 'javascript');
   }
 
-  sanitizeHtml(html: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(html);
-  }
+  // sanitizeHtml(html: string): SafeHtml {
+  //   return this.sanitizer.bypassSecurityTrustHtml(html);
+  // }
 
   checkAnswer(questionIndex: number, answerIndex: number): void {
     if (this.quizComplete) return;
@@ -542,7 +726,7 @@ export class TechnicalAnalysisConceptComponent implements OnInit, AfterViewInit,
     return '';
   }
 
-  get allQuestionsAnswered(): boolean {
+  allQuestionsAnswered(): boolean {
     return this.userAnswers.every(answer => answer !== undefined);
   }
 
@@ -561,7 +745,11 @@ export class TechnicalAnalysisConceptComponent implements OnInit, AfterViewInit,
   }
 
   resetQuiz(): void {
-    this.userAnswers = this.userAnswers.map(() => undefined);
+    if (this.content?.quiz) {
+      this.userAnswers = new Array(this.content.quiz.length).fill(undefined);
+    } else {
+      this.userAnswers = [];
+    }
     this.quizComplete = false;
     this.quizScore = 0;
   }

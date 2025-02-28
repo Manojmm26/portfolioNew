@@ -740,7 +740,8 @@ export class HtmlConceptComponent implements OnInit {
     });
   }
 
-  highlightCode(code: string): SafeHtml {
+  highlightCode(code: string | undefined): SafeHtml {
+    if (!code) return this.sanitizer.bypassSecurityTrustHtml('');
     return this.sanitizer.bypassSecurityTrustHtml(
       Prism.highlight(code, Prism.languages.markup, 'markup')
     );
@@ -753,7 +754,7 @@ export class HtmlConceptComponent implements OnInit {
   tryExample(index: number): void {
     if (this.content?.interactiveExamples) {
       const example = this.content.interactiveExamples[index];
-      this.currentCode = example.code;
+      this.currentCode = example.code || '';
       this.updatePreview();
       this.checkSyntax();
     }

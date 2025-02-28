@@ -87,7 +87,7 @@ import { ThemeService } from '../../../core/theme/theme.service';
                 <div class="example-container">
                   <div class="code-section">
                     <div class="code-header">
-                      <h3>Angular Code</h3>
+                      <h3>Typescript Code</h3>
                       <div class="code-actions">
                         <button mat-icon-button (click)="copyCode()" matTooltip="Copy to clipboard">
                           <mat-icon>content_copy</mat-icon>
@@ -110,7 +110,7 @@ import { ThemeService } from '../../../core/theme/theme.service';
                       </textarea>
                     </div>
                   </div>
-                  <div class="output-section">
+                  <!-- <div class="output-section">
                     <div class="output-header">
                       <h3>Preview</h3>
                       <button mat-icon-button (click)="clearPreview()" matTooltip="Clear preview">
@@ -119,7 +119,7 @@ import { ThemeService } from '../../../core/theme/theme.service';
                     </div>
                     <div class="preview-output" [innerHTML]="previewContent">
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </mat-card-content>
             </mat-card>
@@ -319,7 +319,7 @@ import { ThemeService } from '../../../core/theme/theme.service';
 
       .example-container {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 2rem;
         margin-top: 1rem;
 

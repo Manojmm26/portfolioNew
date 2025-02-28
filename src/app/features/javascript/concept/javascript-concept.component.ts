@@ -444,7 +444,7 @@ declare var Prism: any;
 
     .example-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 1rem;
       margin-top: 1rem;
 
@@ -793,7 +793,7 @@ export class JavascriptConceptComponent implements OnInit, AfterViewInit {
   tryExample(index: number): void {
     if (this.content?.interactiveExamples) {
       const example = this.content.interactiveExamples[index];
-      this.currentCode = example.code;
+      this.currentCode = example.code || '';
     }
   }
 
@@ -823,7 +823,8 @@ export class JavascriptConceptComponent implements OnInit, AfterViewInit {
     }
   }
 
-  highlightCode(code: string): SafeHtml {
+  highlightCode(code: string | undefined): SafeHtml {
+    if (!code) return this.sanitizer.bypassSecurityTrustHtml('');
     return this.sanitizer.bypassSecurityTrustHtml(
       highlight(code, 'javascript')
     );

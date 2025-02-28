@@ -91,7 +91,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
 }
 
-
+.token.operator {
+  color: black!important;
+}
+.token.punctuation {
+  color: black!important;
+}
+.token.function{
+  color: #ec7ae8!important;
+}
 
 /* Define theme variables for component use */
 :root {

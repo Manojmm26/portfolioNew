@@ -31,6 +31,15 @@ export const routes: Routes = [
       .then(m => m.TypescriptConceptsModule)
   },
   {
+    path: 'technical-analysis',
+    loadChildren: () => import('./features/technical-analysis/technical-analysis.module')
+      .then(m => m.TechnicalAnalysisModule)
+  },
+  {
+    path: 'java',
+    loadChildren: () => import('./features/Java/java.module').then(m => m.JavaModule)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

@@ -46,6 +46,11 @@ export class HomeComponent {
       title: 'TypeScript',
       path: '/typescript-concepts',
       description: 'Master TypeScript concepts and best practices'
+    },
+    {
+      title: 'Technical Analysis',
+      path: '/technical-analysis',
+      description: 'Understand technical analysis concepts and strategies'
     }
   ];
 

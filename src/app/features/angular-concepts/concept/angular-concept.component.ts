@@ -110,7 +110,7 @@ import { marked } from 'marked';
                       </textarea>
                     </div>
                   </div>
-                  <div class="output-section">
+                  <!-- <div class="output-section">
                     <div class="output-header">
                       <h3>Preview</h3>
                       <button mat-icon-button (click)="clearPreview()" matTooltip="Clear preview">
@@ -119,7 +119,7 @@ import { marked } from 'marked';
                     </div>
                     <div class="preview-output" [innerHTML]="previewContent">
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </mat-card-content>
             </mat-card>
@@ -319,7 +319,7 @@ import { marked } from 'marked';
 
       .example-container {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 2rem;
         margin-top: 1rem;
 
