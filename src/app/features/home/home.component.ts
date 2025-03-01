@@ -33,7 +33,11 @@ export class HomeComponent {
       description: 'Understand core JavaScript concepts and modern features'
     },
     {
-      title: 'Programming Questions',
+      title:'Java',
+      path: '/java',
+      description: 'Master Java programming concepts and best practices'
+    },
+     { title: 'Programming Questions',
       path: '/programming-questions',
       description: 'Test your knowledge with programming questions'
     },
