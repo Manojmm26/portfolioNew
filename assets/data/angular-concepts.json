@@ -630,6 +630,481 @@
         }
       ]
     },
+    {
+      "id": "route-parameters",
+      "title": "Route Parameters",
+      "description": "Learn how to pass mandatory data through URL segments using route parameters in Angular.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "Route parameters are essential for displaying dynamic content based on a value embedded directly in the URL path. For example, in a route like `/products/:id`, `:id` is a placeholder for a specific product ID. Angular's router extracts this parameter value from the URL and makes it available to the activated component.\n\nTo access route parameters, you typically inject the `ActivatedRoute` service into your component's constructor. The `ActivatedRoute` service provides access to information about the route associated with a component, including parameters (`snapshot.params` or the `params` Observable), query parameters, and fragments.\n\nUsing the `params` Observable is often preferred as it allows your component to react to changes in the route parameters without needing to be recreated (e.g., navigating from `/products/1` to `/products/2` while staying on the same component instance).",
+      "example": "// 1. Define a route with a parameter (app-routing.module.ts)\n// const routes: Routes = [\n//   { path: 'product/:id', component: ProductDetailsComponent },\n//   // ... other routes\n// ];\n\n// 2. Access the parameter in the component (product-details.component.ts)\nimport { Component, OnInit, OnDestroy } from '@angular/core';\nimport { ActivatedRoute } from '@angular/router';\nimport { Subscription } from 'rxjs';\n\n@Component({\n  selector: 'app-product-details',\n  template: '<h2>Product Details - ID: {{ productId }}</h2>'\n})\nexport class ProductDetailsComponent implements OnInit, OnDestroy {\n  productId: string | null = null;\n  private routeSub: Subscription | null = null;\n\n  constructor(private route: ActivatedRoute) { }\n\n  ngOnInit(): void {\n    // Option 1: Using snapshot (only gets initial value)\n    // this.productId = this.route.snapshot.paramMap.get('id');\n\n    // Option 2: Using Observable (reacts to changes)\n    this.routeSub = this.route.paramMap.subscribe(params => {\n      this.productId = params.get('id');\n      console.log('Product ID from route:', this.productId);\n      // Fetch product data based on this.productId\n    });\n  }\n\n  ngOnDestroy(): void {\n    // Unsubscribe to prevent memory leaks\n    this.routeSub?.unsubscribe();\n  }\n}\n\n// 3. Navigate to the route (e.g., using RouterLink)\n// <a [routerLink]=\"['/product', product.id]\">{{ product.name }}</a>\n",
+      "keyPoints": [
+        "**Definition:** Defined in the route path using colon syntax (e.g., `:id`, `:slug`).",
+        "**Purpose:** Pass mandatory, dynamic data identifying a specific resource.",
+        "**Access:** Inject `ActivatedRoute` service into the component.",
+        "**Retrieval:** Use `route.snapshot.paramMap.get('paramName')` for initial value or `route.paramMap.subscribe(...)` for an Observable that reacts to changes.",
+        "**`paramMap`:** Preferred API over `params` for accessing parameters.",
+        "**Navigation:** Pass parameters when navigating using `routerLink` (e.g., `[routerLink]=\"['/path', paramValue]\"`) or `router.navigate`.",
+        "**Observable Cleanup:** Unsubscribe from the `paramMap` Observable in `ngOnDestroy`."
+      ],
+      "quiz": [
+        {
+          "question": "How do you define a route parameter in the `Routes` configuration?",
+          "options": ["Using `?id`", "Using `{id}`", "Using `path/:id`", "Using `path/[id]`"],
+          "correctAnswer": 2,
+          "explanation": "Route parameters are defined using a colon followed by the parameter name in the path string, like `path/:id`."
+        },
+        {
+          "question": "Which service needs to be injected into a component to access route parameters?",
+          "options": ["Router", "HttpClient", "ActivatedRoute", "Location"],
+          "correctAnswer": 2,
+          "explanation": "`ActivatedRoute` provides access to route-specific information, including parameters."
+        },
+        {
+          "question": "What is the recommended way to reactively listen for changes in route parameters within a component?",
+          "options": [
+            "Using `route.snapshot.params['id']`",
+            "Subscribing to `route.paramMap`",
+            "Using `window.location.href`",
+            "Using `route.queryParams`"
+            ],
+          "correctAnswer": 1,
+          "explanation": "Subscribing to the `route.paramMap` Observable allows the component to react to parameter changes without being recreated."
+        }
+      ]
+    },
+    {
+      "id": "query-parameters-fragments",
+      "title": "Query Parameters and Fragments",
+      "description": "Explore how to work with optional query parameters and URL fragments in Angular routing.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "Besides mandatory route parameters, Angular routing allows you to work with optional query parameters and URL fragments.\n\n*   **Query Parameters:** Appear after a question mark (`?`) in the URL (e.g., `/search?query=angular&page=1`). They are typically used for optional values like filtering criteria, search terms, or pagination.\n*   **Fragments:** Appear after a hash (`#`) in the URL (e.g., `/about#team`). They usually identify a specific section within a page to scroll to.\n\nSimilar to route parameters, query parameters and fragments can be accessed via the `ActivatedRoute` service using `snapshot.queryParamMap` / `queryParamMap` Observable and `snapshot.fragment` / `fragment` Observable respectively. They can be set programmatically during navigation using the `Router` service or declaratively using the `queryParams` and `fragment` bindings on the `RouterLink` directive.",
+      "example": "// 1. Navigate with Query Params and Fragment (Using RouterLink)\n// <a [routerLink]=\"['/search']\"\n//    [queryParams]=\"{ query: 'angular', page: 1 }\"\n//    fragment=\"results\">\n//    Search Angular (Page 1, #results)\n// </a>\n\n// 2. Navigate Programmatically (Using Router service)\n// constructor(private router: Router) {}\n// \n// performSearch(term: string) {\n//   this.router.navigate(['/search'], {\n//     queryParams: { query: term, sort: 'relevance' },\n//     fragment: 'top'\n//   });\n// }\n\n// 3. Access Query Params and Fragment in Component (search.component.ts)\nimport { Component, OnInit, OnDestroy } from '@angular/core';\nimport { ActivatedRoute } from '@angular/router';\nimport { Subscription } from 'rxjs';\n\n@Component({\n  selector: 'app-search',\n  template: `\n    <h2>Search Results</h2>\n    <p>Query: {{ searchQuery }}</p>\n    <p>Page: {{ currentPage }}</p>\n    <p>Fragment: {{ sectionId }}</p>\n  `\n})\nexport class SearchComponent implements OnInit, OnDestroy {\n  searchQuery: string | null = null;\n  currentPage: number = 1;\n  sectionId: string | null = null;\n  private querySub: Subscription | null = null;\n  private fragmentSub: Subscription | null = null;\n\n  constructor(private route: ActivatedRoute) { }\n\n  ngOnInit(): void {\n    // Access Query Params (Observable)\n    this.querySub = this.route.queryParamMap.subscribe(params => {\n      this.searchQuery = params.get('query');\n      this.currentPage = +(params.get('page') || 1); // '+' converts string to number\n      console.log('Query Params:', this.searchQuery, this.currentPage);\n    });\n\n    // Access Fragment (Observable)\n    this.fragmentSub = this.route.fragment.subscribe(fragment => {\n      this.sectionId = fragment;\n      console.log('Fragment:', this.sectionId);\n      // Optionally scroll to element with this ID\n    });\n  }\n\n  ngOnDestroy(): void {\n    this.querySub?.unsubscribe();\n    this.fragmentSub?.unsubscribe();\n  }\n}\n",
+      "keyPoints": [
+        "**Query Parameters:** Optional key-value pairs after `?` (e.g., `?q=term`). Used for filtering, pagination, etc.",
+        "**Fragments:** Optional string after `#` (e.g., `#section`). Used for in-page navigation.",
+        "**Access:** Inject `ActivatedRoute` service.",
+        "**Retrieval:** Use `route.queryParamMap` Observable for query params and `route.fragment` Observable for fragments.",
+        "**Setting (Declarative):** Use `[queryParams]` and `[fragment]` inputs on `routerLink` directive.",
+        "**Setting (Programmatic):** Pass an options object with `queryParams` and `fragment` properties to `router.navigate()`. ",
+        "**`queryParamMap`:** Preferred API over `queryParams`.",
+        "**Observable Cleanup:** Unsubscribe from observables in `ngOnDestroy`."
+      ],
+      "quiz": [
+        {
+          "question": "In the URL `/items?category=books&sort=title#list`, what is `category=books&sort=title`?",
+          "options": ["Route parameters", "Query parameters", "A fragment", "Part of the path"],
+          "correctAnswer": 1,
+          "explanation": "Key-value pairs following the `?` are query parameters."
+        },
+        {
+          "question": "How can you declaratively add query parameters to a navigation link in a template?",
+          "options": [
+              "Using `[routeParams]` binding",
+              "Using `(queryParams)` binding",
+              "Using `[queryParams]` binding on `routerLink`",
+              "Appending them directly to the `routerLink` path string"
+            ],
+          "correctAnswer": 2,
+          "explanation": "The `[queryParams]` input binding on the `routerLink` directive is used to pass an object of query parameters."
+        },
+        {
+          "question": "Which property of the `ActivatedRoute` service provides an Observable for accessing URL fragments?",
+          "options": ["`paramMap`", "`queryParamMap`", "`fragment`", "`url`"],
+          "correctAnswer": 2,
+          "explanation": "The `fragment` property of `ActivatedRoute` returns an Observable that emits the URL fragment string."
+        }
+      ]
+    },
+    {
+      "id": "child-routes",
+      "title": "Child Routes (Nested Routing)",
+      "description": "Structure your application features by defining child routes that render components within the view of a parent component.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "Child routes, or nested routing, allow you to define routes that are relative to a parent route. This is useful for organizing features where multiple views are displayed within a common layout provided by a parent component. The parent component typically contains a `<router-outlet>` where the child components will be rendered.\n\nChild routes are defined using the `children` property within a parent route configuration in the `Routes` array. Paths for child routes are relative to the parent's path. For example, if a parent route has path `'settings'`, a child route with path `'profile'` will match the full URL `/settings/profile`.\n\nThis approach helps in structuring complex applications, managing layouts consistently, and grouping related functionalities together.",
+      "example": "// 1. Define Parent and Child Routes (app-routing.module.ts or feature-routing.module.ts)\nimport { SettingsComponent } from './settings.component';\nimport { ProfileComponent } from './profile.component';\nimport { AccountComponent } from './account.component';\n\nconst routes: Routes = [\n  {\n    path: 'settings', // Parent Route Path\n    component: SettingsComponent, // Parent Component (with its own <router-outlet>)\n    children: [\n      { path: 'profile', component: ProfileComponent }, // Child Route: matches /settings/profile\n      { path: 'account', component: AccountComponent }, // Child Route: matches /settings/account\n      { path: '', redirectTo: 'profile', pathMatch: 'full' } // Default child route\n    ]\n  },\n  // ... other top-level routes\n];\n\n// 2. Parent Component Template (settings.component.html)\n// <h2>Settings</h2>\n// <nav>\n//   <a routerLink=\"profile\" routerLinkActive=\"active-link\">Profile</a>\n//   <a routerLink=\"account\" routerLinkActive=\"active-link\">Account</a>\n// </nav>\n// \n// <!-- Child components render here -->\n// <div class=\"settings-content\">\n//   <router-outlet></router-outlet>\n// </div>\n\n// 3. Child Component Example (profile.component.ts)\n// @Component({\n//   template: '<h3>Edit Your Profile</h3><p>...</p>'\n// })\n// export class ProfileComponent { }\n",
+      "keyPoints": [
+        "**Hierarchical Structure:** Organize routes in a parent-child relationship.",
+        "**`children` Property:** Define child routes within an array assigned to the `children` property of a parent route configuration.",
+        "**Relative Paths:** Child route paths are relative to their parent's path.",
+        "**Parent Component Layout:** The parent component's template typically provides a common layout and contains a `<router-outlet>` for rendering child components.",
+        "**Feature Organization:** Useful for grouping related views under a common feature area (e.g., settings, user dashboard).",
+        "**Relative Navigation:** Use `routerLink` within the parent component to navigate between child routes (e.g., `routerLink=\"profile\"`)."
+      ],
+      "quiz": [
+        {
+          "question": "Which property in a route definition is used to specify child routes?",
+          "options": ["`childRoutes`", "`nested`", "`children`", "`routes`"],
+          "correctAnswer": 2,
+          "explanation": "The `children` property takes an array of `Route` objects that define the child routes for a parent route."
+        },
+        {
+          "question": "If a parent route has `path: 'users'` and a child route has `path: 'details'`, what is the full URL path for the child route?",
+          "options": ["`/details`", "`/users/details`", "`/users:details`", "`/users?details`"],
+          "correctAnswer": 1,
+          "explanation": "Child route paths are appended to the parent's path, forming `/users/details`."
+        },
+        {
+          "question": "Where is the view of a matched child route component typically rendered?",
+          "options": [
+              "In the main `AppComponent`'s `<router-outlet>`",
+              "In a `<router-outlet>` placed within the parent route's component template",
+              "It replaces the parent component's view entirely",
+              "In a modal dialog"
+            ],
+          "correctAnswer": 1,
+          "explanation": "Child routes render their components into the `<router-outlet>` defined within their parent component's template."
+        }
+      ]
+    },
+    {
+      "id": "lazy-loading",
+      "title": "Lazy Loading Feature Modules",
+      "description": "Improve application startup performance by configuring Angular Router to load feature modules only when their routes are activated.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "Lazy loading is a design pattern where you load NgModules only when they are needed, typically when a user navigates to one of their routes. This contrasts with eager loading, where all modules are loaded when the application starts. Lazy loading significantly improves the initial load time of your application, especially for large applications with many features, as the initial bundle size is smaller.\n\nTo configure lazy loading, you use the `loadChildren` property in your route definition instead of the `component` property. The `loadChildren` property uses a dynamic import `import('./path/to/module').then(m => m.ModuleName)` which tells the Angular CLI to create a separate JavaScript bundle for the feature module. When the user navigates to a route configured with `loadChildren`, the router downloads and loads this bundle before activating the route and rendering its component.",
+      "example": "// 1. Create a Feature Module with its own Routing (e.g., admin.module.ts, admin-routing.module.ts)\n\n// admin-routing.module.ts\n// import { NgModule } from '@angular/core';\n// import { RouterModule, Routes } from '@angular/router';\n// import { AdminDashboardComponent } from './admin-dashboard.component';\n// \n// const routes: Routes = [\n//   { path: '', component: AdminDashboardComponent } // Path relative to lazy-loaded path\n// ];\n// \n// @NgModule({\n//   imports: [RouterModule.forChild(routes)], // Use forChild() in feature modules\n//   exports: [RouterModule]\n// })\n// export class AdminRoutingModule { }\n// \n// admin.module.ts\n// import { NgModule } from '@angular/core';\n// import { CommonModule } from '@angular/common';\n// import { AdminRoutingModule } from './admin-routing.module';\n// import { AdminDashboardComponent } from './admin-dashboard.component';\n// \n// @NgModule({\n//   declarations: [AdminDashboardComponent],\n//   imports: [\n//     CommonModule,\n//     AdminRoutingModule // Import the feature module's routing\n//   ]\n// })\n// export class AdminModule { }\n\n// 2. Configure Lazy Loading in App Routing (app-routing.module.ts)\nconst routes: Routes = [\n  { path: 'home', component: HomeComponent },\n  {\n    path: 'admin', // Path prefix for the lazy-loaded module\n    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)\n    // Angular loads AdminModule only when navigating to '/admin' or its children\n  },\n  { path: 'products', component: ProductListComponent },\n  // ... other routes\n  { path: '', redirectTo: '/home', pathMatch: 'full' },\n];\n\n@NgModule({\n  imports: [RouterModule.forRoot(routes)], // Use forRoot() only in the root module\n  exports: [RouterModule]\n})\nexport class AppRoutingModule { }\n",
+      "keyPoints": [
+        "**Performance:** Reduces initial bundle size and improves application startup time.",
+        "**On-Demand Loading:** Feature modules are loaded only when a user navigates to their routes.",
+        "**`loadChildren` Property:** Used in route configuration instead of `component`.",
+        "**Dynamic Import:** Uses the `import('...').then(...)` syntax to specify the module to load.",
+        "**Separate Bundles:** Angular CLI creates separate JavaScript chunks for lazy-loaded modules.",
+        "**Feature Modules:** Lazy loading typically applies to feature modules encapsulating specific application areas.",
+        "**`RouterModule.forChild()`:** Feature modules must use `RouterModule.forChild(routes)` to define their routes."
+      ],
+      "quiz": [
+        {
+          "question": "What is the main benefit of lazy loading feature modules in Angular?",
+          "options": [
+            "Easier component communication",
+            "Reduced initial application load time",
+            "Simpler route definitions",
+            "Automatic data fetching"
+            ],
+          "correctAnswer": 1,
+          "explanation": "Lazy loading decreases the initial bundle size by loading feature modules only when needed, leading to faster startup."
+        },
+        {
+          "question": "Which property in a route configuration enables lazy loading?",
+          "options": ["`component`", "`children`", "`loadModule`", "`loadChildren`"],
+          "correctAnswer": 3,
+          "explanation": "The `loadChildren` property is used to specify a function that dynamically imports the feature module."
+        },
+        {
+          "question": "What method should be used to configure routes within a lazy-loaded feature module?",
+          "options": ["`RouterModule.forRoot(routes)`", "`RouterModule.forFeature(routes)`", "`RouterModule.forChild(routes)`", "`RouterModule.loadRoutes(routes)`"],
+          "correctAnswer": 2,
+          "explanation": "`RouterModule.forChild(routes)` should be used in feature modules (lazy-loaded or eagerly loaded) to provide their routes, while `forRoot` is used only once in the root module."
+        }
+      ]
+    },
+    {
+      "id": "canactivate-guard",
+      "title": "Route Guard: CanActivate",
+      "description": "Protect routes by implementing the CanActivate guard to control whether a user can navigate TO a specific route.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "Route guards are services that implement specific interfaces to control navigation within your application. The `CanActivate` guard is used to decide if a route can be activated, essentially granting or denying access to a route and its children.\n\nCommon use cases for `CanActivate` include checking if a user is logged in or if they have the necessary permissions to access a particular feature or section of the application. The guard service implements the `canActivate` method, which must return `true`, `false`, an `Observable<boolean | UrlTree>`, or a `Promise<boolean | UrlTree>`. If it returns `true`, navigation proceeds. If it returns `false` or a `UrlTree`, navigation is cancelled (and optionally redirected if a `UrlTree` is returned).\n\nGuards are registered in the `providers` array (often using `providedIn: 'root'`) and applied to routes using the `canActivate` property in the route configuration.",
+      "example": "// 1. Create the Guard Service (auth.guard.ts)\nimport { Injectable } from '@angular/core';\nimport {\n  CanActivate,\n  ActivatedRouteSnapshot,\n  RouterStateSnapshot,\n  UrlTree,\n  Router\n} from '@angular/router';\nimport { Observable } from 'rxjs';\nimport { AuthService } from './auth.service'; // Your authentication service\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class AuthGuard implements CanActivate {\n  constructor(private authService: AuthService, private router: Router) {}\n\n  canActivate(\n    route: ActivatedRouteSnapshot,\n    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {\n\n    if (this.authService.isAuthenticated()) {\n      return true; // User is authenticated, allow access\n    } else {\n      // User is not authenticated, redirect to login page\n      console.log('AuthGuard: Access denied, redirecting to login.');\n      return this.router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });\n    }\n  }\n}\n\n// 2. Apply the Guard to a Route (app-routing.module.ts)\n// import { AuthGuard } from './auth.guard';\n// \n// const routes: Routes = [\n//   { path: 'login', component: LoginComponent },\n//   {\n//     path: 'admin',\n//     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),\n//     canActivate: [AuthGuard] // Apply the guard here\n//   },\n//   // ... other routes\n// ];\n\n// 3. Ensure Guard is Provided (usually via providedIn: 'root' or in AppModule providers)\n",
+      "keyPoints": [
+        "**Purpose:** Controls access TO a route.",
+        "**Interface:** Implement the `CanActivate` interface.",
+        "**Method:** Implement the `canActivate()` method.",
+        "**Return Value:** `canActivate` returns `boolean`, `UrlTree`, `Observable<boolean | UrlTree>`, or `Promise<boolean | UrlTree>`.",
+        "**`true`:** Allows navigation.",
+        "**`false` / `UrlTree`:** Cancels navigation (optionally redirects with `UrlTree`).",
+        "**Use Cases:** Authentication checks, permission checks.",
+        "**Registration:** Provide the guard service (e.g., `providedIn: 'root'`).",
+        "**Application:** Add the guard class to the `canActivate` array in the route configuration."
+      ],
+      "quiz": [
+        {
+          "question": "What is the primary purpose of the `CanActivate` route guard?",
+          "options": [
+              "To pre-fetch data for a route",
+              "To prevent navigation AWAY from a route",
+              "To decide if a route can be activated (navigated TO)",
+              "To lazy load a module"
+            ],
+          "correctAnswer": 2,
+          "explanation": "`CanActivate` guards run before a route is activated to determine if access should be granted."
+        },
+        {
+          "question": "What should the `canActivate` method return to allow navigation to proceed?",
+          "options": ["`false`", "`null`", "`true`", "An error object"],
+          "correctAnswer": 2,
+          "explanation": "Returning `true` (or an Observable/Promise resolving to `true`) indicates that the route can be activated."
+        },
+        {
+          "question": "How do you apply a `CanActivate` guard to a specific route configuration?",
+          "options": [
+              "In the component's constructor",
+              "Using the `canActivate` property in the route definition",
+              "By importing it into the component's module",
+              "Using the `activateGuard` directive"
+            ],
+          "correctAnswer": 1,
+          "explanation": "The `canActivate` property in the `Route` object takes an array of guard classes to apply."
+        }
+      ]
+    },
+    {
+      "id": "candeactivate-guard",
+      "title": "Route Guard: CanDeactivate",
+      "description": "Prevent users from navigating AWAY from a route, typically used to warn about unsaved changes, by implementing the CanDeactivate guard.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "The `CanDeactivate` guard controls whether a user can navigate *away* from the current route. Its most common use case is to prevent accidental data loss by prompting the user if they try to leave a page with unsaved changes (e.g., a form they have modified but not submitted).\n\nThe `CanDeactivate` guard is slightly different because it needs information about the specific component instance being deactivated. It's implemented as a generic interface `CanDeactivate<T>`, where `T` is the type of the component being guarded.\n\nThe guard service implements the `canDeactivate` method, which receives the component instance as an argument. This method returns `true`, `false`, an `Observable<boolean | UrlTree>`, or a `Promise<boolean | UrlTree>`. If `true`, navigation proceeds; otherwise, it's cancelled. The logic within `canDeactivate` usually involves checking a property or calling a method on the component instance to see if it's 'safe' to leave.",
+      "example": "// 1. Define an Interface for Components with Unsaved Changes\nexport interface CanComponentDeactivate {\n  canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;\n}\n\n// 2. Create the Guard Service (unsaved-changes.guard.ts)\nimport { Injectable } from '@angular/core';\nimport {\n  CanDeactivate,\n  ActivatedRouteSnapshot,\n  RouterStateSnapshot,\n  UrlTree\n} from '@angular/router';\nimport { Observable } from 'rxjs';\nimport { CanComponentDeactivate } from './can-component-deactivate'; // Import the interface\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {\n  canDeactivate(\n    component: CanComponentDeactivate,\n    currentRoute: ActivatedRouteSnapshot,\n    currentState: RouterStateSnapshot,\n    nextState?: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {\n\n    // Call the component's own canDeactivate method if it exists, otherwise allow deactivation\n    return component.canDeactivate ? component.canDeactivate() : true;\n  }\n}\n\n// 3. Implement the Interface in the Component (edit-form.component.ts)\n// import { Component } from '@angular/core';\n// import { CanComponentDeactivate } from './can-component-deactivate';\n// import { Observable, of } from 'rxjs';\n// \n// @Component({ /* ... */ })\n// export class EditFormComponent implements CanComponentDeactivate {\n//   hasUnsavedChanges: boolean = false; // Track changes in the form\n// \n//   // Logic to set hasUnsavedChanges based on form interactions\n// \n//   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {\n//     if (this.hasUnsavedChanges) {\n//       return confirm('You have unsaved changes! Are you sure you want to leave?');\n//     }\n//     return true; // Safe to leave\n//   }\n// }\n\n// 4. Apply the Guard to the Route (app-routing.module.ts)\n// import { UnsavedChangesGuard } from './unsaved-changes.guard';\n// \n// const routes: Routes = [\n//   {\n//     path: 'edit-item/:id',\n//     component: EditFormComponent,\n//     canDeactivate: [UnsavedChangesGuard] // Apply the guard\n//   },\n//   // ... other routes\n// ];\n",
+      "keyPoints": [
+        "**Purpose:** Controls navigation AWAY from the current route.",
+        "**Interface:** Implement the `CanDeactivate<T>` interface, where `T` is the component type.",
+        "**Method:** Implement the `canDeactivate()` method.",
+        "**Component Access:** The `canDeactivate` method receives the component instance being deactivated as an argument.",
+        "**Return Value:** `canDeactivate` returns `boolean`, `UrlTree`, `Observable<boolean | UrlTree>`, or `Promise<boolean | UrlTree>`.",
+        "**`true`:** Allows navigation away.",
+        "**`false` / `UrlTree`:** Prevents navigation away.",
+        "**Use Cases:** Preventing data loss (unsaved changes warnings).",
+        "**Common Pattern:** Define a common interface (e.g., `CanComponentDeactivate`) for components to implement their specific 'is safe to leave' logic.",
+        "**Application:** Add the guard class to the `canDeactivate` array in the route configuration."
+      ],
+      "quiz": [
+        {
+          "question": "What is the main use case for the `CanDeactivate` route guard?",
+          "options": [
+            "Checking user login status before activating a route",
+            "Pre-loading data for a component",
+            "Preventing a user from navigating away from a route, often due to unsaved changes",
+            "Redirecting users from an old route to a new one"
+            ],
+          "correctAnswer": 2,
+          "explanation": "`CanDeactivate` is specifically designed to intercept navigation *away* from the current route, commonly used for unsaved changes confirmation."
+        },
+        {
+          "question": "The `canDeactivate` method in a `CanDeactivate` guard typically needs access to what?",
+          "options": [
+            "The `Router` service",
+            "The component instance being deactivated",
+            "The `HttpClient` service",
+            "The application's root module"
+            ],
+          "correctAnswer": 1,
+          "explanation": "The `canDeactivate` method receives the component instance as its first argument, allowing the guard to check the component's state (e.g., if it has unsaved changes)."
+        },
+        {
+          "question": "If a `CanDeactivate` guard's `canDeactivate` method returns `false`, what happens?",
+          "options": [
+            "Navigation proceeds normally",
+            "The application crashes",
+            "Navigation away from the current route is cancelled",
+            "The user is automatically logged out"
+            ],
+          "correctAnswer": 2,
+          "explanation": "Returning `false` (or an Observable/Promise resolving to `false`) prevents the user from navigating away from the current route."
+        }
+      ]
+    },
+    {
+      "id": "resolve-guard",
+      "title": "Route Guard: Resolve",
+      "description": "Pre-fetch data needed for a route before the route activation completes using the Resolve guard.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "The `Resolve` guard allows you to fetch data required by a component *before* the route is activated and the component is rendered. This ensures that the necessary data is available immediately upon component initialization, preventing partially loaded views or the need for loading indicators within the component itself.\n\nThe guard service implements the `Resolve<T>` interface, where `T` specifies the type of data being resolved. It must implement the `resolve()` method, which typically returns an `Observable<T>`, `Promise<T>`, or directly `T`. The router waits for the data to be resolved (i.e., for the Observable or Promise to complete) before activating the route.\n\nThe resolved data is then made available to the activated component through the `ActivatedRoute` service, specifically under the `data` property (`snapshot.data` or the `data` Observable). You configure the resolver in the route definition using the `resolve` property, which takes an object mapping keys to resolver classes.",
+      "example": "// 1. Create the Resolver Service (item-resolver.service.ts)\nimport { Injectable } from '@angular/core';\nimport {\n  Resolve,\n  RouterStateSnapshot,\n  ActivatedRouteSnapshot\n} from '@angular/router';\nimport { Observable, of } from 'rxjs';\nimport { catchError } from 'rxjs/operators';\nimport { DataService, Item } from './data.service'; // Your data fetching service\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class ItemResolver implements Resolve<Item | null> { // Resolves to an Item or null\n  constructor(private dataService: DataService) {}\n\n  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Item | null> {\n    const id = route.paramMap.get('id');\n    if (!id) {\n      // Handle case where ID is missing, maybe redirect or return null\n      return of(null);\n    }\n    console.log(`ItemResolver: Fetching item with ID: ${id}`);\n    return this.dataService.getItemById(+id).pipe(\n      catchError(error => {\n        console.error('ItemResolver Error:', error);\n        // Handle error appropriately, maybe navigate away or return null\n        return of(null);\n      })\n    );\n  }\n}\n\n// 2. Apply the Resolver to a Route (app-routing.module.ts)\n// import { ItemResolver } from './item-resolver.service';\n// \n// const routes: Routes = [\n//   {\n//     path: 'item/:id',\n//     component: ItemDetailsComponent,\n//     resolve: {\n//       itemData: ItemResolver // Key 'itemData' will hold the resolved data\n//     }\n//   },\n//   // ... other routes\n// ];\n\n// 3. Access Resolved Data in Component (item-details.component.ts)\n// import { Component, OnInit } from '@angular/core';\n// import { ActivatedRoute } from '@angular/router';\n// import { Item } from './data.service';\n// \n// @Component({ /* ... */ })\n// export class ItemDetailsComponent implements OnInit {\n//   item: Item | null = null;\n// \n//   constructor(private route: ActivatedRoute) { }\n// \n//   ngOnInit(): void {\n//     // Access data resolved by the 'itemData' key\n//     this.route.data.subscribe(data => {\n//       this.item = data['itemData'];\n//       if (this.item) {\n//         console.log('Component received resolved item:', this.item);\n//       } else {\n//         console.log('Component did not receive resolved item.');\n//       }\n//     });\n// \n//     // Alternative: Snapshot access (if component always re-initializes on route change)\n//     // this.item = this.route.snapshot.data['itemData'];\n//   }\n// }\n",
+      "keyPoints": [
+        "**Purpose:** Fetch route-specific data *before* the route activates.",
+        "**Interface:** Implement the `Resolve<T>` interface, where `T` is the type of data returned.",
+        "**Method:** Implement the `resolve()` method.",
+        "**Return Value:** `resolve()` returns the data itself, or an `Observable` or `Promise` that emits/resolves to the data.",
+        "**Router Wait:** The router waits for the data resolution to complete before activating the route.",
+        "**Use Cases:** Ensure critical data is available on component load, avoid loading spinners inside components for initial data.",
+        "**Registration:** Provide the resolver service (e.g., `providedIn: 'root'`).",
+        "**Application:** Use the `resolve` property in the route configuration, mapping a key to the resolver class.",
+        "**Data Access:** Access resolved data in the component via `ActivatedRoute.data` (Observable or snapshot)."
+      ],
+      "quiz": [
+        {
+          "question": "What is the primary function of a `Resolve` guard in Angular routing?",
+          "options": [
+            "To check if a user is authenticated",
+            "To prevent navigation away from a route",
+            "To lazy load a feature module",
+            "To pre-fetch data needed for a route before it activates"
+            ],
+          "correctAnswer": 3,
+          "explanation": "Resolve guards are used to fetch data required by a component before the component itself is instantiated and the route is fully activated."
+        },
+        {
+          "question": "What happens if the Observable or Promise returned by a `resolve()` method never completes?",
+          "options": [
+            "The component loads without the data",
+            "An error is thrown immediately",
+            "Navigation to the route is blocked indefinitely",
+            "The resolver is ignored"
+            ],
+          "correctAnswer": 2,
+          "explanation": "The router waits for the resolver to complete. If it never does, the navigation will hang and never complete."
+        },
+        {
+          "question": "How does the activated component access the data fetched by a `Resolve` guard?",
+          "options": [
+            "Via `@Input()` binding",
+            "Through the `Router` service",
+            "Via the `data` property of the `ActivatedRoute` service",
+            "Using a shared service directly"
+            ],
+          "correctAnswer": 2,
+          "explanation": "The resolved data is added to the `data` object associated with the route, accessible via `ActivatedRoute.data`."
+        }
+      ]
+    },
+    {
+      "id": "router-events",
+      "title": "Router Events",
+      "description": "Subscribe to and react to events fired by the Angular Router during the navigation lifecycle.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "The Angular Router emits a sequence of events during each navigation cycle. By subscribing to the Router's `events` observable, you can track the navigation process and trigger actions at specific points.\n\nThis is useful for tasks like:\n*   Displaying a global loading indicator during navigation.\n*   Logging navigation activity.\n*   Performing analytics tracking.\n*   Modifying page titles based on the route.\n\nCommon router events include:\n*   `NavigationStart`: Fired when navigation starts.\n*   `RouteConfigLoadStart`: Fired before a lazy-loaded module is fetched.\n*   `RouteConfigLoadEnd`: Fired after a lazy-loaded module has been fetched.\n*   `RoutesRecognized`: Fired when the router has parsed the URL and recognized the routes.\n*   `GuardsCheckStart / GuardsCheckEnd`: Fired before/after route guards (`CanActivate`, `CanActivateChild`, `CanDeactivate`) are checked.\n*   `ResolveStart / ResolveEnd`: Fired before/after route resolvers (`Resolve`) are executed.\n*   `NavigationEnd`: Fired when navigation completes successfully.\n*   `NavigationCancel`: Fired when navigation is cancelled (e.g., by a guard returning `false`).\n*   `NavigationError`: Fired when navigation fails due to an unexpected error.\n\nYou typically inject the `Router` service and subscribe to `router.events` in a high-level component (like `AppComponent`) or a dedicated service.",
+      "example": "// Example: Subscribing to Router Events (app.component.ts)\n\nimport { Component, OnInit, OnDestroy } from '@angular/core';\nimport {\n  Router, Event, NavigationStart, NavigationEnd,\n  NavigationCancel, NavigationError, RouteConfigLoadStart, RouteConfigLoadEnd\n} from '@angular/router';\nimport { Subscription } from 'rxjs';\nimport { filter } from 'rxjs/operators'; // Import filter operator\n\n@Component({\n  selector: 'app-root',\n  template: `\n    <h1>My App</h1>\n    <div *ngIf=\"isLoading\" class=\"loading-indicator\">Loading...</div>\n    <nav>\n      <a routerLink=\"/home\">Home</a> | <a routerLink=\"/lazy\">Lazy Feature</a>\n    </nav>\n    <router-outlet></router-outlet>\n  `,\n  styles: ['.loading-indicator { color: blue; font-style: italic; }']\n})\nexport class AppComponent implements OnInit, OnDestroy {\n  isLoading: boolean = false;\n  private routerSub: Subscription | null = null;\n\n  constructor(private router: Router) {}\n\n  ngOnInit() {\n    this.routerSub = this.router.events.pipe(\n      // Optional: Filter for specific events if needed\n      // filter(event => event instanceof NavigationStart || event instanceof NavigationEnd)\n    ).subscribe((event: Event) => {\n      this.checkRouterEvent(event);\n    });\n  }\n\n  ngOnDestroy() {\n    this.routerSub?.unsubscribe();\n  }\n\n  private checkRouterEvent(event: Event): void {\n    if (event instanceof NavigationStart || event instanceof RouteConfigLoadStart) {\n      this.isLoading = true;\n      console.log('Navigation/Load Start...');\n    }\n\n    if (\n      event instanceof NavigationEnd ||\n      event instanceof NavigationCancel ||\n      event instanceof NavigationError ||\n      event instanceof RouteConfigLoadEnd\n    ) {\n      this.isLoading = false;\n      console.log('Navigation/Load End/Cancel/Error.');\n    }\n\n    if (event instanceof NavigationError) {\n      console.error('Router Error:', event.error);\n    }\n  }\n}\n",
+      "keyPoints": [
+        "**Navigation Lifecycle:** Router emits events at different stages of navigation.",
+        "**`Router.events`:** An Observable property on the `Router` service that emits navigation events.",
+        "**Subscription:** Subscribe to `router.events` to react to these events.",
+        "**Event Types:** Various event classes exist (e.g., `NavigationStart`, `NavigationEnd`, `NavigationError`).",
+        "**Type Checking:** Use `instanceof` to determine the specific type of event.",
+        "**Use Cases:** Loading indicators, logging, analytics, title updates.",
+        "**Filtering:** Use RxJS operators (like `filter`) to listen only for specific events.",
+        "**Cleanup:** Unsubscribe from the `events` observable in `ngOnDestroy`."
+      ],
+      "quiz": [
+        {
+          "question": "Which property of the `Router` service provides an Observable for navigation events?",
+          "options": ["`navigation`", "`routes`", "`events`", "`state`"],
+          "correctAnswer": 2,
+          "explanation": "The `Router.events` property is an Observable that emits different router event objects during navigation."
+        },
+        {
+          "question": "Which router event typically signifies that a navigation cycle has completed successfully?",
+          "options": ["`NavigationStart`", "`RoutesRecognized`", "`NavigationEnd`", "`NavigationCancel`"],
+          "correctAnswer": 2,
+          "explanation": "`NavigationEnd` is fired when the router successfully finishes navigating to the destination route."
+        },
+        {
+          "question": "How can you perform actions only for a specific type of router event (e.g., only `NavigationEnd`)?",
+          "options": [
+              "By checking `event.type` property",
+              "Using `instanceof` checks within the subscription callback",
+              "The router only emits one type of event",
+              "By configuring the event type in `RouterModule.forRoot`"
+            ],
+          "correctAnswer": 1,
+          "explanation": "You typically use `if (event instanceof EventClassName)` inside the subscription to check the event type and execute specific logic."
+        }
+      ]
+    },
+    {
+      "id": "redirects-wildcards",
+      "title": "Redirects and Wildcard Routes",
+      "description": "Configure default routes, redirect users from one path to another, and handle invalid URLs using wildcard routes.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "Angular Router provides mechanisms to handle common routing scenarios like default pages, path corrections, and handling non-existent routes:\n\n*   **Redirects:** Defined using the `redirectTo` property in a route configuration. When the router matches the `path` of a redirect route, it automatically navigates to the path specified in `redirectTo`. This is often used for setting a default route (e.g., redirecting the empty path `''` to `/home`) or redirecting old paths to new ones.\n    *   `pathMatch: 'full'`: This property is crucial for redirects, especially for the empty path. It tells the router to match only if the *entire* remaining URL matches the specified `path`. For `path: ''`, `pathMatch: 'full'` ensures it only matches when the URL is exactly the base path.\n*   **Wildcard Routes:** Defined using a path `**`. This route matches any URL that hasn't been matched by earlier routes in the configuration. It's typically used as the last route in the configuration to display a 'Page Not Found' component (404 error page).",
+      "example": "// Example: Redirects and Wildcard Route Configuration (app-routing.module.ts)\n\nimport { HomeComponent } from './home.component';\nimport { AboutComponent } from './about.component';\nimport { NotFoundComponent } from './not-found.component'; // Your 404 component\n\nconst routes: Routes = [\n  // Redirect from empty path to /home\n  { path: '', redirectTo: '/home', pathMatch: 'full' },\n\n  // Redirect from an old path to a new one\n  { path: 'about-us', redirectTo: '/about' },\n\n  // Application routes\n  { path: 'home', component: HomeComponent },\n  { path: 'about', component: AboutComponent },\n  // ... other application routes\n\n  // Wildcard route for 404 Not Found - MUST BE LAST!\n  { path: '**', component: NotFoundComponent }\n];\n\n@NgModule({\n  imports: [RouterModule.forRoot(routes)],\n  exports: [RouterModule]\n})\nexport class AppRoutingModule { }\n\n// not-found.component.ts\n// @Component({\n//   template: '<h2>404 - Page Not Found</h2><p>Sorry, the page you requested does not exist.</p>'\n// })\n// export class NotFoundComponent {}\n",
+      "keyPoints": [
+        "**Redirects:** Navigate automatically from one path to another.",
+        "**`redirectTo`:** Property in route config specifying the target path for redirection.",
+        "**`pathMatch: 'full'`:** Crucial for redirects, especially `path: ''`. Ensures the *entire* URL segment matches.",
+        "**Default Route:** Common use case for redirecting `path: ''`.",
+        "**Wildcard Route (`**`):** Matches any path not previously matched.",
+        "**Order Matters:** Wildcard route must be the *last* route in the configuration.",
+        "**404 Pages:** Wildcard routes are typically used to display a 'Page Not Found' component.",
+        "**Path Correction:** Redirects can seamlessly guide users from old/deprecated URLs to current ones."
+      ],
+      "quiz": [
+        {
+          "question": "What route path is used to define a wildcard route that matches any unspecified URL?",
+          "options": ["`*`", "`/*`", "`**`", "`any`"],
+          "correctAnswer": 2,
+          "explanation": "A double asterisk `**` is used as the path for a wildcard route."
+        },
+        {
+          "question": "Why is `pathMatch: 'full'` typically necessary when redirecting from an empty path (`path: ''`)?",
+          "options": [
+            "It enables query parameters",
+            "It makes the redirect faster",
+            "It ensures the redirect only occurs if the *entire* URL matches the empty path, preventing unintended matches on child routes",
+            "It's required for lazy loading"
+            ],
+          "correctAnswer": 2,
+          "explanation": "Without `pathMatch: 'full'`, the empty path (`''`) would match the beginning of *every* URL, causing the redirect to always trigger. `full` ensures it only matches when the path is truly empty."
+        },
+        {
+          "question": "Where should a wildcard route (`path: '**'`) typically be placed in the `Routes` array?",
+          "options": [
+            "At the very beginning",
+            "Immediately after the default route",
+            "Anywhere in the array",
+            "At the very end"
+            ],
+          "correctAnswer": 3,
+          "explanation": "The router matches routes in order. The wildcard route should be last so it only matches if no other more specific route matches first."
+        }
+      ]
+    },
+    {
+      "id": "secondary-outlets",
+      "title": "Secondary Outlets (Named Outlets)",
+      "description": "Display multiple, independent routed components simultaneously in different parts of your application layout using named router outlets.",
+      "difficulty": "intermediate",
+      "category": "routing",
+      "explanation": "By default, Angular routes render their components into the primary, unnamed `<router-outlet>`. However, Angular allows you to define additional, *named* router outlets. This enables scenarios where you want to display multiple, independently routed components on the same page, often for complex layouts like sidebars, chat windows, or auxiliary information panels that change based on navigation.\n\nTo use a secondary outlet, you give the `<router-outlet>` element a `name` attribute (e.g., `<router-outlet name=\"sidebar\"></router-outlet>`). Then, in your route configuration, you specify the target outlet for a component using the `outlet` property within the route definition. Navigating to such a route involves specifying the outlets and their corresponding paths in the navigation command (e.g., `routerLink=\"['/', { outlets: { sidebar: ['chat'] } }]\"`). The paths for secondary outlets are defined within parentheses in the URL.",
+      "example": "// 1. Define Named Outlets in Template (e.g., app.component.html)\n// <div>\n//   <h2>Main Content</h2>\n//   <router-outlet></router-outlet> <!-- Primary outlet -->\n// </div>\n// <div class=\"sidebar\">\n//   <h2>Sidebar</h2>\n//   <router-outlet name=\"sidebar\"></router-outlet> <!-- Named outlet -->\n// </div>\n\n// 2. Configure Routes for Secondary Outlet (app-routing.module.ts)\n// import { ChatComponent } from './chat.component';\n// import { HelpComponent } from './help.component';\n// \n// const routes: Routes = [\n//   { path: 'home', component: HomeComponent },\n//   {\n//     path: 'chat',\n//     component: ChatComponent,\n//     outlet: 'sidebar' // Target the 'sidebar' outlet\n//   },\n//   {\n//     path: 'help',\n//     component: HelpComponent,\n//     outlet: 'sidebar' // Target the 'sidebar' outlet\n//   },\n//   // ... other primary routes\n// ];\n\n// 3. Navigate to Secondary Outlet (e.g., in a template)\n// <!-- Navigate to home in primary, chat in sidebar -->\n// <a [routerLink]=\"['/home', { outlets: { sidebar: ['chat'] } }]\">\n//   Home with Chat\n// </a>\n// \n// <!-- Navigate to home in primary, help in sidebar -->\n// <a [routerLink]=\"['/home', { outlets: { sidebar: ['help'] } }]\">\n//   Home with Help\n// </a>\n// \n// <!-- Clear the sidebar outlet -->\n// <a [routerLink]=\"['/home', { outlets: { sidebar: null } }]\">\n//   Home (Clear Sidebar)\n// </a>\n\n// 4. URL Structure\n// Navigating to 'Home with Chat' results in a URL like: /home(sidebar:chat)\n",
+      "keyPoints": [
+        "**Multiple Views:** Allows displaying components from different routes simultaneously.",
+        "**Named `<router-outlet>`:** Define secondary outlets by adding a `name` attribute (e.g., `<router-outlet name=\"popup\">`).",
+        "**`outlet` Property:** Specify the target outlet in the route configuration using the `outlet` property.",
+        "**Primary Outlet:** The default, unnamed outlet.",
+        "**Navigation Syntax:** Use the `outlets` property within the `routerLink` array or `router.navigate` options object to specify paths for named outlets.",
+        "**URL Syntax:** Paths for secondary outlets appear in parentheses in the URL (e.g., `/primarypath(outletname:secondarypath)`).",
+        "**Clearing Outlets:** Navigate with the outlet name set to `null` in the `outlets` object to clear it.",
+        "**Use Cases:** Complex layouts, sidebars, chat widgets, auxiliary panels."
+      ],
+      "quiz": [
+        {
+          "question": "How do you define a secondary router outlet in an Angular template?",
+          "options": [
+            "Using `<secondary-router-outlet>`",
+            "Using `<router-outlet id=\"secondary\">`",
+            "Using `<router-outlet name=\"outletName\">`",
+            "Using `<router-outlet type=\"secondary\">`"
+            ],
+          "correctAnswer": 2,
+          "explanation": "A secondary outlet is created by adding the `name` attribute to a standard `<router-outlet>` element."
+        },
+        {
+          "question": "Which property in a route definition specifies that the component should be rendered in a named outlet?",
+          "options": ["`name`", "`target`", "`renderTo`", "`outlet`"],
+          "correctAnswer": 3,
+          "explanation": "The `outlet` property in the `Route` object configuration specifies the name of the target router outlet."
+        },
+        {
+          "question": "What would the URL typically look like if the primary route is `/users` and a secondary outlet named `details` is activated with the path `view`?",
+          "options": [
+            "`/users/details/view`",
+            "`/users?details=view`",
+            "`/users/(details:view)`",
+            "`/users#details=view`"
+            ],
+          "correctAnswer": 2,
+          "explanation": "Secondary outlet paths are typically represented within parentheses in the URL segment, like `/users(details:view)`."
+        }
+      ]
+    },
      {
       "id": "http-client",
       "title": "HTTP Client",
